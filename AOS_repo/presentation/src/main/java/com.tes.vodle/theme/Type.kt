@@ -1,4 +1,4 @@
-package com.tes.vodle.ui.theme
+package com.tes.vodle.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

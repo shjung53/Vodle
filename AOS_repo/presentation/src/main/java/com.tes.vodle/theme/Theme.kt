@@ -1,4 +1,4 @@
-package com.tes.vodle.ui.theme
+package com.tes.vodle.theme
 
 import android.app.Activity
 import android.os.Build
