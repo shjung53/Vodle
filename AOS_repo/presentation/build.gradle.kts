@@ -71,6 +71,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
     implementation(libs.hilt.compiler)
+    implementation("androidx.compose.material:material-icons-extended:1.6.3")
 
     implementation(project(":domain"))
 }
