@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ktlintLibrary)
+    id("kotlin-kapt")
 }
 
 android {
@@ -24,6 +25,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+
+    configurations.implementation {
+        exclude(group = "com.intellij", module = "annotations")
     }
 
     compileOptions {
@@ -62,6 +67,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.compiler)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,7 +77,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 
     implementation(project(":domain"))
 }
