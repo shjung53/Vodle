@@ -31,6 +31,11 @@ android {
             )
         }
     }
+
+    configurations.implementation {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -71,7 +76,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
+    annotationProcessor(libs.hilt.compiler)
 
     implementation(project(":presentation"))
     implementation(project(":domain"))
