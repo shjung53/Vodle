@@ -15,22 +15,22 @@ fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Destination.LOGIN.destination
+        startDestination = Route.LOGIN.destination
     ) {
-        composable(Destination.LOGIN.destination) {
-            LoginScreen { navController.navigateToDestination(Destination.MAIN) }
+        composable(Route.LOGIN.destination) {
+            LoginScreen { navController.navigateToDestination(Route.MAIN) }
         }
 
-        composable(Destination.MAIN.destination) {
-            MainScreen { navController.navigateToDestination(Destination.MY_PAGE) }
+        composable(Route.MAIN.destination) {
+            MainScreen { navController.navigateToDestination(Route.MY_PAGE) }
         }
 
-        composable(Destination.MY_PAGE.destination) {
-            MyPageScreen { navController.navigateToDestination(Destination.LOGIN) }
+        composable(Route.MY_PAGE.destination) {
+            MyPageScreen { navController.navigateToDestination(Route.LOGIN) }
         }
     }
 }
 
-fun NavController.navigateToDestination(destination: Destination, navOptions: NavOptions? = null) {
-    this.navigate(destination.destination, navOptions)
+fun NavController.navigateToDestination(route: Route, navOptions: NavOptions? = null) {
+    this.navigate(route.destination, navOptions)
 }
