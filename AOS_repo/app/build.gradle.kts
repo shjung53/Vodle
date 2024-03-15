@@ -1,8 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktlintLibrary)
     alias(libs.plugins.hilt)
+    id("kotlin-kapt")
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -20,6 +27,23 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "NAVER_LOGIN_CLIENT_ID",
+            "\"${properties["NAVER_LOGIN_CLIENT_ID"]}\""
+        )
+        buildConfigField(
+            "String",
+            "NAVER_LOGIN_CLIENT_SECRET",
+            "\"${properties["NAVER_LOGIN_CLIENT_SECRET"]}\""
+        )
+
+        buildConfigField(
+            "String",
+            "NAVER_LOGIN_CLIENT_NAME",
+            "\"${properties["NAVER_LOGIN_CLIENT_NAME"]}\""
+        )
     }
 
     buildTypes {
@@ -34,6 +58,10 @@ android {
 
     configurations.implementation {
         exclude(group = "com.intellij", module = "annotations")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
@@ -62,11 +90,21 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.hilt.android)
-    annotationProcessor(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGson)
+
+    implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
+
+    implementation("com.navercorp.nid:oauth:5.9.0")
 
     implementation(project(":presentation"))
     implementation(project(":domain"))

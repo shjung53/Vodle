@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State : ViewState, Event : com.tes.presentation.composebase.Event> :
+abstract class BaseViewModel<State : ViewState,
+    Event : com.tes.presentation.composebase.ViewEvent> :
     ViewModel() {
     private val initialState: State by lazy { createInitialState() }
     abstract fun createInitialState(): State

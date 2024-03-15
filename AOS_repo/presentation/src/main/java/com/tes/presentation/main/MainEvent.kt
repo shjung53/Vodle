@@ -1,9 +1,9 @@
 package com.tes.presentation.main
 
-import com.tes.presentation.composebase.Event
 import com.tes.presentation.composebase.SideEffect
+import com.tes.presentation.composebase.ViewEvent
 
-interface MainEvent : Event
+interface MainEvent : ViewEvent
 
 sealed class MainViewEvent : MainEvent
 

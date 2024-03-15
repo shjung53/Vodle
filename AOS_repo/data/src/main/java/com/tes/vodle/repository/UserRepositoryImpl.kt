@@ -1,3 +1,5 @@
 package com.tes.vodle.repository
 
-class UserRepositoryImpl
+import com.tes.domain.repository.UserRepository
+
+class UserRepositoryImpl : UserRepository
