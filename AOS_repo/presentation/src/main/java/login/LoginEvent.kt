@@ -6,13 +6,19 @@ import com.tes.presentation.navigation.Route
 
 interface LoginEvent : Event
 
-sealed class LoginViewEvent : LoginEvent
+sealed class LoginViewEvent : LoginEvent {
+    data object OnClickNaverLoginButton : LoginViewEvent()
+
+    data object OnClickGoogleLoginButton : LoginViewEvent()
+}
 
 sealed class LoginViewSideEffect : LoginEvent, SideEffect {
 
-    data object OnClickNaverLoginButton : LoginViewSideEffect()
+    data object AttemptToNaverLogin : LoginViewSideEffect()
 
-    data object OnClickGoogleLoginButton : LoginViewSideEffect()
+    data class AttemptToFetchNaverId(val accessToken: String) : LoginViewSideEffect()
+
+    data class AttemptToLogin(val id: String) : LoginViewSideEffect()
 
     data class OnSuccessLogin(val route: Route) : LoginViewSideEffect()
 
