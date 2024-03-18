@@ -107,6 +107,7 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.hiltNavigation)
     implementation("com.navercorp.nid:oauth:5.9.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.3")
 
     implementation(project(":domain"))
 }

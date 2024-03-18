@@ -64,7 +64,7 @@ fun VodleTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = vodleTypoGraphy,
         content = content
     )
 }
