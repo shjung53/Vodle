@@ -17,7 +17,7 @@ ktlint-library = "11.3.1"
 appcompat = "1.6.1"
 material = "1.10.0"
 jetbrainsKotlinJvm = "1.9.0"
-hilt = "2.44"
+hilt = "2.48"
 roomCommon = "2.6.1"
 roomCompiler = "2.6.1"
 

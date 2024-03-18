@@ -21,3 +21,5 @@ val main_yellow_bright = Color(0xFFFBEED0)
 val main_coral_darken = Color(0xFF027070)
 val main_red_darken = Color(0xFFC2363E)
 val main_yellow_darken = Color(0xFFFFAB2C)
+
+val smooth_black = Color(0xFF646464)
