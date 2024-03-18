@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,9 +24,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tes.presentation.R
+import com.tes.presentation.navigation.Route
 
 @Composable
-fun LoginScreen(onClickText: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = LoginViewModel(),
+    onLoginSuccess: () -> Unit
+) {
+    val viewState = viewModel.uiState.collectAsState().value
+
+    ObserveLoginSuccess(viewState, onLoginSuccess)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,11 +61,23 @@ fun LoginScreen(onClickText: () -> Unit) {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
-                ) { onClickText() },
+                ) { viewModel.onTriggerEvent(LoginViewEvent.OnClickNaverLoginButton) },
             painter = painterResource(id = R.drawable.naver_login_button),
             contentDescription = null
         )
 
         Spacer(modifier = Modifier.weight(1.1f))
+    }
+}
+
+@Composable
+private fun ObserveLoginSuccess(
+    viewState: LoginViewState,
+    onLoginSuccess: () -> Unit
+) {
+    LaunchedEffect(key1 = viewState) {
+        if (viewState.nextRoute != Route.LOGIN) {
+            onLoginSuccess()
+        }
     }
 }
