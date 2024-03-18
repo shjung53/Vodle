@@ -1,6 +1,9 @@
 package com.tes.presentation.login
 
+import android.app.Activity
 import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,24 +35,32 @@ import com.tes.presentation.R
 import com.tes.presentation.navigation.Route
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: LoginViewModel = hiltViewModel<LoginViewModel>(),
     onLoginSuccess: () -> Unit
 ) {
     val viewState = viewModel.uiState.collectAsState().value
 
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = viewState.isTryingLogin) {
-        if (viewState.isTryingLogin) {
-            authenticateWithNaver(context = context)
+    ObserveLoginAttempt(viewState, context, viewModel)
+
+    ObserveDialogMessage(viewState, context)
+
+    ObserveRoute(viewState, onLoginSuccess)
+
+    LaunchedEffect(key1 = viewState.shouldExit) {
+        if (viewState.shouldExit) {
+            (context as Activity).finish()
         }
     }
 
-    ObserveLoginSuccess(viewState, onLoginSuccess)
+    BackHandler {
+        val backPressedTime = System.currentTimeMillis()
+        viewModel.onTriggerEvent(LoginViewEvent.OnClickBackButton(backPressedTime))
+    }
 
     Column(
         modifier = Modifier
@@ -87,7 +98,40 @@ fun LoginScreen(
 }
 
 @Composable
-private fun ObserveLoginSuccess(
+private fun ObserveLoginAttempt(
+    viewState: LoginViewState,
+    context: Context,
+    viewModel: LoginViewModel
+) {
+    LaunchedEffect(key1 = viewState.isTryingLogin) {
+        if (viewState.isTryingLogin) {
+            val result = authenticateWithNaver(context = context)
+            result.fold(
+                onSuccess = { _ ->
+                    viewModel.onTriggerEvent(LoginViewEvent.OnSuccessLogin)
+                },
+                onFailure = { _ ->
+                    viewModel.onTriggerEvent(LoginViewEvent.ShowDialog("네이버 로그인 실패"))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ObserveDialogMessage(
+    viewState: LoginViewState,
+    context: Context
+) {
+    LaunchedEffect(key1 = viewState.dialogMessage) {
+        if (viewState.dialogMessage?.isNotEmpty() == true) {
+            Toast.makeText(context, viewState.dialogMessage, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+@Composable
+private fun ObserveRoute(
     viewState: LoginViewState,
     onLoginSuccess: () -> Unit
 ) {
@@ -107,8 +151,10 @@ private suspend fun authenticateWithNaver(context: Context): Result<String> =
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
-                continuation.resumeWithException(
-                    Exception("Authentication failed: $message (HTTP $httpStatus)")
+                continuation.resume(
+                    Result.failure(
+                        Exception("Naver login failed: $httpStatus, $message")
+                    )
                 )
             }
 
@@ -119,6 +165,5 @@ private suspend fun authenticateWithNaver(context: Context): Result<String> =
 
         NaverIdLoginSDK.authenticate(context, callback)
 
-        continuation.invokeOnCancellation {
-        }
+        continuation.invokeOnCancellation {}
     }

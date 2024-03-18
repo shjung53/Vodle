@@ -1,12 +1,13 @@
 package com.tes.presentation.login
 
 import com.tes.presentation.composebase.ViewEvent
-import com.tes.presentation.navigation.Route
 
 sealed class LoginViewEvent : ViewEvent {
     data object OnClickNaverLoginButton : LoginViewEvent()
 
     data object OnClickGoogleLoginButton : LoginViewEvent()
+
+    data class OnClickBackButton(val backPressedTime: Long) : LoginViewEvent()
 
     data object AttemptToNaverLogin : LoginViewEvent()
 
@@ -14,7 +15,7 @@ sealed class LoginViewEvent : ViewEvent {
 
     data class AttemptToLogin(val id: String) : LoginViewEvent()
 
-    data class OnSuccessLogin(val route: Route) : LoginViewEvent()
+    data object OnSuccessLogin : LoginViewEvent()
 
-    data class ShowSnackBar(val message: String) : LoginViewEvent()
+    data class ShowDialog(val message: String) : LoginViewEvent()
 }
