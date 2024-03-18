@@ -1,9 +1,9 @@
 package com.tes.presentation.mypage
 
-import com.tes.presentation.composebase.Event
 import com.tes.presentation.composebase.SideEffect
+import com.tes.presentation.composebase.ViewEvent
 
-interface MyPageEvent : Event
+interface MyPageEvent : ViewEvent
 sealed class MyPageViewEvent : MyPageEvent
 
 sealed class MyPageViewSideEffect : MyPageEvent, SideEffect {

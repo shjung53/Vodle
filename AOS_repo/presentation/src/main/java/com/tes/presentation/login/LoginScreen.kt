@@ -1,5 +1,6 @@
 package com.tes.presentation.login
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,18 +21,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.tes.presentation.R
 import com.tes.presentation.navigation.Route
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = LoginViewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit
 ) {
     val viewState = viewModel.uiState.collectAsState().value
+
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = viewState.isTryingLogin) {
+        if (viewState.isTryingLogin) {
+            authenticateWithNaver(context = context)
+        }
+    }
 
     ObserveLoginSuccess(viewState, onLoginSuccess)
 
@@ -81,3 +97,28 @@ private fun ObserveLoginSuccess(
         }
     }
 }
+
+private suspend fun authenticateWithNaver(context: Context): Result<String> =
+    suspendCancellableCoroutine { continuation ->
+        val callback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                val accessToken = NaverIdLoginSDK.getAccessToken() ?: ""
+                continuation.resume(Result.success(accessToken))
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+                continuation.resumeWithException(
+                    Exception("Authentication failed: $message (HTTP $httpStatus)")
+                )
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        }
+
+        NaverIdLoginSDK.authenticate(context, callback)
+
+        continuation.invokeOnCancellation {
+        }
+    }
