@@ -16,9 +16,14 @@ class UserDataSourceImpl @Inject constructor(
         naverLoginService.getNaverUserId("Bearer $accessToken").response.id
     }
 
-    override suspend fun signInNaver(code: String): Result<TokenResponse> = runCatching {
-        userService.signInNaver(NaverLoginRequest(code)).getOrThrow()
+    override suspend fun signInNaver(
+        userCode: String,
+        signature: String,
+        provider: String
+    ): Result<TokenResponse> = runCatching {
+        userService.signInNaver(NaverLoginRequest(userCode, provider, signature)).getOrThrow()
     }
+
     override suspend fun signOutWithNaver(
         naverClientId: String,
         naverSecret: String,

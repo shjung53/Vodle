@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface UserService {
 
-    @POST("/users/sign-in-naver")
+    @POST("api/auth/social")
     suspend fun signInNaver(
         @Body naverLoginRequest: NaverLoginRequest
     ): Result<TokenResponse>
