@@ -27,7 +27,7 @@ fun BottomNavBarComponent(
     clickDraw: () -> Unit,
     clickOverhearing: () -> Unit,
     clickRecord: () -> Unit,
-    clickMypage: () -> Unit,
+    clickMypage: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -53,7 +53,8 @@ fun BottomNavBarComponent(
                 imageVector = Icons.Outlined.Headphones,
                 flag = flag,
                 onClick = clickOverhearing,
-                info = "오버히어링 모드", modifier = Modifier
+                info = "오버히어링 모드",
+                modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
             )

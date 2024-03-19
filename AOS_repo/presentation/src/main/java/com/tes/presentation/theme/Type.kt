@@ -9,10 +9,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.tes.presentation.R
-import org.w3c.dom.Text
 
 val vodleMainFontFamily = FontFamily(
-    Font(R.font.nanumpen, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.nanumpen, FontWeight.Normal, FontStyle.Normal)
 )
 
 val vodleSubFontFamily = FontFamily(
@@ -80,5 +79,5 @@ val vodleTypoGraphy = Typography(
         letterSpacing = 0.5.sp,
         textAlign = TextAlign.Center,
         color = smooth_black
-    ),
+    )
 )
