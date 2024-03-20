@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.androidx.room.compiler)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -112,6 +113,7 @@ dependencies {
     implementation("com.navercorp.nid:oauth:5.9.0")
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
     implementation(libs.naver.map)
+    implementation(libs.naver.map.location)
 
     implementation(project(":domain"))
 }

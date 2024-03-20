@@ -23,7 +23,7 @@ fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Route.LOGIN.destination,
+        startDestination = Route.MAIN.destination,
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(

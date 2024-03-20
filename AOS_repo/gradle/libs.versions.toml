@@ -28,6 +28,8 @@ naverLogin = "5.9.0"
 hiltNav = "1.0.0"
 inject = "1"
 naverMap = "1.6.0"
+playServicesLocation = "21.0.1"
+naverMapLocation = "21.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +62,8 @@ naverOAuth = { group = "com.navercorp.nid:oauth", name = "oauth", version.ref = 
 hiltNavigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNav" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "inject" }
 naver-map = { module = "io.github.fornewid:naver-map-compose", version.ref = "naverMap" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+naver-map-location = { module = "io.github.fornewid:naver-map-location", version.ref = "naverMapLocation" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

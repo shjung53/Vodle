@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Draw
@@ -23,18 +24,25 @@ import com.tes.presentation.theme.main_coral_darken
 
 @Composable
 fun BottomNavBarComponent(
+    modifier: Modifier,
     flag: Boolean = true,
-    clickDraw: () -> Unit,
-    clickOverhearing: () -> Unit,
-    clickRecord: () -> Unit,
-    clickMypage: () -> Unit
+    onClickWriteButton: () -> Unit,
+    onClickHeadphoneButton: () -> Unit,
+    onClickRecordButton: () -> Unit,
+    onClickUserButton: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .clip(shape = RoundedCornerShape(10.dp))
-            .fillMaxWidth(0.88f)
-            .border(BorderStroke(1.dp, color = main_coral_darken), shape = RoundedCornerShape(20))
-            .background(color = Color.White)
+        modifier = modifier.then(
+            Modifier
+                .clip(shape = RoundedCornerShape(10.dp))
+                .fillMaxWidth(0.88f)
+                .wrapContentHeight()
+                .border(
+                    BorderStroke(1.dp, color = main_coral_darken),
+                    shape = RoundedCornerShape(20)
+                )
+                .background(color = Color.White)
+        )
     ) {
         Row(
             modifier = Modifier
@@ -43,7 +51,7 @@ fun BottomNavBarComponent(
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.Draw,
                 flag = flag,
-                onClick = clickDraw,
+                onClick = onClickWriteButton,
                 info = "보들 그리기",
                 modifier = Modifier
                     .weight(1f)
@@ -52,7 +60,7 @@ fun BottomNavBarComponent(
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.Headphones,
                 flag = flag,
-                onClick = clickOverhearing,
+                onClick = onClickHeadphoneButton,
                 info = "오버히어링 모드",
                 modifier = Modifier
                     .weight(1f)
@@ -61,7 +69,7 @@ fun BottomNavBarComponent(
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.MicNone,
                 flag = flag,
-                onClick = clickRecord,
+                onClick = onClickRecordButton,
                 info = "녹음하기",
                 modifier = Modifier
                     .weight(1f)
@@ -70,7 +78,7 @@ fun BottomNavBarComponent(
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.Person,
                 flag = flag,
-                onClick = clickMypage,
+                onClick = onClickUserButton,
                 info = "마이페이지",
                 modifier = Modifier
                     .weight(1f)
@@ -84,9 +92,10 @@ fun BottomNavBarComponent(
 @Composable
 fun PreviewBottomNavBarComponent() {
     BottomNavBarComponent(
-        clickDraw = {},
-        clickOverhearing = {},
-        clickRecord = {},
-        clickMypage = {}
+        modifier = Modifier,
+        onClickWriteButton = {},
+        onClickHeadphoneButton = {},
+        onClickRecordButton = {},
+        onClickUserButton = {}
     )
 }
