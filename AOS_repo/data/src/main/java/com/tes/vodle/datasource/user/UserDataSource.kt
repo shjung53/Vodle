@@ -6,7 +6,11 @@ interface UserDataSource {
 
     suspend fun getNaverLoginId(accessToken: String): Result<String>
 
-    suspend fun signInNaver(code: String): Result<TokenResponse>
+    suspend fun signInNaver(
+        userCode: String,
+        signature: String,
+        provider: String
+    ): Result<TokenResponse>
 
     suspend fun signOutWithNaver(
         naverClientId: String,

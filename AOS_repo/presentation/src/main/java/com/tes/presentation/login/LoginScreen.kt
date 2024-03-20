@@ -47,7 +47,7 @@ fun LoginScreen(
 
     ObserveLoginAttempt(viewState, context, viewModel)
 
-    ObserveDialogMessage(viewState, context)
+    ObserveDialogMessage(viewState, context, viewModel)
 
     ObserveRoute(viewState, onLoginSuccess)
 
@@ -121,11 +121,13 @@ private fun ObserveLoginAttempt(
 @Composable
 private fun ObserveDialogMessage(
     viewState: LoginViewState,
-    context: Context
+    context: Context,
+    viewModel: LoginViewModel
 ) {
     LaunchedEffect(key1 = viewState.dialogMessage) {
         if (viewState.dialogMessage?.isNotEmpty() == true) {
             Toast.makeText(context, viewState.dialogMessage, Toast.LENGTH_SHORT).show()
+            viewModel.onTriggerEvent(LoginViewEvent.OnFinishDialog)
         }
     }
 }

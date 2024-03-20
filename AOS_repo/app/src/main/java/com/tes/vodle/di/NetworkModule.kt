@@ -1,5 +1,7 @@
 package com.tes.vodle.di
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.tes.vodle.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -53,9 +55,11 @@ object NetworkModule {
         return builder.build()
     }
 
+    private val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
+
     @Singleton
     @Provides
     fun provideConverterFactory(): GsonConverterFactory {
-        return GsonConverterFactory.create()
+        return GsonConverterFactory.create(gson)
     }
 }

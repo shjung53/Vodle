@@ -1,6 +1,5 @@
 package com.tes.presentation.login
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.user.GetNaverIdUseCase
 import com.tes.domain.usecase.user.SignInNaverUseCase
@@ -31,11 +30,8 @@ class LoginViewModel @Inject constructor(
 
     private suspend fun handleLoginViewEvent(event: LoginViewEvent) {
         when (event) {
-            LoginViewEvent.OnClickGoogleLoginButton -> TODO()
-            LoginViewEvent.OnClickNaverLoginButton -> setState { onAttemptToLogin() }
+            LoginViewEvent.OnClickNaverLoginButton -> setState { onAttemptNaverLogin() }
             is LoginViewEvent.AttemptToFetchNaverId -> fetchUserNaverId(event.accessToken)
-            is LoginViewEvent.AttemptToLogin -> TODO()
-            LoginViewEvent.AttemptToNaverLogin -> TODO()
             is LoginViewEvent.OnSuccessLogin -> setState { LoginViewState.Login() }
             is LoginViewEvent.ShowDialog -> setState { showDialog(event.message) }
             is LoginViewEvent.OnClickBackButton -> setState {
@@ -43,29 +39,49 @@ class LoginViewModel @Inject constructor(
                     event.backPressedTime
                 )
             }
+
+            LoginViewEvent.OnFinishDialog -> setState { onFinishDialog() }
         }
     }
 
     private suspend fun fetchUserNaverId(accessToken: String) {
         getNaverIdUseCase(accessToken).fold(
             onSuccess = {
-                setState { LoginViewState.Login() }
+                tryToLogin(it)
             },
-            onFailure = { setState { showDialog(it.message ?: "") } }
+            onFailure = { setState { showDialog(it.message ?: "네이버 접속 실패") } }
         )
     }
 
-    private fun LoginViewState.onAttemptToLogin(): LoginViewState {
+    private fun LoginViewState.onAttemptNaverLogin(): LoginViewState {
         return when (this) {
             is LoginViewState.Default -> copy(isTryingLogin = true)
             is LoginViewState.Login -> copy(isTryingLogin = true)
         }
     }
 
+    private suspend fun tryToLogin(naverId: String) {
+        signInNaverUseCase(naverId).fold(
+            onSuccess = {
+                setState { LoginViewState.Login() }
+            },
+            onFailure = {
+                setState { showDialog(it.message ?: "네트워크 에러") }
+            }
+        )
+    }
+
     private fun LoginViewState.showDialog(message: String): LoginViewState {
         return when (this) {
-            is LoginViewState.Default -> copy(dialogMessage = message)
-            is LoginViewState.Login -> copy(dialogMessage = message)
+            is LoginViewState.Default -> copy(dialogMessage = message, isTryingLogin = false)
+            is LoginViewState.Login -> copy(dialogMessage = message, isTryingLogin = false)
+        }
+    }
+
+    private fun LoginViewState.onFinishDialog(): LoginViewState {
+        return when (this) {
+            is LoginViewState.Default -> copy(dialogMessage = "", isTryingLogin = false)
+            is LoginViewState.Login -> copy(dialogMessage = "", isTryingLogin = false)
         }
     }
 
@@ -94,7 +110,6 @@ class LoginViewModel @Inject constructor(
         backPressedTime: Long,
         lastBackPressedTime: Long
     ): Boolean {
-        if (backPressedTime - lastBackPressedTime < 1000) return true
-        return false
+        return backPressedTime - lastBackPressedTime < 1000
     }
 }
