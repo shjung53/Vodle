@@ -1,4 +1,4 @@
-package com.tes.presentation.main.components
+package main.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,17 +23,18 @@ import com.tes.presentation.theme.main_red
 
 @Composable
 fun FabComponent(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector,
     flag: Boolean = true,
     onClick: () -> Unit,
-    info: String?
+    info: String? = null
 ) {
     IconButton(
         onClick = {
             onClick()
         },
         enabled = flag,
-        modifier = Modifier.clip(CircleShape).size(40.dp),
+        modifier = modifier.then(Modifier.clip(CircleShape).size(40.dp)),
         colors = IconButtonDefaults.iconButtonColors(
             contentColor = main_red,
             containerColor = Color.White,
