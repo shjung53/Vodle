@@ -27,6 +27,7 @@ android {
             "NAVER_LOGIN_CLIENT_ID",
             "\"${properties["NAVER_LOGIN_CLIENT_ID"]}\""
         )
+
         buildConfigField(
             "String",
             "NAVER_LOGIN_CLIENT_SECRET",
@@ -38,6 +39,8 @@ android {
             "NAVER_LOGIN_CLIENT_NAME",
             "\"${properties["NAVER_LOGIN_CLIENT_NAME"]}\""
         )
+
+        manifestPlaceholders["NAVER_MAPS_CLIENT_ID"] = properties["NAVER_MAPS_CLIENT_ID"] as String
     }
 
     buildTypes {
@@ -108,6 +111,7 @@ dependencies {
     implementation(libs.hiltNavigation)
     implementation("com.navercorp.nid:oauth:5.9.0")
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
+    implementation(libs.naver.map)
 
     implementation(project(":domain"))
 }
