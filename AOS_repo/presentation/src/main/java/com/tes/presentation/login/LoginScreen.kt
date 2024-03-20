@@ -107,8 +107,8 @@ private fun ObserveLoginAttempt(
         if (viewState.isTryingLogin) {
             val result = authenticateWithNaver(context = context)
             result.fold(
-                onSuccess = { _ ->
-                    viewModel.onTriggerEvent(LoginViewEvent.OnSuccessLogin)
+                onSuccess = {
+                    viewModel.onTriggerEvent(LoginViewEvent.AttemptToFetchNaverId(it))
                 },
                 onFailure = { _ ->
                     viewModel.onTriggerEvent(LoginViewEvent.ShowDialog("네이버 로그인 실패"))

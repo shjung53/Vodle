@@ -26,8 +26,8 @@ fun FabComponent(
     imageVector: ImageVector,
     flag: Boolean = true,
     onClick: () -> Unit,
-    info: String?,
-){
+    info: String?
+) {
     IconButton(
         onClick = {
             onClick()
@@ -49,21 +49,20 @@ fun FabComponent(
     }
 }
 
-
 @Preview
 @Composable
-fun PreviewFabComponent(){
+fun PreviewFabComponent() {
     Row {
         FabComponent(
             imageVector = Icons.Outlined.MyLocation,
             onClick = {},
-            info = "내 위치로 이동",
+            info = "내 위치로 이동"
         )
         Spacer(modifier = Modifier.width(20.dp))
         FabComponent(
             imageVector = Icons.Outlined.CalendarMonth,
             onClick = {},
-            info = "날짜 이동",
+            info = "날짜 이동"
         )
     }
 }

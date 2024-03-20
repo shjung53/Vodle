@@ -26,6 +26,7 @@ retrofit = "2.9.0"
 okHttp = "4.10.0"
 naverLogin = "5.9.0"
 hiltNav = "1.0.0"
+inject = "1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,7 @@ okhttp = {group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp
 okhttpLogging = {group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okHttp"}
 naverOAuth = {group = "com.navercorp.nid:oauth", name = "oauth", version.ref = "naverLogin"}
 hiltNavigation = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNav"}
+javax-inject = {group = "javax.inject", name = "javax.inject", version.ref = "inject"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

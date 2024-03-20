@@ -1,3 +1,4 @@
+
 import java.util.Properties
 
 plugins {
@@ -24,9 +25,16 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            "\"${properties["BASE_URL"]}\""
+        )
 
         buildConfigField(
             "String",

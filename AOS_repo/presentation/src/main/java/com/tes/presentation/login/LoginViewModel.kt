@@ -1,13 +1,19 @@
 package com.tes.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.tes.domain.usecase.user.GetNaverIdUseCase
+import com.tes.domain.usecase.user.SignInNaverUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : BaseViewModel<LoginViewState, LoginViewEvent>() {
+class LoginViewModel @Inject constructor(
+    private val signInNaverUseCase: SignInNaverUseCase,
+    private val getNaverIdUseCase: GetNaverIdUseCase
+) : BaseViewModel<LoginViewState, LoginViewEvent>() {
     override fun createInitialState(): LoginViewState =
         LoginViewState.Default()
 
@@ -23,11 +29,11 @@ class LoginViewModel @Inject constructor() : BaseViewModel<LoginViewState, Login
         }
     }
 
-    private fun handleLoginViewEvent(event: LoginViewEvent) {
+    private suspend fun handleLoginViewEvent(event: LoginViewEvent) {
         when (event) {
             LoginViewEvent.OnClickGoogleLoginButton -> TODO()
             LoginViewEvent.OnClickNaverLoginButton -> setState { onAttemptToLogin() }
-            is LoginViewEvent.AttemptToFetchNaverId -> TODO()
+            is LoginViewEvent.AttemptToFetchNaverId -> fetchUserNaverId(event.accessToken)
             is LoginViewEvent.AttemptToLogin -> TODO()
             LoginViewEvent.AttemptToNaverLogin -> TODO()
             is LoginViewEvent.OnSuccessLogin -> setState { LoginViewState.Login() }
@@ -38,6 +44,15 @@ class LoginViewModel @Inject constructor() : BaseViewModel<LoginViewState, Login
                 )
             }
         }
+    }
+
+    private suspend fun fetchUserNaverId(accessToken: String) {
+        getNaverIdUseCase(accessToken).fold(
+            onSuccess = {
+                setState { LoginViewState.Login() }
+            },
+            onFailure = { setState { showDialog(it.message ?: "") } }
+        )
     }
 
     private fun LoginViewState.onAttemptToLogin(): LoginViewState {

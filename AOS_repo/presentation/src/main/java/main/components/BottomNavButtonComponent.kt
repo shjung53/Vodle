@@ -16,7 +16,7 @@ fun BottomNavButtonComponent(
     flag: Boolean = true,
     onClick: () -> Unit,
     info: String?,
-    modifier : Modifier
+    modifier: Modifier
 ) {
     IconButton(
         onClick = {
@@ -38,4 +38,3 @@ fun BottomNavButtonComponent(
         )
     }
 }
-
