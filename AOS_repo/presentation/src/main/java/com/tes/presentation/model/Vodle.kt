@@ -16,7 +16,7 @@ sealed class Vodle {
         override val date: String,
         override val address: String,
         val writer: String,
-        val summary: String,
+        val category: String,
         val location: Location
     ) : Vodle()
 }
