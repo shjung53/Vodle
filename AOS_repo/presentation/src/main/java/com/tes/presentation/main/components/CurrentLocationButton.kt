@@ -31,7 +31,9 @@ internal fun CurrentLocationButton(
             fetchLocationAndHandle(
                 scope,
                 context,
-                onSuccess = { location -> moveCameraPosition(cameraPositionState, location) },
+                onSuccess = { location ->
+                    moveCameraPosition(cameraPositionState, location)
+                },
                 onFailure = {
                     viewModel.onTriggerEvent(
                         MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))

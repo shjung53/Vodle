@@ -37,9 +37,11 @@ internal fun fetchLocationAndHandle(
     onFailure: () -> Unit
 ) {
     scope.launch(Dispatchers.IO) {
-        LocationModule.getLocation(context).fold(
-            onSuccess = withContext(Dispatchers.Main) { onSuccess },
-            onFailure = { withContext(Dispatchers.Main) { onFailure() } }
-        )
+        val result = LocationModule.getLocation(context)
+        if (result.isSuccess) {
+            withContext(Dispatchers.Main) { onSuccess(result.getOrThrow()) }
+        } else {
+            withContext(Dispatchers.Main) { onFailure() }
+        }
     }
 }

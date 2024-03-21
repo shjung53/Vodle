@@ -3,9 +3,7 @@ package com.tes.presentation.main
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,21 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.LocationTrackingMode
-import com.naver.maps.map.compose.MapProperties
-import com.naver.maps.map.compose.MapUiSettings
-import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
-import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.tes.presentation.main.components.BottomButtonGroup
 import com.tes.presentation.main.components.CalendarButton
 import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.SearchVodleButton
+import com.tes.presentation.main.components.VodleMap
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -47,20 +40,7 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    NaverMap(
-        modifier = Modifier.fillMaxSize(),
-        locationSource = rememberFusedLocationSource(),
-        cameraPositionState = cameraPositionState,
-        contentPadding = PaddingValues(48.dp),
-        properties = MapProperties(
-            locationTrackingMode = LocationTrackingMode.Face
-        ),
-        uiSettings = MapUiSettings(
-            isLocationButtonEnabled = false,
-            isZoomControlEnabled = false,
-            isCompassEnabled = false
-        )
-    )
+    VodleMap(viewState, cameraPositionState)
 
     Column {
         SearchVodleButton(
