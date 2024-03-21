@@ -11,7 +11,7 @@ sealed class LoginViewEvent : ViewEvent {
 
     data object OnSuccessLogin : LoginViewEvent()
 
-    data class ShowDialog(val message: String) : LoginViewEvent()
+    data class ShowToast(val message: String) : LoginViewEvent()
 
-    data object OnFinishDialog : LoginViewEvent()
+    data object OnFinishToast : LoginViewEvent()
 }

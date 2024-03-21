@@ -1,4 +1,4 @@
-package com.tes.presentation.main.components
+package main.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tes.presentation.main.components.BottomNavButtonComponent
 import com.tes.presentation.theme.main_coral_darken
 
 @Composable
@@ -28,7 +29,7 @@ fun BottomNavBarComponent(
     flag: Boolean = true,
     onClickWriteButton: () -> Unit,
     onClickHeadphoneButton: () -> Unit,
-    onClickRecordButton: () -> Unit,
+    onClickRecordingButton: () -> Unit,
     onClickUserButton: () -> Unit
 ) {
     Box(
@@ -69,7 +70,7 @@ fun BottomNavBarComponent(
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.MicNone,
                 flag = flag,
-                onClick = onClickRecordButton,
+                onClick = onClickRecordingButton,
                 info = "녹음하기",
                 modifier = Modifier
                     .weight(1f)
@@ -95,7 +96,7 @@ fun PreviewBottomNavBarComponent() {
         modifier = Modifier,
         onClickWriteButton = {},
         onClickHeadphoneButton = {},
-        onClickRecordButton = {},
+        onClickRecordingButton = {},
         onClickUserButton = {}
     )
 }

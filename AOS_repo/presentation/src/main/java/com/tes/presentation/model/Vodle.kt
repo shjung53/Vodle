@@ -17,6 +17,6 @@ sealed class Vodle {
         override val address: String,
         val writer: String,
         val summary: String,
-        val location: Pair<Double, Double>
+        val location: Location
     ) : Vodle()
 }

@@ -47,7 +47,7 @@ fun LoginScreen(
 
     ObserveLoginAttempt(viewState, context, viewModel)
 
-    ObserveDialogMessage(viewState, context, viewModel)
+    ObserveToastMessage(viewState, context, viewModel)
 
     ObserveRoute(viewState, onLoginSuccess)
 
@@ -111,7 +111,7 @@ private fun ObserveLoginAttempt(
                     viewModel.onTriggerEvent(LoginViewEvent.AttemptToFetchNaverId(it))
                 },
                 onFailure = { _ ->
-                    viewModel.onTriggerEvent(LoginViewEvent.ShowDialog("네이버 로그인 실패"))
+                    viewModel.onTriggerEvent(LoginViewEvent.ShowToast("네이버 로그인 실패"))
                 }
             )
         }
@@ -119,15 +119,15 @@ private fun ObserveLoginAttempt(
 }
 
 @Composable
-private fun ObserveDialogMessage(
+private fun ObserveToastMessage(
     viewState: LoginViewState,
     context: Context,
     viewModel: LoginViewModel
 ) {
-    LaunchedEffect(key1 = viewState.dialogMessage) {
-        if (viewState.dialogMessage?.isNotEmpty() == true) {
-            Toast.makeText(context, viewState.dialogMessage, Toast.LENGTH_SHORT).show()
-            viewModel.onTriggerEvent(LoginViewEvent.OnFinishDialog)
+    LaunchedEffect(key1 = viewState.toastMessage) {
+        if (viewState.toastMessage?.isNotEmpty() == true) {
+            Toast.makeText(context, viewState.toastMessage, Toast.LENGTH_SHORT).show()
+            viewModel.onTriggerEvent(LoginViewEvent.OnFinishToast)
         }
     }
 }

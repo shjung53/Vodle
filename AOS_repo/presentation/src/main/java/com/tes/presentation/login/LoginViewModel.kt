@@ -33,14 +33,14 @@ class LoginViewModel @Inject constructor(
             LoginViewEvent.OnClickNaverLoginButton -> setState { onAttemptNaverLogin() }
             is LoginViewEvent.AttemptToFetchNaverId -> fetchUserNaverId(event.accessToken)
             is LoginViewEvent.OnSuccessLogin -> setState { LoginViewState.Login() }
-            is LoginViewEvent.ShowDialog -> setState { showDialog(event.message) }
+            is LoginViewEvent.ShowToast -> setState { showToast(event.message) }
             is LoginViewEvent.OnClickBackButton -> setState {
                 onClickBackButton(
                     event.backPressedTime
                 )
             }
 
-            LoginViewEvent.OnFinishDialog -> setState { onFinishDialog() }
+            LoginViewEvent.OnFinishToast -> setState { onFinishToast() }
         }
     }
 
@@ -49,7 +49,7 @@ class LoginViewModel @Inject constructor(
             onSuccess = {
                 tryToLogin(it)
             },
-            onFailure = { setState { showDialog(it.message ?: "네이버 접속 실패") } }
+            onFailure = { setState { showToast(it.message ?: "네이버 접속 실패") } }
         )
     }
 
@@ -66,22 +66,22 @@ class LoginViewModel @Inject constructor(
                 setState { LoginViewState.Login() }
             },
             onFailure = {
-                setState { showDialog(it.message ?: "네트워크 에러") }
+                setState { showToast(it.message ?: "네트워크 에러") }
             }
         )
     }
 
-    private fun LoginViewState.showDialog(message: String): LoginViewState {
+    private fun LoginViewState.showToast(message: String): LoginViewState {
         return when (this) {
-            is LoginViewState.Default -> copy(dialogMessage = message, isTryingLogin = false)
-            is LoginViewState.Login -> copy(dialogMessage = message, isTryingLogin = false)
+            is LoginViewState.Default -> copy(toastMessage = message, isTryingLogin = false)
+            is LoginViewState.Login -> copy(toastMessage = message, isTryingLogin = false)
         }
     }
 
-    private fun LoginViewState.onFinishDialog(): LoginViewState {
+    private fun LoginViewState.onFinishToast(): LoginViewState {
         return when (this) {
-            is LoginViewState.Default -> copy(dialogMessage = "", isTryingLogin = false)
-            is LoginViewState.Login -> copy(dialogMessage = "", isTryingLogin = false)
+            is LoginViewState.Default -> copy(toastMessage = "", isTryingLogin = false)
+            is LoginViewState.Login -> copy(toastMessage = "", isTryingLogin = false)
         }
     }
 
@@ -96,12 +96,12 @@ class LoginViewModel @Inject constructor(
         return when (this) {
             is LoginViewState.Default -> copy(
                 lastBackPressedTime = backPressedTime,
-                dialogMessage = "한번 더 누르면 종료됩니다."
+                toastMessage = "한번 더 누르면 종료됩니다."
             )
 
             is LoginViewState.Login -> copy(
                 lastBackPressedTime = backPressedTime,
-                dialogMessage = "한번 더 누르면 종료됩니다."
+                toastMessage = "한번 더 누르면 종료됩니다."
             )
         }
     }
