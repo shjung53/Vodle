@@ -1,6 +1,8 @@
 package com.tes.vodle.datasource.vodle
 
+import com.tes.vodle.model.vodle.VodlesAroundResponse
+
 interface VodleDataSource {
 
-    fun fetchVodlesAround()
+    suspend fun fetchVodlesAround(): Result<VodlesAroundResponse>
 }

@@ -4,6 +4,7 @@ import com.tes.vodle.BuildConfig
 import com.tes.vodle.api.NaverAuthService
 import com.tes.vodle.api.NaverLoginService
 import com.tes.vodle.api.UserService
+import com.tes.vodle.api.VodleService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,6 +79,13 @@ object ApiModule {
         @VodleRetrofit
         retrofit: Retrofit
     ): UserService = retrofit.create((UserService::class.java))
+
+    @Singleton
+    @Provides
+    fun provideVodleApi(
+        @VodleRetrofit
+        retrofit: Retrofit
+    ): VodleService = retrofit.create((VodleService::class.java))
 
     @Singleton
     @Provides

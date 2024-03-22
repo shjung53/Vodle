@@ -2,7 +2,7 @@ package com.tes.presentation.main
 
 import com.tes.presentation.composebase.ViewState
 import com.tes.presentation.model.Location
-import com.tes.presentation.model.Vodle.VodleForMap
+import com.tes.presentation.model.VodleForMap
 
 sealed class MainViewState : ViewState {
     abstract val vodleList: List<VodleForMap>

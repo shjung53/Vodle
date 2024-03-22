@@ -1,6 +1,8 @@
 package com.tes.domain.repository
 
+import com.tes.domain.model.Vodle
+
 interface VodleRepository {
 
-    suspend fun fetchVodlesAround()
+    suspend fun fetchVodlesAround(): Result<List<Vodle>>
 }

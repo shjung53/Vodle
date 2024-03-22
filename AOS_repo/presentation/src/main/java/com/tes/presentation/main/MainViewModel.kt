@@ -1,13 +1,19 @@
 package com.tes.presentation.main
 
+import androidx.lifecycle.viewModelScope
+import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import com.tes.presentation.model.Location
-import com.tes.presentation.model.Vodle.VodleForMap
+import com.tes.presentation.model.VodleForMap
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : BaseViewModel<MainViewState, MainViewEvent>() {
+class MainViewModel @Inject constructor(
+    private val fetchVodlesAroundUseCase: FetchVodlesAroundUseCase
+
+) : BaseViewModel<MainViewState, MainViewEvent>() {
     override fun createInitialState(): MainViewState =
         MainViewState.Default()
 
@@ -26,24 +32,34 @@ class MainViewModel @Inject constructor() : BaseViewModel<MainViewState, MainVie
     }
 
     private fun searchVodlesAround() {
-        setState { updateVodles() }
+        viewModelScope.launch {
+            fetchVodlesAroundUseCase().fold(
+                onSuccess = {
+                    setState {
+                        updateVodles(
+                            it.map {
+                                VodleForMap(
+                                    it.id,
+                                    it.date,
+                                    it.address,
+                                    it.writer,
+                                    it.category,
+                                    it.location
+                                )
+                            }
+                        )
+                    }
+                },
+                onFailure = {
+                }
+            )
+        }
     }
 
-    private fun MainViewState.updateVodles(): MainViewState {
+    private fun MainViewState.updateVodles(vodleList: List<VodleForMap>): MainViewState {
         return when (this) {
             is MainViewState.Default -> {
-                val newList = mutableListOf<VodleForMap>()
-                newList.add(
-                    VodleForMap(
-                        1,
-                        "날짜",
-                        "주소",
-                        "작성자",
-                        "카테고리",
-                        Location(36.1071402 + Math.random(), 128.4164788 + Math.random())
-                    )
-                )
-                this.copy(vodleList = newList)
+                this.copy(vodleList = vodleList)
             }
 
             is MainViewState.MakingVodle -> this

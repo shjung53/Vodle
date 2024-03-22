@@ -10,7 +10,7 @@ import androidx.compose.ui.res.painterResource
 import com.tes.presentation.R
 
 @Composable
-internal fun VodleDialog(){
+internal fun VodleDialog() {
     Column {
         Row {
             Text(text = "작성자")
@@ -18,9 +18,9 @@ internal fun VodleDialog(){
             Text(text = "주소")
         }
         Row {
-            Image(painter= painterResource(id = R.drawable.left_arrow), null)
+            Image(painter = painterResource(id = R.drawable.left_arrow), null)
             Text(text = "카테고리")
-            Image(painter= painterResource(id = R.drawable.right_arrow), null)
+            Image(painter = painterResource(id = R.drawable.right_arrow), null)
         }
         Row {
             LinearProgressIndicator()
