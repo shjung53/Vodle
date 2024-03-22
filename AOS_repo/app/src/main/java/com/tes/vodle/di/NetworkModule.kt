@@ -3,6 +3,8 @@ package com.tes.vodle.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.tes.vodle.BuildConfig
+import com.tes.vodle.util.AuthAuthenticator
+import com.tes.vodle.util.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,13 +35,34 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class SocialLoginClient
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AuthClient
+
     @Singleton
     @Provides
     @VodleClient
-    fun provideVodleClient(): OkHttpClient {
+    fun provideVodleClient(
+        authInterceptor: AuthInterceptor,
+        authAuthenticator: AuthAuthenticator
+    ): OkHttpClient {
+        val builder = OkHttpClient.Builder()
+        builder.apply {
+            addInterceptor(authInterceptor)
+            addInterceptor(loggingInterceptor)
+            authenticator(authAuthenticator)
+        }
+        return builder.build()
+    }
+
+    @Singleton
+    @Provides
+    @AuthClient
+    fun provideAuthClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
             addInterceptor(loggingInterceptor)
+            addInterceptor(authInterceptor)
         }
         return builder.build()
     }
