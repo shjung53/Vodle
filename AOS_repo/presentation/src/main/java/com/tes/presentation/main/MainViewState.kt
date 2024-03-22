@@ -18,4 +18,10 @@ sealed class MainViewState : ViewState {
         val location: Location,
         override val toastMessage: String? = null
     ) : MainViewState()
+
+    data class ShowRecordedVodle(
+        override val vodleList: List<VodleForMap> = emptyList(),
+        val location: Location,
+        override val toastMessage: String? = null
+    ) : MainViewState()
 }

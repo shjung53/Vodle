@@ -9,6 +9,8 @@ import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMapComposable
 import com.naver.maps.map.overlay.OverlayImage
 import com.tes.presentation.R
+import com.tes.presentation.main.MainViewEvent
+import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.lat
 import com.tes.presentation.model.lng
@@ -16,11 +18,16 @@ import com.tes.presentation.model.lng
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 @NaverMapComposable
-internal fun VodleMarker(location: Location) {
+internal fun VodleMarker(viewModel: MainViewModel, location: Location) {
     Marker(
         width = 40.dp,
         height = 40.dp,
         icon = OverlayImage.fromResource(R.drawable.megaphone),
-        state = MarkerState(position = LatLng(location.lat, location.lng))
+        state = MarkerState(position = LatLng(location.lat, location.lng)),
+        onClick = {
+            viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(location))
+
+            true
+        }
     )
 }

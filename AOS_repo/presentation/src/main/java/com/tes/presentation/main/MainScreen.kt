@@ -22,6 +22,7 @@ import com.tes.presentation.main.components.BottomButtonGroup
 import com.tes.presentation.main.components.CalendarButton
 import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.SearchVodleButton
+import com.tes.presentation.main.components.VodleDialog
 import com.tes.presentation.main.components.VodleMap
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -40,20 +41,20 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    VodleMap(viewState, cameraPositionState)
+    VodleMap(viewModel, viewState, cameraPositionState)
 
     Column {
         SearchVodleButton(
             viewModel = viewModel,
+            cameraPositionState = cameraPositionState,
             modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            cameraPositionState = cameraPositionState
+                .align(Alignment.CenterHorizontally)
         )
 
         CurrentLocationButton(
             viewModel = viewModel,
-            scope = scope,
             context = context,
+            scope = scope,
             cameraPositionState = cameraPositionState,
             modifier = Modifier
                 .align(Alignment.End)
@@ -64,6 +65,12 @@ internal fun MainScreen(
         )
 
         Spacer(modifier = Modifier.weight(1f))
+
+        if (viewState is MainViewState.ShowRecordedVodle) {
+            Dialog(onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog) }) {
+                VodleDialog()
+            }
+        }
 
         BottomButtonGroup(
             viewModel = viewModel,

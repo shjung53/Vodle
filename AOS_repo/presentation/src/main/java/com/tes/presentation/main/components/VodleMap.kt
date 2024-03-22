@@ -12,11 +12,16 @@ import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberFusedLocationSource
+import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.MainViewState
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
-internal fun VodleMap(viewState: MainViewState, cameraPositionState: CameraPositionState) {
+internal fun VodleMap(
+    viewModel: MainViewModel,
+    viewState: MainViewState,
+    cameraPositionState: CameraPositionState
+) {
     NaverMap(
         modifier = Modifier.fillMaxSize(),
         locationSource = rememberFusedLocationSource(),
@@ -32,7 +37,7 @@ internal fun VodleMap(viewState: MainViewState, cameraPositionState: CameraPosit
         )
     ) {
         viewState.vodleList.forEach {
-            VodleMarker(location = it.location)
+            VodleMarker(location = it.location, viewModel = viewModel)
         }
     }
 }
