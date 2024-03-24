@@ -10,5 +10,5 @@ interface UserService {
     @POST("api/auth/social")
     suspend fun signInNaver(
         @Body naverLoginRequest: NaverLoginRequest
-    ): Result<TokenResponse>
+    ): TokenResponse
 }

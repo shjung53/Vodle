@@ -21,7 +21,7 @@ object NetworkModule {
 
     private val loggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
         if (BuildConfig.DEBUG) {
-            setLevel(HttpLoggingInterceptor.Level.BODY)
+            setLevel(HttpLoggingInterceptor.Level.HEADERS)
         } else {
             setLevel(HttpLoggingInterceptor.Level.NONE)
         }
@@ -58,11 +58,10 @@ object NetworkModule {
     @Singleton
     @Provides
     @AuthClient
-    fun provideAuthClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideAuthClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
             addInterceptor(loggingInterceptor)
-            addInterceptor(authInterceptor)
         }
         return builder.build()
     }

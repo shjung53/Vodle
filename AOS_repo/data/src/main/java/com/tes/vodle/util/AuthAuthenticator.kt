@@ -2,7 +2,6 @@ package com.tes.vodle.util
 
 import com.tes.domain.TokenManager
 import com.tes.vodle.api.AuthService
-import com.tes.vodle.model.user.response.TokenResponse
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -15,21 +14,27 @@ class AuthAuthenticator @Inject constructor(
     private val tokenManager: TokenManager
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
+        val accessToken = runBlocking { tokenManager.getAccessToken() }
         val refreshToken = runBlocking { tokenManager.getRefreshToken() }
 
         if (refreshToken == "null") return null
 
         return runBlocking {
-            val result = runCatching { authService.refreshUserToken(refreshToken) }
+            val result = runCatching {
+                authService.refreshUserToken(
+                    refreshToken,
+                    "Bearer $accessToken"
+                )
+            }
 
-            if (result.isFailure || result.getOrNull() != null) {
+            if (result.isFailure || result.getOrNull() == null) {
                 tokenManager.deleteTokens()
                 null
             } else {
-                val tokens = result.getOrDefault(TokenResponse("", ""))
-                tokenManager.saveToken(tokens.accessToken, tokens.refreshToken)
+                val tokens = result.getOrThrow()
+                tokenManager.saveToken(tokens.data.accessToken, tokens.data.refreshToken)
                 response.request.newBuilder()
-                    .header("Authorization", "Bearer ${tokens.accessToken}")
+                    .header("Authorization", "Bearer ${tokens.data.accessToken}")
                     .build()
             }
         }

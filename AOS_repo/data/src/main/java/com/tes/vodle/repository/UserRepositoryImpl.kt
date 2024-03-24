@@ -4,6 +4,7 @@ import com.tes.domain.TokenManager
 import com.tes.domain.repository.UserRepository
 import com.tes.vodle.datasource.user.UserDataSource
 import com.tes.vodle.util.Encryption.calculateHmac
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -13,9 +14,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signInNaver(code: String): Result<Unit> {
         val signature = calculateHmac("$code&NAVER")
-        return userDataSource.signInNaver(code, signature, "NAVER").fold(
+        val result = runBlocking { userDataSource.signInNaver(code, signature, "NAVER") }
+        return result.fold(
             onSuccess = {
-                tokenManager.saveToken(it.accessToken, it.refreshToken)
+                tokenManager.saveToken(it.data.accessToken, it.data.refreshToken)
                 Result.success(Unit)
             },
             onFailure = {
