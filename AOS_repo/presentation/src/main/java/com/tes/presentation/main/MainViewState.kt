@@ -1,6 +1,7 @@
 package com.tes.presentation.main
 
 import com.tes.presentation.composebase.ViewState
+import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.VodleForMap
 
@@ -16,6 +17,7 @@ sealed class MainViewState : ViewState {
     data class MakingVodle(
         override val vodleList: List<VodleForMap> = emptyList(),
         val location: Location,
-        override val toastMessage: String? = null
+        override val toastMessage: String? = null,
+        val recordingStep: RecordingStep = RecordingStep.INTRODUCTION
     ) : MainViewState()
 }
