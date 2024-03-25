@@ -6,4 +6,6 @@ import retrofit2.http.GET
 interface VodleService {
     @GET("api/vodle/all")
     suspend fun fetchVodlesAround(): VodlesAroundResponse
+
+
 }

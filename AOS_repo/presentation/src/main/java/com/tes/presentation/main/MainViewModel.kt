@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import com.tes.presentation.model.Location
-import com.tes.presentation.model.VodleForMap
+import com.tes.presentation.model.Vodle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,7 +40,7 @@ class MainViewModel @Inject constructor(
                     setState {
                         updateVodles(
                             it.map {
-                                VodleForMap(
+                                Vodle(
                                     it.id,
                                     it.date,
                                     it.address,
@@ -58,7 +58,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun MainViewState.updateVodles(vodleList: List<VodleForMap>): MainViewState {
+    private fun MainViewState.updateVodles(vodleList: List<Vodle>): MainViewState {
         return when (this) {
             is MainViewState.Default -> {
                 this.copy(vodleList = vodleList)

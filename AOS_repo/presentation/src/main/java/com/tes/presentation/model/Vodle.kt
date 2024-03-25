@@ -6,7 +6,11 @@ data class VodleForLog(
     val address: String
 )
 
-data class VodleForMap(
+data class VodleCluster(
+    val vodleList : List<Vodle>
+)
+
+data class Vodle(
     val id: Long,
     val date: String,
     val address: String,

@@ -1,9 +1,11 @@
 package com.tes.presentation.main
 
 import android.content.Context
+import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,9 +14,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.rememberCameraPositionState
@@ -68,7 +73,15 @@ internal fun MainScreen(
 
         if (viewState is MainViewState.ShowRecordedVodle) {
             Dialog(onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog) }) {
-                VodleDialog(viewState.vodleList)
+                (LocalView.current.parent as DialogWindowProvider)?.window?.setDimAmount(0f)
+                (LocalView.current.parent as DialogWindowProvider)?.window?.setGravity(Gravity.BOTTOM)
+                Column(){
+                    VodleDialog(
+                        viewState.vodleList,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(70.dp))
+                }
             }
         }
 
