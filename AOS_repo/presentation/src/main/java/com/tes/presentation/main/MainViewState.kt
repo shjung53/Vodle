@@ -7,22 +7,23 @@ import com.tes.presentation.model.Vodle
 sealed class MainViewState : ViewState {
     abstract val vodleList: List<Vodle>
     abstract val toastMessage: String?
-//    abstract val
+    abstract val location: Location?
 
     data class Default(
         override val vodleList: List<Vodle> = emptyList(),
-        override val toastMessage: String? = null
+        override val toastMessage: String? = null,
+        override val location: Location? = null
     ) : MainViewState()
 
     data class MakingVodle(
         override val vodleList: List<Vodle> = emptyList(),
-        val location: Location,
-        override val toastMessage: String? = null
+        override val toastMessage: String? = null,
+        override val location: Location? = null
     ) : MainViewState()
 
     data class ShowRecordedVodle(
         override val vodleList: List<Vodle> = emptyList(),
-        val location: Location,
-        override val toastMessage: String? = null
+        override val toastMessage: String? = null,
+        override val location: Location? = null
     ) : MainViewState()
 }

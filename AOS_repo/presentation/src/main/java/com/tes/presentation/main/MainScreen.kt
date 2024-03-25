@@ -75,9 +75,9 @@ internal fun MainScreen(
             Dialog(onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog) }) {
                 (LocalView.current.parent as DialogWindowProvider)?.window?.setDimAmount(0f)
                 (LocalView.current.parent as DialogWindowProvider)?.window?.setGravity(Gravity.BOTTOM)
-                Column(){
+                Column() {
                     VodleDialog(
-                        viewState.vodleList,
+                        viewState,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                     Spacer(modifier = Modifier.height(70.dp))

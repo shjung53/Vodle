@@ -28,7 +28,7 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnCompleteVodle -> TODO()
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
-            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location)}
+            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
         }
     }
@@ -112,10 +112,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun MainViewState.onClickMarker(location: Location): MainViewState{
+    private fun MainViewState.onClickMarker(location: Location): MainViewState {
         return when (this) {
             is MainViewState.Default -> MainViewState.ShowRecordedVodle(
                 this.vodleList,
+                "",
                 location
             )
 

@@ -1,5 +1,6 @@
 package main.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,22 +43,18 @@ import com.tes.presentation.theme.vodleTypoGraphy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+private const val TAG = "VodleListDialogComponen_싸피"
+
 @Composable
 fun VodleListDialogComponent(
     vodleList: List<Vodle>,
     onClick: () -> Unit,
 ) {
-    var index = 0
+    var index by remember { mutableStateOf(0) }
 
-    //////////////////////////////////////////////////////
     var currentProgress by remember { mutableStateOf(0f) }
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
-    //////////////////////////////////////////////////////
-
-    LaunchedEffect(index) {
-
-    }
 
     Box(
         modifier = Modifier.then(
@@ -68,37 +65,44 @@ fun VodleListDialogComponent(
                 .background(color = Color.White)
         )
     ) {
-        IconButton(
-            onClick = onClick,
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = main_coral_darken,
-                containerColor = Color.White,
-                disabledContentColor = main_coral_darken,
-                disabledContainerColor = Color.White
-            ),
-            modifier = Modifier.align(Alignment.CenterStart)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBackIosNew,
-                contentDescription = "backButton",
-                modifier = Modifier.fillMaxWidth()
-            )
+        if (index != 0) {
+            IconButton(
+                onClick = onClick,
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = main_coral_darken,
+                    containerColor = Color.White,
+                    disabledContentColor = main_coral_darken,
+                    disabledContainerColor = Color.White
+                ),
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = "backButton",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
-        IconButton(
-            onClick = onClick,
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = main_coral_darken,
-                containerColor = Color.White,
-                disabledContentColor = main_coral_darken,
-                disabledContainerColor = Color.White
-            ),
-            modifier = Modifier.align(Alignment.CenterEnd)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                contentDescription = "forwardButton",
-                modifier = Modifier.fillMaxWidth()
-            )
+        if (index != vodleList.size - 1) {
+            Log.d(TAG, "VodleListDialogComponent: index : $index")
+            IconButton(
+                onClick = {
+                    index++
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = main_coral_darken,
+                    containerColor = Color.White,
+                    disabledContentColor = main_coral_darken,
+                    disabledContainerColor = Color.White
+                ),
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = "forwardButton",
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
         Column(
             modifier = Modifier
@@ -113,14 +117,14 @@ fun VodleListDialogComponent(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = vodleList.get(index % vodleList.size).writer,
+                    text = vodleList.get(index).writer,
                     textAlign = TextAlign.Start,
                     style = vodleTypoGraphy.bodyMedium,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
-                    text = vodleList.get(index % vodleList.size).address,
+                    text = vodleList.get(index).address,
                     textAlign = TextAlign.Start,
                     style = vodleTypoGraphy.titleSmall,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -170,14 +174,13 @@ fun VodleListDialogComponent(
                         disabledContainerColor = Color.White
                     ),
                 ) {
-                    if(loading){
+                    if (loading) {
                         Icon(
                             imageVector = Icons.Outlined.Pause,
                             contentDescription = "playButton",
                             modifier = Modifier.fillMaxWidth()
                         )
-                    }
-                    else{
+                    } else {
                         Icon(
                             imageVector = Icons.Outlined.PlayArrow,
                             contentDescription = "playButton",
