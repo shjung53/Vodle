@@ -68,7 +68,7 @@ internal fun MainScreen(
 
         if (viewState is MainViewState.ShowRecordedVodle) {
             Dialog(onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog) }) {
-                VodleDialog()
+                VodleDialog(viewState.vodleList)
             }
         }
 
