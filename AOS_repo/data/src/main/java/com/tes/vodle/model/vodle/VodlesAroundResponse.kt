@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class VodlesAroundResponse(
     @SerializedName("dataHeader") val dataHeader: DataHeader,
-    @SerializedName("dataBody") val dataBody: List<VodleResponse>
+    @SerializedName("data") val dataBody: List<VodleResponse>
 )
 
 data class VodleResponse(

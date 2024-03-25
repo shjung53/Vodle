@@ -1,6 +1,7 @@
 package com.tes.vodle.di
 
 import com.tes.vodle.BuildConfig
+import com.tes.vodle.api.AuthService
 import com.tes.vodle.api.NaverAuthService
 import com.tes.vodle.api.NaverLoginService
 import com.tes.vodle.api.UserService
@@ -34,6 +35,10 @@ object ApiModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class NaverAuthRetrofit
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AuthRetrofit
+
     @Singleton
     @Provides
     @VodleRetrofit
@@ -56,6 +61,19 @@ object ApiModule {
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(NAVER_LOGIN_BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(gsonConverterFactory)
+        .build()
+
+    @Singleton
+    @Provides
+    @AuthRetrofit
+    fun provideAuthRetrofit(
+        @NetworkModule.AuthClient
+        okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(BuildConfig.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(gsonConverterFactory)
         .build()
@@ -86,6 +104,13 @@ object ApiModule {
         @VodleRetrofit
         retrofit: Retrofit
     ): VodleService = retrofit.create((VodleService::class.java))
+
+    @Singleton
+    @Provides
+    fun provideAuthApi(
+        @AuthRetrofit
+        retrofit: Retrofit
+    ): AuthService = retrofit.create((AuthService::class.java))
 
     @Singleton
     @Provides

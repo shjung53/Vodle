@@ -21,7 +21,7 @@ class UserDataSourceImpl @Inject constructor(
         signature: String,
         provider: String
     ): Result<TokenResponse> = runCatching {
-        userService.signInNaver(NaverLoginRequest(userCode, provider, signature)).getOrThrow()
+        userService.signInNaver(NaverLoginRequest(userCode, provider, signature))
     }
 
     override suspend fun signOutWithNaver(
