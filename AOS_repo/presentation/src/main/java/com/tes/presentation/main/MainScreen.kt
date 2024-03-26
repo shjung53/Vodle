@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.exoplayer.ExoPlayer
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.tes.presentation.main.components.BottomButtonGroup
@@ -43,6 +46,9 @@ internal fun MainScreen(
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
+
+    val player = ExoPlayer.Builder(LocalContext.current).build()
+    val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
@@ -72,12 +78,18 @@ internal fun MainScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         if (viewState is MainViewState.ShowRecordedVodle) {
-            Dialog(onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog) }) {
+            Dialog(onDismissRequest = {
+                viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog)
+                player.pause()
+                player.stop()
+            }
+            ) {
                 (LocalView.current.parent as DialogWindowProvider)?.window?.setDimAmount(0f)
                 (LocalView.current.parent as DialogWindowProvider)?.window?.setGravity(Gravity.BOTTOM)
                 Column() {
                     VodleDialog(
                         viewState,
+                        player, dataSourceFactory,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                     Spacer(modifier = Modifier.height(70.dp))

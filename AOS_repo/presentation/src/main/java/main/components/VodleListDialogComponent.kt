@@ -1,6 +1,7 @@
 package main.components
 
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +15,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Pause
-import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,25 +33,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.tes.presentation.model.Location
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.HlsMediaSource
+import com.tes.presentation.BuildConfig
 import com.tes.presentation.model.Vodle
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val TAG = "VodleListDialogComponen_싸피"
 
+@OptIn(UnstableApi::class)
 @Composable
 fun VodleListDialogComponent(
     vodleList: List<Vodle>,
+    player: ExoPlayer,
+    dataSourceFactory: DataSource.Factory,
     onClick: () -> Unit,
 ) {
     var index by remember { mutableStateOf(0) }
-
     var currentProgress by remember { mutableStateOf(0f) }
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
@@ -67,7 +74,11 @@ fun VodleListDialogComponent(
     ) {
         if (index != 0) {
             IconButton(
-                onClick = onClick,
+                onClick = {
+                    index--;
+                    loading = false
+                    currentProgress = 0f
+                },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
                     containerColor = Color.White,
@@ -88,6 +99,8 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index++
+                    loading = false
+                    currentProgress = 0f
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -137,14 +150,14 @@ fun VodleListDialogComponent(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = vodleList.get(index % vodleList.size).date,
+                    text = vodleList.get(index).date,
                     textAlign = TextAlign.Start,
                     style = vodleTypoGraphy.bodySmall,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
-                    text = vodleList.get(index % vodleList.size).category,
+                    text = vodleList.get(index).category,
                     textAlign = TextAlign.Start,
                     style = vodleTypoGraphy.titleMedium,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -158,12 +171,17 @@ fun VodleListDialogComponent(
             ) {
                 IconButton(
                     onClick = {
-                        loading = true
-                        scope.launch {
-                            loadProgress { progress ->
-                                currentProgress = progress
+                        loading = !loading
+                        if (loading) {
+                            scope.launch {
+                                loadProgress { progress ->
+                                    currentProgress = progress
+                                }
+                                loading = false
                             }
-                            loading = false
+                        }
+                        else{
+                            scope.cancel()
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -175,14 +193,22 @@ fun VodleListDialogComponent(
                     ),
                 ) {
                     if (loading) {
+                        var hlsMediaSource =
+                            HlsMediaSource.Factory(dataSourceFactory)
+                                .createMediaSource(MediaItem.fromUri(BuildConfig.S3_URL + "2024_03_25_175598_%EC%9D%8C%EC%84%B1%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%98%A4.m3u8"))
+                        player.setMediaSource(hlsMediaSource)
+                        player.prepare()
+                        player.play()
                         Icon(
-                            imageVector = Icons.Outlined.Pause,
-                            contentDescription = "playButton",
+                            imageVector = Icons.Default.Stop,
+                            contentDescription = "stopButton",
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
+                        player.pause()
+                        player.stop()
                         Icon(
-                            imageVector = Icons.Outlined.PlayArrow,
+                            imageVector = Icons.Default.PlayArrow,
                             contentDescription = "playButton",
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -199,23 +225,11 @@ fun VodleListDialogComponent(
     }
 }
 
-suspend fun loadProgress(updateProgress: (Float) -> Unit) {
+suspend fun loadProgress(
+    updateProgress: (Float) -> Unit,
+) {
     for (i in 1..16) {
         updateProgress(i.toFloat() / 16)
         delay(1000)
-    }
-}
-
-@Preview
-@Composable
-fun PreviewListDialogComponent() {
-    for (i in 0..20) {
-        var location1: Location =
-            Location(36.1081844 + (Math.random() % 100), 128.4139686 + (Math.random() % 100))
-
-        VodleListDialogComponent(
-            mutableListOf(Vodle(1, "2024-03-25", "주소란", "테스터1", "음식", location1)),
-            {}
-        )
     }
 }

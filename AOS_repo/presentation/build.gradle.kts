@@ -40,6 +40,11 @@ android {
             "\"${properties["NAVER_LOGIN_CLIENT_NAME"]}\""
         )
 
+        buildConfigField(
+            "String",
+            "S3_URL",
+            "\"${properties["S3_URL"]}\""
+        )
         manifestPlaceholders["NAVER_MAPS_CLIENT_ID"] = properties["NAVER_MAPS_CLIENT_ID"] as String
     }
 
@@ -114,6 +119,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.6.3")
     implementation(libs.naver.map)
     implementation(libs.naver.map.location)
+    implementation("androidx.media3:media3-exoplayer:1.3.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.3.0")
+    implementation("androidx.media3:media3-ui:1.3.0")
 
     implementation(project(":domain"))
 }
