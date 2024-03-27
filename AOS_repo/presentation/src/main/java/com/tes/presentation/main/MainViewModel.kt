@@ -3,6 +3,7 @@ package com.tes.presentation.main
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.presentation.composebase.BaseViewModel
+import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.VodleForMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,9 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnCompleteVodle -> TODO()
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
+            MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
+            MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
+            MainViewEvent.OnClickSaveVodleButton -> setState { saveRecording() }
         }
     }
 
@@ -50,9 +54,35 @@ class MainViewModel @Inject constructor(
                         )
                     }
                 },
-                onFailure = {
-                }
+                onFailure = {}
             )
+        }
+    }
+
+    private fun MainViewState.startRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                this.copy(recordingStep = RecordingStep.RECORDING)
+            }
+        }
+    }
+
+    private fun MainViewState.finishRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                this.copy(recordingStep = RecordingStep.CREATE)
+            }
+        }
+    }
+
+    private fun MainViewState.saveRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                MainViewState.Default(this.vodleList)
+            }
         }
     }
 

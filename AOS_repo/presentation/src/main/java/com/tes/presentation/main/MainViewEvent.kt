@@ -17,6 +17,10 @@ sealed class MainViewEvent : ViewEvent {
 
     data object OnDismissRecordingDialog : MainViewEvent()
 
+    data object OnClickMakingVodleButton : MainViewEvent()
+    data object OnClickFinishRecordingButton : MainViewEvent()
+    data object OnClickSaveVodleButton : MainViewEvent()
+
     data object OnCompleteVodle : MainViewEvent()
     data class ShowToast(val message: String) : MainViewEvent()
 

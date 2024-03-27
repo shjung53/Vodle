@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,13 +21,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
 
 @Composable
 fun ButtonComponent(
     modifier: Modifier = Modifier,
-    textModifier: Modifier = Modifier,
     buttonText: String,
     onClick: () -> Unit,
     buttonTextStyle: TextStyle
@@ -46,7 +47,10 @@ fun ButtonComponent(
         )
     ) {
         Text(
-            modifier = textModifier,
+            modifier = Modifier.padding(
+                horizontal = Padding.textButtonHorizontalPadding,
+                vertical = Padding.textButtonVerticalPadding
+            ),
             text = buttonText,
             textAlign = TextAlign.Center,
             style = buttonTextStyle
