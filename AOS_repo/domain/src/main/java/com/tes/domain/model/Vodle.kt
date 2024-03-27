@@ -6,5 +6,6 @@ data class Vodle(
     val address: String,
     val writer: String,
     val category: String,
-    val location: Location
+    val location: Location,
+    val streamingURL : String,
 )

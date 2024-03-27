@@ -64,6 +64,7 @@ javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "i
 naver-map = { module = "io.github.fornewid:naver-map-compose", version.ref = "naverMap" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 naver-map-location = { module = "io.github.fornewid:naver-map-location", version.ref = "naverMapLocation" }
+naver-map-clustering = "io.github.ParkSangGwon:tedclustering-naver:1.0.2"
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

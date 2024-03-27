@@ -31,7 +31,7 @@ import com.tes.presentation.main.components.CalendarButton
 import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.SearchVodleButton
 import com.tes.presentation.main.components.VodleDialog
-import com.tes.presentation.main.components.VodleMap
+import com.tes.presentation.main.components.VodleMapClustering
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -52,7 +52,7 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    VodleMap(viewModel, viewState, cameraPositionState)
+    VodleMapClustering(viewModel,viewState,cameraPositionState)
 
     Column {
         SearchVodleButton(
@@ -92,7 +92,7 @@ internal fun MainScreen(
                         player, dataSourceFactory,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
-                    Spacer(modifier = Modifier.height(70.dp))
+                    Spacer(modifier = Modifier.height(90.dp))
                 }
             }
         }

@@ -1,5 +1,8 @@
 package com.tes.presentation.model
 
+import ted.gun0912.clustering.clustering.TedClusterItem
+import ted.gun0912.clustering.geometry.TedLatLng
+
 data class VodleForLog(
     val id: Long,
     val date: String,
@@ -16,5 +19,11 @@ data class Vodle(
     val address: String,
     val writer: String,
     val category: String,
-    val location: Location
-)
+    val location: Location,
+    val streamingURL: String
+) : TedClusterItem{
+    override fun getTedLatLng(): TedLatLng {
+        return TedLatLng(location.lat,location.lng)
+    }
+
+}

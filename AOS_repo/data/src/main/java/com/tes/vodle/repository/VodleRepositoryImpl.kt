@@ -22,7 +22,8 @@ class VodleRepositoryImpl @Inject constructor(
                             it.address,
                             it.writer,
                             it.category,
-                            Location(it.latitude.toDouble(), it.longitude.toDouble())
+                            Location(it.latitude.toDouble(), it.longitude.toDouble()),
+                            it.streamingURL
                         )
                     }
                 )

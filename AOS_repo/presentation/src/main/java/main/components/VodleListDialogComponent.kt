@@ -2,6 +2,10 @@ package main.components
 
 import android.util.Log
 import androidx.annotation.OptIn
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +27,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,9 +64,16 @@ fun VodleListDialogComponent(
     onClick: () -> Unit,
 ) {
     var index by remember { mutableStateOf(0) }
-    var currentProgress by remember { mutableStateOf(0f) }
-    var loading by remember { mutableStateOf(false) }
+    var currentProgress = remember { Animatable(0f) }
+    var isPlaying by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope() // Create a coroutine scope
+
+    if (isPlaying) {
+        playVodle(isPlaying, currentProgress)
+    }
+    else {
+        playVodle(isPlaying, currentProgress)
+    }
 
     Box(
         modifier = Modifier.then(
@@ -76,8 +88,7 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index--;
-                    loading = false
-                    currentProgress = 0f
+                    isPlaying = false
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -99,8 +110,7 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index++
-                    loading = false
-                    currentProgress = 0f
+                    isPlaying = false
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -171,18 +181,7 @@ fun VodleListDialogComponent(
             ) {
                 IconButton(
                     onClick = {
-                        loading = !loading
-                        if (loading) {
-                            scope.launch {
-                                loadProgress { progress ->
-                                    currentProgress = progress
-                                }
-                                loading = false
-                            }
-                        }
-                        else{
-                            scope.cancel()
-                        }
+                        isPlaying = !isPlaying
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                     colors = IconButtonDefaults.iconButtonColors(
@@ -192,10 +191,11 @@ fun VodleListDialogComponent(
                         disabledContainerColor = Color.White
                     ),
                 ) {
-                    if (loading) {
+                    if (isPlaying) {
                         var hlsMediaSource =
                             HlsMediaSource.Factory(dataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(BuildConfig.S3_URL + "2024_03_25_175598_%EC%9D%8C%EC%84%B1%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%98%A4.m3u8"))
+                                .createMediaSource(MediaItem.fromUri(vodleList.get(index).streamingURL))
+                        Log.d(TAG, "VodleListDialogComponent: ${BuildConfig.S3_URL+vodleList.get(index).streamingURL+".m3u8"}")
                         player.setMediaSource(hlsMediaSource)
                         player.prepare()
                         player.play()
@@ -215,21 +215,38 @@ fun VodleListDialogComponent(
                     }
                 }
                 LinearProgressIndicator(
-                    progress = { currentProgress },
+                    progress = { currentProgress.value },
                     modifier = Modifier.align(Alignment.CenterVertically),
+                    color = main_coral_darken,
                     trackColor = main_coral_bright,
-                    color = main_coral_darken
                 )
             }
         }
     }
 }
 
-suspend fun loadProgress(
-    updateProgress: (Float) -> Unit,
+@Composable
+private fun playVodle(
+    isPlaying: Boolean,
+    progress: Animatable<Float, AnimationVector1D>
 ) {
-    for (i in 1..16) {
-        updateProgress(i.toFloat() / 16)
-        delay(1000)
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(isPlaying) {
+        if (isPlaying) {
+            // isPlaying이 true일 때 애니메이션 시작
+            coroutineScope.launch {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = 15000,
+                        easing = LinearEasing
+                    )
+                )
+            }
+        } else {
+            // isPlaying이 false일 때 애니메이션 중지 및 초기화
+            progress.snapTo(0f)
+        }
     }
 }

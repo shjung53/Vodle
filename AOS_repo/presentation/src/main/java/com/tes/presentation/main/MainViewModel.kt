@@ -46,7 +46,8 @@ class MainViewModel @Inject constructor(
                                     it.address,
                                     it.writer,
                                     it.category,
-                                    it.location
+                                    it.location,
+                                    it.streamingURL
                                 )
                             }
                         )
