@@ -85,6 +85,8 @@ internal fun VodleMap(
                     .markerClickListener {
                         viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(it.location))
                     }
+                    .clusterAnimation(true)
+                    .clickToCenter(true)
                     .make()
             }
             clusterManager?.addItems(vodleList)
