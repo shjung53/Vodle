@@ -4,6 +4,7 @@ import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.VodleRepository
 import com.tes.vodle.datasource.vodle.VodleDataSource
+import java.io.File
 import javax.inject.Inject
 
 class VodleRepositoryImpl @Inject constructor(
@@ -26,5 +27,15 @@ class VodleRepositoryImpl @Inject constructor(
                 )
             },
             onFailure = { Result.failure(Exception()) }
+        )
+
+    override suspend fun uploadVodle(recordingFile: File): Result<Unit> =
+        vodleDataSource.uploadVodle(recordingFile).fold(
+            onSuccess = {
+                Result.success(Unit)
+            },
+            onFailure = {
+                Result.failure(Exception())
+            }
         )
 }

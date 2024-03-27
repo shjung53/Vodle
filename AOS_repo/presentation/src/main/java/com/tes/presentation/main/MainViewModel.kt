@@ -2,18 +2,20 @@ package com.tes.presentation.main
 
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
+import com.tes.domain.usecase.vodle.UploadVodleUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.VodleForMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val fetchVodlesAroundUseCase: FetchVodlesAroundUseCase
-
+    private val fetchVodlesAroundUseCase: FetchVodlesAroundUseCase,
+    private val uploadVodleUseCase: UploadVodleUseCase
 ) : BaseViewModel<MainViewState, MainViewEvent>() {
     override fun createInitialState(): MainViewState =
         MainViewState.Default()
@@ -29,9 +31,9 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnCompleteVodle -> TODO()
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
-            MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
+            is MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
-            MainViewEvent.OnClickSaveVodleButton -> setState { saveRecording() }
+            MainViewEvent.OnClickSaveVodleButton -> {}
         }
     }
 
@@ -77,12 +79,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun MainViewState.saveRecording(): MainViewState {
-        return when (this) {
-            is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> {
-                MainViewState.Default(this.vodleList)
-            }
+    private fun MainViewState.saveVodle(recordingFile: File) {
+        // TODO 보들 저장하는거 해야한다..
+        viewModelScope.launch {
+            uploadVodleUseCase(recordingFile).fold(
+                onSuccess = {},
+                onFailure = {}
+            )
         }
     }
 

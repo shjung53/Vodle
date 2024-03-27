@@ -2,10 +2,6 @@ package com.tes.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-object Color {
-    val lightGrey = Color(0xFFD7D7D7)
-}
-
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
@@ -27,3 +23,4 @@ val main_red_darken = Color(0xFFC2363E)
 val main_yellow_darken = Color(0xFFFFAB2C)
 
 val smooth_black = Color(0xFF646464)
+val lightGrey = Color(0xFFD7D7D7)

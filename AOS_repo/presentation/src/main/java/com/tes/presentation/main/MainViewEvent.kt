@@ -2,6 +2,7 @@ package com.tes.presentation.main
 
 import com.tes.presentation.composebase.ViewEvent
 import com.tes.presentation.model.Location
+import java.io.File
 
 sealed class MainViewEvent : ViewEvent {
 
@@ -18,7 +19,7 @@ sealed class MainViewEvent : ViewEvent {
     data object OnDismissRecordingDialog : MainViewEvent()
 
     data object OnClickMakingVodleButton : MainViewEvent()
-    data object OnClickFinishRecordingButton : MainViewEvent()
+    data class OnClickFinishRecordingButton(val recordingFile: File) : MainViewEvent()
     data object OnClickSaveVodleButton : MainViewEvent()
 
     data object OnCompleteVodle : MainViewEvent()
