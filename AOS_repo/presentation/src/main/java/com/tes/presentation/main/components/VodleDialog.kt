@@ -20,12 +20,14 @@ internal fun VodleDialog(
 ) {
     var markerVodleList: MutableList<Vodle> = mutableListOf()
 
-    for (i in 0..viewState.vodleList.size - 1) {
+    for (i in 0..viewState.vodleMap.size - 1) {
         //위도 값은 -90 ~ 90 사이의 값, 경도 값은 -180 ~ 180 사이의 값이어야 함(이외의 값은 지도 상으로 표시 x)
-        Log.d(TAG, "VodleDialog: vodle값 : ${viewState.vodleList.get(i)}")
-        if (viewState.location == viewState.vodleList.get(i).location) {
-            markerVodleList.add(viewState.vodleList.get(i))
-        }
+//        Log.d(TAG, "VodleDialog: vodle값 : ${viewState.vodleMap.get(i)}")
+//        if (viewState.location == viewState.vodleList.get(i).location) {
+//            markerVodleList.add(viewState.vodleList.get(i))
+//        }
     }
-    VodleListDialogComponent(markerVodleList, player, dataSourceFactory, {})
+    Log.d(TAG, "VodleDialog: ${viewState.vodleMap}")
+    Log.d(TAG, "VodleDialog: ${viewState.vodleList}")
+    VodleListDialogComponent(viewState.vodleList, player, dataSourceFactory)
 }

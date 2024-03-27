@@ -41,19 +41,21 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             fetchVodlesAroundUseCase().fold(
                 onSuccess = {
+                    val vodleList = it.map {
+                        Vodle(
+                            it.id,
+                            it.date,
+                            it.address,
+                            it.writer,
+                            it.category,
+                            it.location,
+                            it.streamingURL
+                        )
+                    }
+
                     setState {
                         updateVodles(
-                            it.map {
-                                Vodle(
-                                    it.id,
-                                    it.date,
-                                    it.address,
-                                    it.writer,
-                                    it.category,
-                                    it.location,
-                                    it.streamingURL
-                                )
-                            }
+                            makeVodleMap(vodleList), vodleList
                         )
                     }
                 },
@@ -68,6 +70,7 @@ class MainViewModel @Inject constructor(
             is MainViewState.MakingVodle -> {
                 this.copy(recordingStep = RecordingStep.RECORDING)
             }
+
             is MainViewState.ShowRecordedVodle -> this
         }
     }
@@ -78,6 +81,7 @@ class MainViewModel @Inject constructor(
             is MainViewState.MakingVodle -> {
                 this.copy(recordingStep = RecordingStep.CREATE)
             }
+
             is MainViewState.ShowRecordedVodle -> this
         }
     }
@@ -86,22 +90,26 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> this
             is MainViewState.MakingVodle -> {
-                MainViewState.Default(this.vodleList)
+                MainViewState.Default(this.vodleMap)
             }
+
             is MainViewState.ShowRecordedVodle -> this
         }
     }
 
-    private fun MainViewState.updateVodles(vodleList: List<Vodle>): MainViewState {
+    private fun MainViewState.updateVodles(
+        vodleMap: HashMap<Location, List<Vodle>>,
+        vodleList: List<Vodle>
+    ): MainViewState {
         return when (this) {
             is MainViewState.Default -> {
-                this.copy(vodleList = vodleList)
+                this.copy(vodleMap = vodleMap, vodleList = vodleList)
             }
 
             is MainViewState.MakingVodle -> this
 
             is MainViewState.ShowRecordedVodle -> {
-                this.copy(vodleList = vodleList)
+                this.copy(vodleMap = vodleMap, vodleList = vodleList)
             }
         }
     }
@@ -109,7 +117,7 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onDismissDialog(): MainViewState {
         return when (this) {
             is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> MainViewState.Default(this.vodleList)
+            is MainViewState.MakingVodle -> MainViewState.Default(this.vodleMap)
             is MainViewState.ShowRecordedVodle -> this
         }
     }
@@ -133,14 +141,14 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onStartRecord(location: Location): MainViewState {
         return when (this) {
             is MainViewState.Default -> MainViewState.MakingVodle(
-                this.vodleList,
+                this.vodleMap,
                 location = location
             )
 
             is MainViewState.MakingVodle -> this
 
             is MainViewState.ShowRecordedVodle -> MainViewState.MakingVodle(
-                this.vodleList,
+                this.vodleMap,
                 location = location
             )
         }
@@ -149,9 +157,9 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onClickMarker(location: Location): MainViewState {
         return when (this) {
             is MainViewState.Default -> MainViewState.ShowRecordedVodle(
-                this.vodleList,
+                this.vodleMap,
                 "",
-                location
+                this.vodleMap.get(location)!!
             )
 
             is MainViewState.MakingVodle -> this
@@ -163,8 +171,26 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onDismissVodleDialog(): MainViewState {
         return when (this) {
             is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> MainViewState.Default(this.vodleList)
-            is MainViewState.ShowRecordedVodle -> MainViewState.Default(this.vodleList)
+            is MainViewState.MakingVodle -> MainViewState.Default(this.vodleMap)
+            is MainViewState.ShowRecordedVodle -> MainViewState.Default(
+                this.vodleMap,
+                "",
+                this.vodleList
+            )
         }
+    }
+
+    private fun makeVodleMap(vodleList: List<Vodle>): HashMap<Location, List<Vodle>> {
+        val vodelMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>()
+
+        vodleList.forEach {
+            val newList: MutableList<Vodle> = mutableListOf()
+            val oldList: List<Vodle> = vodelMap.getOrDefault(it.location, mutableListOf())
+            newList.addAll(oldList)
+            newList.add(it)
+            vodelMap[it.location] = newList.toList()
+        }
+
+        return vodelMap
     }
 }

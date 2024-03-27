@@ -61,7 +61,6 @@ fun VodleListDialogComponent(
     vodleList: List<Vodle>,
     player: ExoPlayer,
     dataSourceFactory: DataSource.Factory,
-    onClick: () -> Unit,
 ) {
     var index by remember { mutableStateOf(0) }
     var currentProgress = remember { Animatable(0f) }

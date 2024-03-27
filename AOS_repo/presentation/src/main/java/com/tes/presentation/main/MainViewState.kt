@@ -6,25 +6,27 @@ import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
 
 sealed class MainViewState : ViewState {
-    abstract val vodleList: List<Vodle>
+    abstract val vodleMap: HashMap<Location, List<Vodle>>
     abstract val toastMessage: String?
+    abstract val vodleList: List<Vodle>
 
     data class Default(
-        override val vodleList: List<Vodle> = emptyList(),
+        override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val toastMessage: String? = null,
-        val location: Location? = null
+        override val vodleList: List<Vodle> = emptyList()
     ) : MainViewState()
 
     data class MakingVodle(
-        override val vodleList: List<Vodle> = emptyList(),
+        override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location,List<Vodle>>(),
         val location: Location,
         override val toastMessage: String? = null,
-        val recordingStep: RecordingStep = RecordingStep.INTRODUCTION
+        val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
+        override val vodleList: List<Vodle> = emptyList()
     ) : MainViewState()
 
     data class ShowRecordedVodle(
-        override val vodleList: List<Vodle> = emptyList(),
+        override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val toastMessage: String? = null,
-        val location: Location? = null
+        override val vodleList: List<Vodle>
     ) : MainViewState()
 }
