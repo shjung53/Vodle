@@ -21,7 +21,6 @@ internal fun SearchVodleButton(
 ) {
     ButtonComponent(
         modifier = modifier.then(Modifier.padding(top = 12.dp)),
-        textModifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         buttonText = stringResource(R.string.search_in_this_location),
         onClick = {
             viewModel.onTriggerEvent(

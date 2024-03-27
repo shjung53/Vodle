@@ -32,8 +32,12 @@ import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.SearchVodleButton
 import com.tes.presentation.main.components.VodleDialog
 import com.tes.presentation.main.components.VodleMapClustering
+import com.tes.presentation.main.components.VodleMap
+import com.tes.presentation.main.recording.CreateVodleDialog
+import com.tes.presentation.main.recording.IntroDuctionDialog
+import com.tes.presentation.main.recording.RecordingDialog
+import com.tes.presentation.main.recording.RecordingStep
 
-@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 internal fun MainScreen(
     viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
@@ -107,10 +111,10 @@ internal fun MainScreen(
     }
 
     if (viewState is MainViewState.MakingVodle) {
-        Dialog(
-            onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
-        ) {
-            Text(text = "레코딩", style = TextStyle(fontSize = 24.sp))
+        when (viewState.recordingStep) {
+            RecordingStep.INTRODUCTION -> IntroDuctionDialog(viewModel)
+            RecordingStep.RECORDING -> RecordingDialog(viewModel)
+            RecordingStep.CREATE -> CreateVodleDialog(viewModel)
         }
     }
 }

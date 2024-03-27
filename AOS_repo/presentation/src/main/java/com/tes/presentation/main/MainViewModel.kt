@@ -3,6 +3,7 @@ package com.tes.presentation.main
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.presentation.composebase.BaseViewModel
+import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,9 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
             is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
+            MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
+            MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
+            MainViewEvent.OnClickSaveVodleButton -> setState { saveRecording() }
         }
     }
 
@@ -53,9 +57,38 @@ class MainViewModel @Inject constructor(
                         )
                     }
                 },
-                onFailure = {
-                }
+                onFailure = {}
             )
+        }
+    }
+
+    private fun MainViewState.startRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                this.copy(recordingStep = RecordingStep.RECORDING)
+            }
+            is MainViewState.ShowRecordedVodle -> this
+        }
+    }
+
+    private fun MainViewState.finishRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                this.copy(recordingStep = RecordingStep.CREATE)
+            }
+            is MainViewState.ShowRecordedVodle -> this
+        }
+    }
+
+    private fun MainViewState.saveRecording(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> {
+                MainViewState.Default(this.vodleList)
+            }
+            is MainViewState.ShowRecordedVodle -> this
         }
     }
 
