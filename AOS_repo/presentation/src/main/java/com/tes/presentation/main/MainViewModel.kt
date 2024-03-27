@@ -5,7 +5,7 @@ import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.Location
-import com.tes.presentation.model.VodleForMap
+import com.tes.presentation.model.Vodle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,6 +29,8 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnCompleteVodle -> TODO()
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
+            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
+            MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             MainViewEvent.OnClickSaveVodleButton -> setState { saveRecording() }
@@ -42,13 +44,14 @@ class MainViewModel @Inject constructor(
                     setState {
                         updateVodles(
                             it.map {
-                                VodleForMap(
+                                Vodle(
                                     it.id,
                                     it.date,
                                     it.address,
                                     it.writer,
                                     it.category,
-                                    it.location
+                                    it.location,
+                                    it.streamingURL
                                 )
                             }
                         )
@@ -65,6 +68,7 @@ class MainViewModel @Inject constructor(
             is MainViewState.MakingVodle -> {
                 this.copy(recordingStep = RecordingStep.RECORDING)
             }
+            is MainViewState.ShowRecordedVodle -> this
         }
     }
 
@@ -74,6 +78,7 @@ class MainViewModel @Inject constructor(
             is MainViewState.MakingVodle -> {
                 this.copy(recordingStep = RecordingStep.CREATE)
             }
+            is MainViewState.ShowRecordedVodle -> this
         }
     }
 
@@ -83,16 +88,21 @@ class MainViewModel @Inject constructor(
             is MainViewState.MakingVodle -> {
                 MainViewState.Default(this.vodleList)
             }
+            is MainViewState.ShowRecordedVodle -> this
         }
     }
 
-    private fun MainViewState.updateVodles(vodleList: List<VodleForMap>): MainViewState {
+    private fun MainViewState.updateVodles(vodleList: List<Vodle>): MainViewState {
         return when (this) {
             is MainViewState.Default -> {
                 this.copy(vodleList = vodleList)
             }
 
             is MainViewState.MakingVodle -> this
+
+            is MainViewState.ShowRecordedVodle -> {
+                this.copy(vodleList = vodleList)
+            }
         }
     }
 
@@ -100,6 +110,7 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> this
             is MainViewState.MakingVodle -> MainViewState.Default(this.vodleList)
+            is MainViewState.ShowRecordedVodle -> this
         }
     }
 
@@ -107,6 +118,7 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> copy(toastMessage = "")
             is MainViewState.MakingVodle -> copy(toastMessage = "")
+            is MainViewState.ShowRecordedVodle -> copy(toastMessage = "")
         }
     }
 
@@ -114,6 +126,7 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> copy(toastMessage = message)
             is MainViewState.MakingVodle -> copy(toastMessage = message)
+            is MainViewState.ShowRecordedVodle -> copy(toastMessage = message)
         }
     }
 
@@ -125,6 +138,33 @@ class MainViewModel @Inject constructor(
             )
 
             is MainViewState.MakingVodle -> this
+
+            is MainViewState.ShowRecordedVodle -> MainViewState.MakingVodle(
+                this.vodleList,
+                location = location
+            )
+        }
+    }
+
+    private fun MainViewState.onClickMarker(location: Location): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> MainViewState.ShowRecordedVodle(
+                this.vodleList,
+                "",
+                location
+            )
+
+            is MainViewState.MakingVodle -> this
+
+            is MainViewState.ShowRecordedVodle -> this
+        }
+    }
+
+    private fun MainViewState.onDismissVodleDialog(): MainViewState {
+        return when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> MainViewState.Default(this.vodleList)
+            is MainViewState.ShowRecordedVodle -> MainViewState.Default(this.vodleList)
         }
     }
 }

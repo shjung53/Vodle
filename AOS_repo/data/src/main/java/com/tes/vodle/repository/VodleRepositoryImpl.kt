@@ -16,11 +16,12 @@ class VodleRepositoryImpl @Inject constructor(
                     it.dataBody.map {
                         Vodle(
                             it.id,
-                            "날짜",
+                            "테스트 날짜",
                             it.address,
-                            "작성자",
+                            it.writer,
                             it.category,
-                            Location(it.latitude.toDouble(), it.longitude.toDouble())
+                            Location(it.latitude.toDouble(), it.longitude.toDouble()),
+                            it.streamingURL
                         )
                     }
                 )

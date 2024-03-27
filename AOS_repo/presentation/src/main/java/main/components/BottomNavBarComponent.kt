@@ -40,7 +40,7 @@ fun BottomNavBarComponent(
                 .wrapContentHeight()
                 .border(
                     BorderStroke(1.dp, color = main_coral_darken),
-                    shape = RoundedCornerShape(20)
+                    shape = RoundedCornerShape(12)
                 )
                 .background(color = Color.White)
         )
@@ -56,7 +56,7 @@ fun BottomNavBarComponent(
                 info = "보들 그리기",
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(70.dp)
             )
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.Headphones,
@@ -65,7 +65,7 @@ fun BottomNavBarComponent(
                 info = "오버히어링 모드",
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(70.dp)
             )
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.MicNone,
@@ -74,7 +74,7 @@ fun BottomNavBarComponent(
                 info = "녹음하기",
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(70.dp)
             )
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.Person,
@@ -83,7 +83,7 @@ fun BottomNavBarComponent(
                 info = "마이페이지",
                 modifier = Modifier
                     .weight(1f)
-                    .height(50.dp)
+                    .height(70.dp)
             )
         }
     }
