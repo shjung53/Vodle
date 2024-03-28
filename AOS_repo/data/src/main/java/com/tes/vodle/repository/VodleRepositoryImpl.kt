@@ -13,7 +13,7 @@ class VodleRepositoryImpl @Inject constructor(
     override suspend fun fetchVodlesAround(): Result<List<Vodle>> =
         vodleDataSource.fetchVodlesAround().fold(
             onSuccess = { it ->
-                val vodleList : List<Vodle> = it.dataBody.map {
+                val vodleList: List<Vodle> = it.dataBody.map {
                     Vodle(
                         it.id,
                         "테스트 날짜",
@@ -24,7 +24,6 @@ class VodleRepositoryImpl @Inject constructor(
                         it.streamingURL
                     )
                 }
-
 
                 Result.success(vodleList)
             },

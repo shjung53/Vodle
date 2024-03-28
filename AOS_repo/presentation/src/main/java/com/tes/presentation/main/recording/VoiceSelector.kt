@@ -3,7 +3,6 @@ package com.tes.presentation.main.recording
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -40,7 +39,10 @@ fun VoiceSelector() {
             val visibleItems = listState.layoutInfo.visibleItemsInfo
             if (visibleItems.isNotEmpty()) {
                 val centerItem = visibleItems.minByOrNull {
-                    abs((it.offset + it.size / 2) - (listState.layoutInfo.viewportStartOffset + halfScreenWidth.value / 2))
+                    abs(
+                        (it.offset + it.size / 2) -
+                            (listState.layoutInfo.viewportStartOffset + halfScreenWidth.value / 2)
+                    )
                 }
                 centerItem?.let {
                     coroutineScope.launch {
@@ -50,7 +52,6 @@ fun VoiceSelector() {
                 }
             }
         }
-
 
         LazyRow(state = listState, contentPadding = PaddingValues(horizontal = 12.dp)) {
             items(itemsList.size) { index ->

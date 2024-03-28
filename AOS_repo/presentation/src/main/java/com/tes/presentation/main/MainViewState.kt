@@ -17,11 +17,12 @@ sealed class MainViewState : ViewState {
     ) : MainViewState()
 
     data class MakingVodle(
-        override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location,List<Vodle>>(),
+        override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         val location: Location,
         override val toastMessage: String? = null,
         val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
-        override val vodleList: List<Vodle> = emptyList()
+        override val vodleList: List<Vodle> = emptyList(),
+        val streamingUrl: String = ""
     ) : MainViewState()
 
     data class ShowRecordedVodle(

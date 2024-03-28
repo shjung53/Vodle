@@ -34,7 +34,6 @@ class MainViewModel @Inject constructor(
             is MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
             is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
-            MainViewEvent.OnClickFinishRecordingButton -> setState { finishRecording() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             MainViewEvent.OnClickSaveVodleButton -> {}
         }
@@ -58,7 +57,8 @@ class MainViewModel @Inject constructor(
 
                     setState {
                         updateVodles(
-                            makeVodleMap(vodleList), vodleList
+                            makeVodleMap(vodleList),
+                            vodleList
                         )
                     }
                 },
@@ -96,6 +96,8 @@ class MainViewModel @Inject constructor(
                 onSuccess = {},
                 onFailure = {}
             )
+        }
+    }
     private fun MainViewState.saveRecording(): MainViewState {
         return when (this) {
             is MainViewState.Default -> this

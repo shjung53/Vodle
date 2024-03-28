@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,16 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.tes.presentation.main.components.BottomButtonGroup
 import com.tes.presentation.main.components.CalendarButton
@@ -32,7 +28,6 @@ import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.SearchVodleButton
 import com.tes.presentation.main.components.VodleDialog
 import com.tes.presentation.main.components.VodleMapClustering
-import com.tes.presentation.main.components.VodleMap
 import com.tes.presentation.main.recording.CreateVodleDialog
 import com.tes.presentation.main.recording.IntroDuctionDialog
 import com.tes.presentation.main.recording.RecordingDialog
@@ -56,7 +51,7 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    VodleMapClustering(viewModel,viewState,cameraPositionState)
+    VodleMapClustering(viewModel, viewState, cameraPositionState)
 
     Column {
         SearchVodleButton(
@@ -82,19 +77,20 @@ internal fun MainScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         if (viewState is MainViewState.ShowRecordedVodle) {
-            Dialog(onDismissRequest = {
-                viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog)
-                player.pause()
-                player.stop()
-            }
+            player.pause()
+            player.stop()
+            Dialog(
+                onDismissRequest = {
+                    viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog)
+                }
             ) {
-                (LocalView.current.parent as DialogWindowProvider)?.window?.setDimAmount(0f)
-                (LocalView.current.parent as DialogWindowProvider)?.window?.setGravity(Gravity.BOTTOM)
-                Column() {
+                (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
+                (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.BOTTOM)
+                Column {
                     VodleDialog(
                         viewState,
-                        player, dataSourceFactory,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        player,
+                        dataSourceFactory,
                     )
                     Spacer(modifier = Modifier.height(90.dp))
                 }
@@ -114,7 +110,12 @@ internal fun MainScreen(
         when (viewState.recordingStep) {
             RecordingStep.INTRODUCTION -> IntroDuctionDialog(viewModel)
             RecordingStep.RECORDING -> RecordingDialog(viewModel)
-            RecordingStep.CREATE -> CreateVodleDialog(viewModel)
+            RecordingStep.CREATE -> CreateVodleDialog(
+                viewModel,
+                viewState,
+                player,
+                dataSourceFactory
+            )
         }
     }
 }

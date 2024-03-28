@@ -1,6 +1,5 @@
 package com.tes.presentation.main.components
 
-import android.util.Log
 import android.widget.ImageView
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,8 +26,6 @@ import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.model.Vodle
 import ted.gun0912.clustering.naver.TedNaverClustering
-
-private const val TAG = "VodleMap_싸피"
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
@@ -70,7 +67,6 @@ internal fun VodleMap(
                         }
                     }
                     .markerClickListener {
-                        Log.d(TAG, "VodleMap: 마커 위치 : ${it.location}")
                         viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(it.location))
                     }
                     .clusterAnimation(true)
