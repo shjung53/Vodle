@@ -24,4 +24,11 @@ class VodleDataSourceImpl @Inject constructor(
             MultipartBody.Part.createFormData("soundFile", recordingFile.getName(), requestBody)
         vodleService.uploadVodle(multipartBody, VodleMetaData())
     }
+
+    override suspend fun convertVoice(recordingFile: File): Result<String> = runCatching {
+        val requestBody: RequestBody = recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
+        val multipartBody: MultipartBody.Part =
+            MultipartBody.Part.createFormData("soundFile", recordingFile.getName(), requestBody)
+        vodleService.convertVoice(multipartBody)
+    }
 }

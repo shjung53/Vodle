@@ -113,8 +113,7 @@ internal fun MainScreen(
             RecordingStep.CREATE -> CreateVodleDialog(
                 viewModel,
                 viewState,
-                player,
-                dataSourceFactory
+                player
             )
         }
     }

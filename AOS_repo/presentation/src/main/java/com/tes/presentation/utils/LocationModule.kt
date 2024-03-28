@@ -1,4 +1,4 @@
-package com.tes.presentation
+package com.tes.presentation.utils
 
 import android.Manifest
 import android.content.Context
@@ -14,7 +14,7 @@ object LocationModule {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     suspend fun getLocation(context: Context): Result<Location> = suspendCoroutine { continuation ->
-        if (!::fusedLocationClient.isInitialized) {
+        if (!LocationModule::fusedLocationClient.isInitialized) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         }
 

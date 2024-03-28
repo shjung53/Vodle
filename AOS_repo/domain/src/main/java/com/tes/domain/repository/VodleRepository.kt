@@ -8,4 +8,6 @@ interface VodleRepository {
     suspend fun fetchVodlesAround(): Result<List<Vodle>>
 
     suspend fun uploadVodle(recordingFile: File): Result<Unit>
+
+    suspend fun convertVoice(recordingFile: File): Result<String>
 }

@@ -9,4 +9,6 @@ interface VodleDataSource {
     suspend fun fetchVodlesAround(): Result<VodlesAroundResponse>
 
     suspend fun uploadVodle(recordingFile: File): Result<BasicResponse>
+
+    suspend fun convertVoice(recordingFile: File): Result<String>
 }

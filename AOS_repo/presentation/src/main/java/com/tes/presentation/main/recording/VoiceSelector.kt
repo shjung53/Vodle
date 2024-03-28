@@ -10,8 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +21,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
-fun VoiceSelector() {
+fun VoiceSelector(selectedVoice: MutableIntState, voiceList: List<AudioData>) {
     Column {
         Line()
 
-        val itemsList = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        val selectedVoice = remember { mutableIntStateOf(0) }
         val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
 
@@ -54,14 +51,14 @@ fun VoiceSelector() {
         }
 
         LazyRow(state = listState, contentPadding = PaddingValues(horizontal = 12.dp)) {
-            items(itemsList.size) { index ->
+            items(voiceList.size) { index ->
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .width(100.dp)
                 ) {
                     Text(
-                        text = itemsList[index],
+                        text = voiceList[index].voiceType.name,
                         style = if (listState.isItemCentered(index)) {
                             vodleTypoGraphy.bodyMedium
                         } else {

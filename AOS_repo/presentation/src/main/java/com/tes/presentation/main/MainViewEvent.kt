@@ -20,9 +20,10 @@ sealed class MainViewEvent : ViewEvent {
 
     data object OnClickMakingVodleButton : MainViewEvent()
     data class OnClickFinishRecordingButton(val recordingFile: File) : MainViewEvent()
-    data object OnClickSaveVodleButton : MainViewEvent()
+    data class OnClickSaveVodleButton(val recordingFile: File) : MainViewEvent()
 
-    data object OnCompleteVodle : MainViewEvent()
+    data class OnFinishMakeConvertedFile(val audioFileList: List<File>) : MainViewEvent()
+
     data class ShowToast(val message: String) : MainViewEvent()
 
     data object OnFinishToast : MainViewEvent()
@@ -30,4 +31,6 @@ sealed class MainViewEvent : ViewEvent {
     data class OnClickMarker(val location: Location) : MainViewEvent()
 
     data object OnDismissVodleDialog : MainViewEvent()
+
+    data class OnFialMakingVodle(val toastMessage: String) : MainViewEvent()
 }
