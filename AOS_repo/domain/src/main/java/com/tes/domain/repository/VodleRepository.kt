@@ -1,5 +1,6 @@
 package com.tes.domain.repository
 
+import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import java.io.File
 
