@@ -10,7 +10,7 @@ data class VodleForLog(
 )
 
 data class VodleCluster(
-    val vodleList : List<Vodle>
+    val vodleList: List<Vodle>
 )
 
 data class Vodle(
@@ -21,9 +21,8 @@ data class Vodle(
     val category: String,
     val location: Location,
     val streamingURL: String
-) : TedClusterItem{
+) : TedClusterItem {
     override fun getTedLatLng(): TedLatLng {
-        return TedLatLng(location.lat,location.lng)
+        return TedLatLng(location.lat, location.lng)
     }
-
 }

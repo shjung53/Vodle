@@ -1,6 +1,5 @@
 package main.components
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -44,34 +43,27 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
-import com.tes.presentation.BuildConfig
 import com.tes.presentation.model.Vodle
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-private const val TAG = "VodleListDialogComponen_싸피"
 
 @OptIn(UnstableApi::class)
 @Composable
 fun VodleListDialogComponent(
     vodleList: List<Vodle>,
     player: ExoPlayer,
-    dataSourceFactory: DataSource.Factory,
+    dataSourceFactory: DataSource.Factory
 ) {
     var index by remember { mutableStateOf(0) }
-    var currentProgress = remember { Animatable(0f) }
+    val currentProgress = remember { Animatable(0f) }
     var isPlaying by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope() // Create a coroutine scope
 
     if (isPlaying) {
-        playVodle(isPlaying, currentProgress)
-    }
-    else {
-        playVodle(isPlaying, currentProgress)
+        PlayVodle(isPlaying, currentProgress)
+    } else {
+        PlayVodle(isPlaying, currentProgress)
     }
 
     Box(
@@ -86,7 +78,7 @@ fun VodleListDialogComponent(
         if (index != 0) {
             IconButton(
                 onClick = {
-                    index--;
+                    index--
                     isPlaying = false
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -105,7 +97,6 @@ fun VodleListDialogComponent(
             }
         }
         if (index != vodleList.size - 1) {
-            Log.d(TAG, "VodleListDialogComponent: index : $index")
             IconButton(
                 onClick = {
                     index++
@@ -188,13 +179,14 @@ fun VodleListDialogComponent(
                         containerColor = Color.White,
                         disabledContentColor = main_coral_darken,
                         disabledContainerColor = Color.White
-                    ),
+                    )
                 ) {
                     if (isPlaying) {
-                        var hlsMediaSource =
+                        val hlsMediaSource =
                             HlsMediaSource.Factory(dataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(vodleList.get(index).streamingURL))
-                        Log.d(TAG, "VodleListDialogComponent: ${BuildConfig.S3_URL+vodleList.get(index).streamingURL+".m3u8"}")
+                                .createMediaSource(
+                                    MediaItem.fromUri(vodleList.get(index).streamingURL)
+                                )
                         player.setMediaSource(hlsMediaSource)
                         player.prepare()
                         player.play()
@@ -217,7 +209,7 @@ fun VodleListDialogComponent(
                     progress = { currentProgress.value },
                     modifier = Modifier.align(Alignment.CenterVertically),
                     color = main_coral_darken,
-                    trackColor = main_coral_bright,
+                    trackColor = main_coral_bright
                 )
             }
         }
@@ -225,7 +217,7 @@ fun VodleListDialogComponent(
 }
 
 @Composable
-private fun playVodle(
+private fun PlayVodle(
     isPlaying: Boolean,
     progress: Animatable<Float, AnimationVector1D>
 ) {
