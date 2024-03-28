@@ -31,7 +31,7 @@ import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.lightGrey
 import com.tes.presentation.theme.vodleTypoGraphy
-import com.tes.presentation.utils.createAudioFile
+import com.tes.presentation.utils.createM4aFile
 import kotlinx.coroutines.launch
 import main.components.BasicDialog
 import main.components.ButtonComponent
@@ -45,7 +45,7 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
         val context = LocalContext.current
         val progress = remember { Animatable(0f) }
         val isRecording = remember { mutableStateOf(true) }
-        val recordingFile = createAudioFile(context)
+        val recordingFile = createM4aFile(context)
         val recorder = MediaRecorder()
 
         BasicDialog {

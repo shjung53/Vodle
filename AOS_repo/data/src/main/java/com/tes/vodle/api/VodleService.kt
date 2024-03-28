@@ -1,6 +1,7 @@
 package com.tes.vodle.api
 
 import com.tes.vodle.model.BasicResponse
+import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.VodlesAroundResponse
 import okhttp3.MultipartBody
 import retrofit2.http.GET
@@ -30,7 +31,7 @@ interface VodleService {
         @Part soundFile: MultipartBody.Part,
         @Path(value = "selected_voice") selectedVoice: String = "mundo",
         @Path(value = "pitch_change") pitch: Int = 0
-    ): String
+    ): ConversionResponse
 }
 
 data class VodleMetaData(

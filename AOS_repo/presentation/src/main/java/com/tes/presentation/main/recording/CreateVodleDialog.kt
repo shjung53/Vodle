@@ -1,5 +1,6 @@
 package com.tes.presentation.main.recording
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -49,7 +50,7 @@ import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
-import com.tes.presentation.utils.createAudioFile
+import com.tes.presentation.utils.createWavFile
 import com.tes.presentation.utils.toAudioFile
 import kotlinx.coroutines.launch
 import main.components.ButtonComponent
@@ -77,7 +78,7 @@ internal fun CreateVodleDialog(
             val newAudioFileList = mutableListOf<File>()
             newAudioFileList.addAll(viewState.convertedAudioList)
             viewState.audioDataList.forEach {
-                val outputFile = createAudioFile(context)
+                val outputFile = createWavFile(context)
                 it.audioDataString.toAudioFile(outputFile).fold(
                     onSuccess = { file -> newAudioFileList.add(file) },
                     onFailure = {}
@@ -130,9 +131,15 @@ internal fun CreateVodleDialog(
                     ) {
                         if (isPlaying) {
                             val dataSourceFactory = DefaultDataSource.Factory(context)
+                            Log.d(
+                                "확인",
+                                viewState.convertedAudioList[selectedVoice.intValue].absolutePath
+                            )
                             val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                                .createMediaSource(
-                                    MediaItem.fromUri(viewState.convertedAudioList[0].absolutePath)
+                                .createMediaSource(MediaItem.fromUri(viewState
+                                            .convertedAudioList[selectedVoice.intValue]
+                                            .absolutePath
+                                    )
                                 )
                             player.setMediaSource(mediaSource)
                             player.prepare()

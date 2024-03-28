@@ -5,7 +5,7 @@ import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.UserRepository
 import com.tes.vodle.datasource.user.UserDataSource
-import com.tes.vodle.util.Encryption.calculateHmac
+import com.tes.vodle.util.calculateHmac
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 

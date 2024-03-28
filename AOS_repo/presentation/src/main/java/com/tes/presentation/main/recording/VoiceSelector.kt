@@ -55,7 +55,7 @@ fun VoiceSelector(selectedVoice: MutableIntState, voiceList: List<AudioData>) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .width(100.dp)
+                        .width(screenWidth)
                 ) {
                     Text(
                         text = voiceList[index].voiceType.name,

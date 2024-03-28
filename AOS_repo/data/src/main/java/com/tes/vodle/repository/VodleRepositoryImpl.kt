@@ -1,5 +1,6 @@
 package com.tes.vodle.repository
 
+import android.util.Log
 import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.VodleRepository
@@ -43,7 +44,8 @@ class VodleRepositoryImpl @Inject constructor(
     override suspend fun convertVoice(recordingFile: File): Result<String> =
         vodleDataSource.convertVoice(recordingFile).fold(
             onSuccess = { it ->
-                Result.success(it)
+                Log.d("확인", it.data.convertedFile)
+                Result.success(it.data.convertedFile)
             },
             onFailure = { exception ->
                 // 오류 처리

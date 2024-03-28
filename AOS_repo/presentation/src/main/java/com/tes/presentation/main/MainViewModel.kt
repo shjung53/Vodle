@@ -1,5 +1,6 @@
 package com.tes.presentation.main
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.ConvertRecordingUseCase
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
@@ -45,7 +46,7 @@ class MainViewModel @Inject constructor(
                     event.audioFileList
                 )
             }
-            is MainViewEvent.OnFialMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
+            is MainViewEvent.OnFailMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
         }
     }
 
@@ -80,7 +81,7 @@ class MainViewModel @Inject constructor(
                     }
                 },
                 onFailure = {
-                    onTriggerEvent(MainViewEvent.OnFialMakingVodle("보들을 가져오는데 실패했습니다."))
+                    onTriggerEvent(MainViewEvent.OnFailMakingVodle("보들을 가져오는데 실패했습니다."))
                 }
             )
         }
@@ -100,7 +101,7 @@ class MainViewModel @Inject constructor(
     private suspend fun convertRecording(recordingFile: File): Result<AudioDataString> =
         convertRecordingUseCase(recordingFile).fold(
             onSuccess = {
-                Result.success(it)
+                Result.success(it.toString())
             },
             onFailure = {
                 Result.failure(it)
@@ -111,9 +112,10 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             convertRecording(recordingFile).fold(
                 onSuccess = {
+                    Log.d("확인", it.toString())
                     setState { onFinishConversion(recordingFile, it) }
                 },
-                onFailure = { onTriggerEvent(MainViewEvent.OnFialMakingVodle("문제가 발생했습니다.")) }
+                onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
             )
         }
     }
@@ -149,7 +151,7 @@ class MainViewModel @Inject constructor(
                 onSuccess = {
                     setState { onSuccessSaveVodle() }
                 },
-                onFailure = { onTriggerEvent(MainViewEvent.OnFialMakingVodle("보들을 저장하는데 실패했습니다.")) }
+                onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("보들을 저장하는데 실패했습니다.")) }
             )
         }
     }

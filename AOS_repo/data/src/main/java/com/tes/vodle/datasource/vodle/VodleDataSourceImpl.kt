@@ -3,6 +3,7 @@ package com.tes.vodle.datasource.vodle
 import com.tes.vodle.api.VodleMetaData
 import com.tes.vodle.api.VodleService
 import com.tes.vodle.model.BasicResponse
+import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.VodlesAroundResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -25,10 +26,16 @@ class VodleDataSourceImpl @Inject constructor(
         vodleService.uploadVodle(multipartBody, VodleMetaData())
     }
 
-    override suspend fun convertVoice(recordingFile: File): Result<String> = runCatching {
-        val requestBody: RequestBody = recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
-        val multipartBody: MultipartBody.Part =
-            MultipartBody.Part.createFormData("soundFile", recordingFile.getName(), requestBody)
-        vodleService.convertVoice(multipartBody)
-    }
+    override suspend fun convertVoice(recordingFile: File): Result<ConversionResponse> =
+        runCatching {
+            val requestBody: RequestBody =
+                recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
+            val multipartBody: MultipartBody.Part =
+                MultipartBody.Part.createFormData(
+                    "audio_file",
+                    recordingFile.getName(),
+                    requestBody
+                )
+            vodleService.convertVoice(multipartBody)
+        }
 }

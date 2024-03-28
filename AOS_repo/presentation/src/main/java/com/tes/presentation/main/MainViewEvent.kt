@@ -32,5 +32,5 @@ sealed class MainViewEvent : ViewEvent {
 
     data object OnDismissVodleDialog : MainViewEvent()
 
-    data class OnFialMakingVodle(val toastMessage: String) : MainViewEvent()
+    data class OnFailMakingVodle(val toastMessage: String) : MainViewEvent()
 }
