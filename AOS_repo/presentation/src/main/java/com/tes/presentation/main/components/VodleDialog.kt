@@ -10,7 +10,7 @@ import main.components.VodleListDialogComponent
 internal fun VodleDialog(
     viewState: MainViewState,
     player: ExoPlayer,
-    dataSourceFactory: DataSource.Factory,
+    dataSourceFactory: DataSource.Factory
 ) {
     VodleListDialogComponent(viewState.vodleList, player, dataSourceFactory)
 }

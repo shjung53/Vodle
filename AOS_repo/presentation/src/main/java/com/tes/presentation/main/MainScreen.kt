@@ -90,7 +90,7 @@ internal fun MainScreen(
                     VodleDialog(
                         viewState,
                         player,
-                        dataSourceFactory,
+                        dataSourceFactory
                     )
                     Spacer(modifier = Modifier.height(90.dp))
                 }

@@ -44,7 +44,15 @@ fun AppNavHost() {
         }
 
         composable(Route.MY_PAGE.destination) {
-            MyPageScreen { navController.navigateToDestination(Route.LOGIN) }
+            MyPageScreen(
+                onClickBackButton = { navController.popBackStack() },
+                onSuccessLogout = {
+                    navController.navigateToDestination(
+                        Route.LOGIN,
+                        navOptions { popUpTo(Route.MY_PAGE.destination) { inclusive = true } }
+                    )
+                }
+            )
         }
     }
 }
