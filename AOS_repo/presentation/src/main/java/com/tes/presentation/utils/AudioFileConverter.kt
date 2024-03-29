@@ -9,6 +9,7 @@ typealias AudioDataString = String
 fun AudioDataString.toAudioFile(outputFile: File): Result<File> {
     return try {
         val byteArray = this.decodeToByteArrayWithBase64()
+        Log.d("확인", byteArray.toString())
         FileOutputStream(outputFile).use { fos ->
             fos.write(byteArray)
             fos.flush()

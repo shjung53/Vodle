@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
 import com.tes.presentation.R
@@ -14,11 +15,13 @@ import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.vodleTypoGraphy
+import com.tes.presentation.utils.RecordingModule.recordingPermissionCheck
 import main.components.BasicDialog
 import main.components.ButtonComponent
 
 @Composable
 internal fun IntroDuctionDialog(viewModel: MainViewModel) {
+    val context = LocalContext.current
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
     ) {
@@ -37,10 +40,16 @@ internal fun IntroDuctionDialog(viewModel: MainViewModel) {
                 )
                 ButtonComponent(
                     buttonText = "보들 만들기",
-                    onClick = { viewModel.onTriggerEvent(MainViewEvent.OnClickMakingVodleButton) },
+                    onClick = {
+                        recordingPermissionCheck(context).fold(
+                            onSuccess = { viewModel.onTriggerEvent(MainViewEvent.OnClickMakingVodleButton) },
+                            onFailure = { viewModel.onTriggerEvent(MainViewEvent.ShowToast("마이크 권한 설정이 필요합니다"))}
+                        )
+                    },
                     buttonTextStyle = vodleTypoGraphy.titleMedium
                 )
             }
         }
     }
 }
+
