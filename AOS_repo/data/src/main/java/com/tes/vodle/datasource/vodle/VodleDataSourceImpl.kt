@@ -32,7 +32,7 @@ class VodleDataSourceImpl @Inject constructor(
                 recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
             val multipartBody: MultipartBody.Part =
                 MultipartBody.Part.createFormData(
-                    "audio_file",
+                    "sound_file",
                     recordingFile.getName(),
                     requestBody
                 )
