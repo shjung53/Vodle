@@ -1,5 +1,6 @@
 package com.tes.vodle.datasource.user
 
+import com.tes.vodle.model.user.response.MyVodleResponse
 import com.tes.vodle.model.user.response.TokenResponse
 
 interface UserDataSource {
@@ -17,4 +18,6 @@ interface UserDataSource {
         naverSecret: String,
         accessToken: String
     ): Result<Unit>
+
+    suspend fun fetchMyVodle(): Result<MyVodleResponse>
 }

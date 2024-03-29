@@ -1,6 +1,7 @@
 package com.tes.presentation.mypage
 
 import com.tes.presentation.composebase.ViewState
+import com.tes.presentation.model.VodleForLog
 
 sealed class MyPageViewState : ViewState {
     abstract val isLogin: Boolean
@@ -13,7 +14,7 @@ sealed class MyPageViewState : ViewState {
         MyPageViewState()
 
     data class VodleLog(
-        val vodleLogList: List<VodleLog>,
+        val vodleLogList: List<VodleForLog>,
         override val isLogin: Boolean = true,
         override val isTryingSignOut: Boolean = false
     ) :

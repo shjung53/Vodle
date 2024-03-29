@@ -8,13 +8,14 @@ data class VodlesAroundResponse(
 )
 
 data class VodleResponse(
-    @SerializedName("voiceId") val id: Long,
-    @SerializedName("writer") val writer: String,
-    @SerializedName("contentType") val category: String,
-    @SerializedName("address") val address: String,
-    @SerializedName("latitude") val latitude: Float,
-    @SerializedName("longitude") val longitude: Float,
-    @SerializedName("streamingURL") val streamingURL: String
+    @SerializedName("voiceId") val id: Long = -1,
+    @SerializedName("writer") val writer: String = "",
+    @SerializedName("contentType") val category: String = "",
+    @SerializedName("address") val address: String = "",
+    @SerializedName("latitude") val latitude: Float = 0f,
+    @SerializedName("longitude") val longitude: Float = 0f,
+    @SerializedName("streamingURL") val streamingURL: String = "",
+    @SerializedName("createdDate") val date: String = ""
 )
 
 data class DataHeader(
