@@ -36,6 +36,11 @@ class UserRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun logout(): Result<Unit> {
+        tokenManager.deleteTokens()
+        return Result.success(Unit)
+    }
+
     override suspend fun signOutWithNaver(
         naverClientId: String,
         naverSecret: String,
