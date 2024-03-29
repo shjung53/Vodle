@@ -1,5 +1,7 @@
 package com.tes.domain.repository
 
+import com.tes.domain.model.Vodle
+
 interface UserRepository {
 
     suspend fun signInNaver(code: String): Result<Unit>
@@ -13,4 +15,6 @@ interface UserRepository {
         naverSecret: String,
         accessToken: String
     ): Result<Unit>
+
+    suspend fun fetchMyVodle(): Result<List<Vodle>>
 }

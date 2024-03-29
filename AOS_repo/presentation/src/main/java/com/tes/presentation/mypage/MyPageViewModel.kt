@@ -1,10 +1,12 @@
 package com.tes.presentation.mypage
 
 import androidx.lifecycle.viewModelScope
+import com.tes.domain.usecase.user.FetchMyVodles
 import com.tes.domain.usecase.user.LogoutUseCase
 import com.tes.domain.usecase.user.SignOutNaverUseCase
 import com.tes.presentation.BuildConfig
 import com.tes.presentation.composebase.BaseViewModel
+import com.tes.presentation.model.VodleForLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,20 +14,49 @@ import javax.inject.Inject
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
-    private val singOutUseCase: SignOutNaverUseCase
+    private val singOutUseCase: SignOutNaverUseCase,
+    private val fetchMyVodles: FetchMyVodles
 ) : BaseViewModel<MyPageViewState, MyPageViewEvent>() {
     override fun createInitialState(): MyPageViewState = MyPageViewState.Default()
 
     override fun onTriggerEvent(event: MyPageViewEvent) {
         when (event) {
             MyPageViewEvent.OnClickLogout -> logout()
-            MyPageViewEvent.OnClickBackButton -> TODO()
             MyPageViewEvent.OnClickPrivacyPolicy -> TODO()
             is MyPageViewEvent.OnClickSignOut -> setState { tryingSignOut() }
-            MyPageViewEvent.OnClickMyVodleLog -> TODO()
+            MyPageViewEvent.OnClickMyVodleLog -> fetchMyVodleLogs()
             is MyPageViewEvent.ShowToast -> TODO()
             MyPageViewEvent.OnCancelSignOut -> setState { cancelSignOut() }
             is MyPageViewEvent.OnClickSignOutConfirm -> signOut(event.naverAccessToken)
+            MyPageViewEvent.OnClickBackButtonFromVodleLogView -> setState { backToMyPageView() }
+        }
+    }
+
+    private fun MyPageViewState.backToMyPageView(): MyPageViewState =
+        when (this) {
+            is MyPageViewState.Default -> this
+            is MyPageViewState.VodleLog -> MyPageViewState.Default()
+        }
+
+    private fun MyPageViewState.onSuccessFetchVodleLog(
+        vodleLogList: List<VodleForLog>
+    ): MyPageViewState =
+        when (this) {
+            is MyPageViewState.Default -> MyPageViewState.VodleLog(vodleLogList)
+            is MyPageViewState.VodleLog -> this
+        }
+
+    private fun fetchMyVodleLogs() {
+        viewModelScope.launch {
+            fetchMyVodles().fold(
+                onSuccess = { vodleList ->
+                    val vodleLogList = vodleList.map {
+                        VodleForLog(it.id, it.date, it.address)
+                    }
+                    setState { onSuccessFetchVodleLog(vodleLogList) }
+                },
+                onFailure = {}
+            )
         }
     }
 

@@ -1,6 +1,8 @@
 package com.tes.vodle.repository
 
 import com.tes.domain.TokenManager
+import com.tes.domain.model.Location
+import com.tes.domain.model.Vodle
 import com.tes.domain.repository.UserRepository
 import com.tes.vodle.datasource.user.UserDataSource
 import com.tes.vodle.util.Encryption.calculateHmac
@@ -54,5 +56,25 @@ class UserRepositoryImpl @Inject constructor(
             onFailure = {
                 Result.failure(it)
             }
+        )
+
+    override suspend fun fetchMyVodle(): Result<List<Vodle>> =
+        userDataSource.fetchMyVodle().fold(
+            onSuccess = { response ->
+                Result.success(
+                    response.dataBody.map {
+                        Vodle(
+                            it.id,
+                            it.date,
+                            it.address,
+                            it.writer,
+                            it.category,
+                            location = Location(it.latitude.toDouble(), it.longitude.toDouble()),
+                            it.streamingURL
+                        )
+                    }
+                )
+            },
+            onFailure = { Result.failure(it) }
         )
 }
