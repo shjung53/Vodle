@@ -11,10 +11,6 @@ object RecordingModule {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             // 권한이 이미 부여되었을 경우
@@ -30,4 +26,3 @@ object RecordingModule {
             Result.failure(Exception("Permissions not granted"))
         }
 }
-

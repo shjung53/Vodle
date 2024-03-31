@@ -25,7 +25,6 @@ sealed class MainViewState : ViewState {
         val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
         val location: Location,
         val audioDataList: List<AudioData> = emptyList(),
-        val convertedAudioList: List<File> = emptyList(),
         val recordingFile: File = File("none")
     ) : MainViewState()
 

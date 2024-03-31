@@ -1,6 +1,5 @@
 package com.tes.presentation.main.recording
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -42,7 +41,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.MainViewState
@@ -50,18 +49,15 @@ import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
-import com.tes.presentation.utils.createWavFile
-import com.tes.presentation.utils.toAudioFile
 import kotlinx.coroutines.launch
 import main.components.ButtonComponent
-import java.io.File
 
 @OptIn(UnstableApi::class)
 @Composable
 internal fun CreateVodleDialog(
     viewModel: MainViewModel,
     viewState: MainViewState.MakingVodle,
-    player: ExoPlayer
+    player: ExoPlayer,
 ) {
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
@@ -71,21 +67,9 @@ internal fun CreateVodleDialog(
         val currentProgress = remember { Animatable(0f) }
         val context = LocalContext.current
         val selectedVoice = remember { mutableIntStateOf(0) }
+        val dataSourceFactory = DefaultDataSource.Factory(context)
 
         PlayRecording(isPlaying, currentProgress)
-
-        LaunchedEffect(viewState.audioDataList) {
-            val newAudioFileList = mutableListOf<File>()
-            newAudioFileList.addAll(viewState.convertedAudioList)
-            viewState.audioDataList.forEach {
-                val outputFile = createWavFile(context)
-                it.audioDataString.toAudioFile(outputFile).fold(
-                    onSuccess = { file -> newAudioFileList.add(file) },
-                    onFailure = {}
-                )
-            }
-            viewModel.onTriggerEvent(MainViewEvent.OnFinishMakeConvertedFile(newAudioFileList))
-        }
 
         Box(
             modifier =
@@ -130,18 +114,12 @@ internal fun CreateVodleDialog(
                         )
                     ) {
                         if (isPlaying) {
-                            val dataSourceFactory = DefaultDataSource.Factory(context)
-                            Log.d(
-                                "확인",
-                                viewState.convertedAudioList[selectedVoice.intValue].absolutePath
-                            )
-                            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(viewState
-                                            .convertedAudioList[selectedVoice.intValue]
-                                            .absolutePath
+                            val hlsMediaSource =
+                                HlsMediaSource.Factory(dataSourceFactory)
+                                    .createMediaSource(
+                                        MediaItem.fromUri(viewState.audioDataList[selectedVoice.intValue].convertedAudioUrl)
                                     )
-                                )
-                            player.setMediaSource(mediaSource)
+                            player.setMediaSource(hlsMediaSource)
                             player.prepare()
                             player.play()
                             Icon(
@@ -186,7 +164,7 @@ internal fun CreateVodleDialog(
 @Composable
 private fun PlayRecording(
     isPlaying: Boolean,
-    progress: Animatable<Float, AnimationVector1D>
+    progress: Animatable<Float, AnimationVector1D>,
 ) {
     val coroutineScope = rememberCoroutineScope()
 

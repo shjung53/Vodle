@@ -44,8 +44,8 @@ class VodleRepositoryImpl @Inject constructor(
     override suspend fun convertVoice(recordingFile: File): Result<String> =
         vodleDataSource.convertVoice(recordingFile).fold(
             onSuccess = { it ->
-                Log.d("확인", it.data.convertedFile)
-                Result.success(it.data.convertedFile)
+                Log.d("확인", it.data.convertedFileUrl)
+                Result.success(it.data.convertedFileUrl)
             },
             onFailure = { exception ->
                 // 오류 처리

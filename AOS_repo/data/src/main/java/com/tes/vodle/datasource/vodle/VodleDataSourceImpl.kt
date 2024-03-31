@@ -33,7 +33,7 @@ class VodleDataSourceImpl @Inject constructor(
             val multipartBody: MultipartBody.Part =
                 MultipartBody.Part.createFormData(
                     "sound_file",
-                    recordingFile.getName(),
+                    recordingFile.name,
                     requestBody
                 )
             vodleService.convertVoice(multipartBody)

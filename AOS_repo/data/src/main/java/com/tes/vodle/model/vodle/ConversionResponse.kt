@@ -7,8 +7,7 @@ data class ConversionResponse(
 )
 
 data class ConversionData(
-    val convertedFile: String,
-    val fileName: String,
+    val convertedFileUrl: String,
     val selectedVoice: String,
     val contentType: String
 )

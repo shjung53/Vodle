@@ -1,6 +1,5 @@
 package com.tes.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.vodle.ConvertRecordingUseCase
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
@@ -8,10 +7,10 @@ import com.tes.domain.usecase.vodle.UploadVodleUseCase
 import com.tes.presentation.composebase.BaseViewModel
 import com.tes.presentation.main.recording.AudioData
 import com.tes.presentation.main.recording.RecordingStep
+import com.tes.presentation.main.recording.Url
 import com.tes.presentation.main.recording.VoiceType
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
-import com.tes.presentation.utils.AudioDataString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -41,21 +40,9 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             is MainViewEvent.OnClickSaveVodleButton -> saveVodle(event.recordingFile)
-            is MainViewEvent.OnFinishMakeConvertedFile -> setState {
-                onFinishMakeCnovertedFile(
-                    event.audioFileList
-                )
-            }
             is MainViewEvent.OnFailMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
         }
     }
-
-    private fun MainViewState.onFinishMakeCnovertedFile(audioFileList: List<File>): MainViewState =
-        when (this) {
-            is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> this.copy(convertedAudioList = audioFileList)
-            is MainViewState.ShowRecordedVodle -> this
-        }
 
     private fun searchVodlesAround() {
         viewModelScope.launch {
@@ -98,7 +85,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun convertRecording(recordingFile: File): Result<AudioDataString> =
+    private suspend fun convertRecording(recordingFile: File): Result<Url> =
         convertRecordingUseCase(recordingFile).fold(
             onSuccess = {
                 Result.success(it.toString())
@@ -112,7 +99,6 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             convertRecording(recordingFile).fold(
                 onSuccess = {
-                    Log.d("확인", it.toString())
                     setState { onFinishConversion(recordingFile, it) }
                 },
                 onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
@@ -122,7 +108,7 @@ class MainViewModel @Inject constructor(
 
     private fun MainViewState.onFinishConversion(
         recordingFile: File,
-        convertedAudioDataString: AudioDataString
+        convertedUrl: Url
     ): MainViewState {
         return when (this) {
             is MainViewState.Default -> this
@@ -131,11 +117,10 @@ class MainViewModel @Inject constructor(
                 newAudioFileList.add(recordingFile)
                 val audioDataList = mutableListOf<AudioData>()
                 audioDataList.add(AudioData(VoiceType.ORIGINAL, ""))
-                audioDataList.add(AudioData(VoiceType.MUNDO, convertedAudioDataString))
+                audioDataList.add(AudioData(VoiceType.MUNDO, convertedUrl))
                 this.copy(
                     recordingStep = RecordingStep.CREATE,
                     recordingFile = recordingFile,
-                    convertedAudioList = newAudioFileList,
                     audioDataList = audioDataList
                 )
             }

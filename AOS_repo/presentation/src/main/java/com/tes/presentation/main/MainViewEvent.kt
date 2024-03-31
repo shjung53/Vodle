@@ -22,8 +22,6 @@ sealed class MainViewEvent : ViewEvent {
     data class OnClickFinishRecordingButton(val recordingFile: File) : MainViewEvent()
     data class OnClickSaveVodleButton(val recordingFile: File) : MainViewEvent()
 
-    data class OnFinishMakeConvertedFile(val audioFileList: List<File>) : MainViewEvent()
-
     data class ShowToast(val message: String) : MainViewEvent()
 
     data object OnFinishToast : MainViewEvent()
