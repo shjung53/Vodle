@@ -35,13 +35,14 @@ fun BottomNavBarComponent(
     Box(
         modifier = modifier.then(
             Modifier
+                .border(
+                    BorderStroke(1.dp, color = main_coral_darken),
+                    shape = RoundedCornerShape(10)
+                )
                 .clip(shape = RoundedCornerShape(10.dp))
                 .fillMaxWidth(0.88f)
                 .wrapContentHeight()
-                .border(
-                    BorderStroke(1.dp, color = main_coral_darken),
-                    shape = RoundedCornerShape(12)
-                )
+
                 .background(color = Color.White)
         )
     ) {

@@ -24,7 +24,10 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.tes.presentation.R
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
+import com.tes.presentation.main.fetchLocationAndHandle
+import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
+import kotlinx.coroutines.CoroutineScope
 import ted.gun0912.clustering.naver.TedNaverClustering
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -32,6 +35,7 @@ import ted.gun0912.clustering.naver.TedNaverClustering
 internal fun VodleMap(
     viewModel: MainViewModel,
     vodleList: List<Vodle>,
+    scope: CoroutineScope,
     cameraPositionState: CameraPositionState
 ) {
     NaverMap(
@@ -51,6 +55,8 @@ internal fun VodleMap(
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<Vodle>?>(null) }
+        var myLocation : Location
+
         MapEffect(vodleList) { map ->
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<Vodle>(context, map)
@@ -67,7 +73,19 @@ internal fun VodleMap(
                         }
                     }
                     .markerClickListener {
-                        viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(it.location))
+                        fetchLocationAndHandle(
+                            scope,
+                            context,
+                            onSuccess = { location ->
+                                myLocation = location
+                                viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(myLocation,it.location))
+                            },
+                            onFailure = {
+                                viewModel.onTriggerEvent(
+                                    MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))
+                                )
+                            }
+                        )
                     }
                     .clusterAnimation(true)
                     .clickToCenter(true)

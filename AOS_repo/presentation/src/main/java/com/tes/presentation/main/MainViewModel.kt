@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(
                 event.gender
             )
 
-            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
+            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.myLocation,event.location) }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             is MainViewEvent.OnClickSaveVodleButton -> saveVodle(event.recordingFile)
@@ -254,12 +254,13 @@ private fun MainViewState.onStartRecord(location: Location): MainViewState {
     }
 }
 
-private fun MainViewState.onClickMarker(location: Location): MainViewState {
+private fun MainViewState.onClickMarker(myLocation: Location, location: Location): MainViewState {
     return when (this) {
         is MainViewState.Default -> MainViewState.ShowRecordedVodle(
             this.vodleMap,
             "",
-            this.vodleMap.get(location)!!
+            this.vodleMap.get(location)!!,
+            myLocation = myLocation
         )
 
         is MainViewState.MakingVodle -> this

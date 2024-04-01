@@ -3,9 +3,12 @@ package com.tes.presentation.main
 import android.content.Context
 import android.view.Gravity
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +36,7 @@ import com.tes.presentation.main.recording.CreateVodleDialog
 import com.tes.presentation.main.recording.IntroDuctionDialog
 import com.tes.presentation.main.recording.RecordingDialog
 import com.tes.presentation.main.recording.RecordingStep
+import com.tes.presentation.theme.main_coral_bright
 
 @Composable
 internal fun MainScreen(
@@ -52,9 +56,11 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    VodleMapClustering(viewModel, viewState, cameraPositionState)
+    VodleMapClustering(viewModel, viewState, scope,cameraPositionState)
 
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         SearchVodleButton(
             viewModel = viewModel,
             cameraPositionState = cameraPositionState,
@@ -78,24 +84,15 @@ internal fun MainScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         if (viewState is MainViewState.ShowRecordedVodle) {
-            player.pause()
-            player.stop()
-            Dialog(
-                onDismissRequest = {
-                    viewModel.onTriggerEvent(MainViewEvent.OnDismissVodleDialog)
-                }
-            ) {
-                (LocalView.current.parent as DialogWindowProvider).window.setDimAmount(0f)
-                (LocalView.current.parent as DialogWindowProvider).window.setGravity(Gravity.BOTTOM)
-                Column {
-                    VodleDialog(
-                        viewState,
-                        player,
-                        dataSourceFactory
-                    )
-                    Spacer(modifier = Modifier.height(90.dp))
-                }
-            }
+            VodleDialog(
+                viewModel = viewModel,
+                viewState = viewState,
+                context = context,
+                myLocation = viewState.myLocation,
+                scope = scope,
+                player = player,
+                dataSourceFactory = dataSourceFactory
+            )
         }
 
         BottomButtonGroup(
