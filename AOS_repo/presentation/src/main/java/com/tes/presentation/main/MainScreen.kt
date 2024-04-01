@@ -1,7 +1,6 @@
 package com.tes.presentation.main
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -121,7 +120,6 @@ internal fun MainScreen(
     }
 
     if (viewState.isLoading) {
-        Log.d("확인", viewState.isLoading.toString())
         LoadingScreen()
     }
 }

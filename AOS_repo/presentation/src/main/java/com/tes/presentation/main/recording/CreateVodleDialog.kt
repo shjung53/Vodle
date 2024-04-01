@@ -24,11 +24,11 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.media3.common.MediaItem
-import androidx.media3.common.util.Log
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -45,6 +45,7 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.MainViewState
+import com.tes.presentation.main.components.LoadingScreen
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
@@ -63,13 +64,48 @@ internal fun CreateVodleDialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
     ) {
         val writer = remember { mutableStateOf("") }
-        var isPlaying by remember { mutableStateOf(false) }
+        val isPlaying = remember { mutableStateOf(false) }
+        val audioDuration = remember { mutableIntStateOf(0) }
         val currentProgress = remember { Animatable(0f) }
         val context = LocalContext.current
         val dataSourceFactory = DefaultDataSource.Factory(context)
+        val playerLoad = remember { mutableStateOf(false) }
 
-        PlayRecording(isPlaying, currentProgress)
+        LaunchedEffect(isPlaying.value) {
+            if (isPlaying.value) {
+                val hlsMediaSource =
+                    HlsMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(
+                            MediaItem.fromUri(
+                                viewState.convertedAudio.convertedAudioUrl
+                            )
+                        )
+                player.setMediaSource(hlsMediaSource)
+                player.prepare()
+                playerLoad.value = true
+            } else {
+                player.pause()
+                player.stop()
+                playerLoad.value = false
+            }
+        }
 
+        player.addListener(object : Player.Listener {
+            @Deprecated("Deprecated in Java")
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playbackState == Player.STATE_READY) {
+                    player.play()
+                    audioDuration.intValue = player.duration.toInt()
+                    playerLoad.value = false
+                }
+
+                if (playbackState == Player.STATE_ENDED) {
+                    audioDuration.intValue = 0
+                }
+            }
+        })
+
+        ProgressBarAnimation(isPlaying, audioDuration.intValue, currentProgress)
         Box(
             modifier =
             Modifier
@@ -100,7 +136,7 @@ internal fun CreateVodleDialog(
                 ) {
                     IconButton(
                         onClick = {
-                            isPlaying = !isPlaying
+                            isPlaying.value = !isPlaying.value
                         },
                         modifier = Modifier.align(Alignment.CenterVertically),
                         colors = IconButtonDefaults.iconButtonColors(
@@ -110,26 +146,13 @@ internal fun CreateVodleDialog(
                             disabledContainerColor = Color.White
                         )
                     ) {
-                        if (isPlaying) {
-                            val hlsMediaSource =
-                                HlsMediaSource.Factory(dataSourceFactory)
-                                    .createMediaSource(
-                                        MediaItem.fromUri(
-                                            viewState.convertedAudio.convertedAudioUrl
-                                        )
-                                    )
-                            Log.d("확인", viewState.convertedAudio.convertedAudioUrl)
-                            player.setMediaSource(hlsMediaSource)
-                            player.prepare()
-                            player.play()
+                        if (isPlaying.value) {
                             Icon(
                                 imageVector = Icons.Default.Stop,
                                 contentDescription = "stopButton",
                                 modifier = Modifier.fillMaxWidth()
                             )
                         } else {
-                            player.pause()
-                            player.stop()
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
                                 contentDescription = "playButton",
@@ -158,30 +181,34 @@ internal fun CreateVodleDialog(
                 )
             }
         }
+
+        if (playerLoad.value) {
+            LoadingScreen()
+        }
     }
 }
 
 @Composable
-private fun PlayRecording(
-    isPlaying: Boolean,
+private fun ProgressBarAnimation(
+    isPlaying: MutableState<Boolean>,
+    audioDuration: Int,
     progress: Animatable<Float, AnimationVector1D>
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            // isPlaying이 true일 때 애니메이션 시작
+    LaunchedEffect(audioDuration) {
+        if (audioDuration > 0) {
             coroutineScope.launch {
                 progress.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(
-                        durationMillis = 15000,
+                        durationMillis = audioDuration,
                         easing = LinearEasing
                     )
                 )
             }
         } else {
-            // isPlaying이 false일 때 애니메이션 중지 및 초기화
+            isPlaying.value = false
             progress.snapTo(0f)
         }
     }

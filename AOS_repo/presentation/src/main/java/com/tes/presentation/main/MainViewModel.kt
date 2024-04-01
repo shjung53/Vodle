@@ -185,7 +185,12 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onFailMakingVodle(toastMessage: String): MainViewState =
         when (this) {
             is MainViewState.Default -> this.copy(isLoading = false)
-            is MainViewState.MakingVodle -> MainViewState.Default(vodleMap, toastMessage, vodleList, isLoading = false)
+            is MainViewState.MakingVodle -> MainViewState.Default(
+                vodleMap,
+                toastMessage,
+                vodleList,
+                isLoading = false
+            )
             is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
 }

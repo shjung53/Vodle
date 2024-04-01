@@ -92,7 +92,9 @@ internal fun RecordingDialog(viewModel: MainViewModel, viewState: MainViewState.
                         recorder.stopRecording(isRecording)
                         viewModel.onTriggerEvent(
                             MainViewEvent.OnClickFinishRecordingButton(
-                                recordingFile, viewState.selectedVoiceType, viewState.gender
+                                recordingFile,
+                                viewState.selectedVoiceType,
+                                viewState.gender
                             )
                         )
                     },
@@ -125,12 +127,11 @@ private fun StartRecording(
         setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
 
         prepare()
-
         start()
     }
 
     LaunchedEffect(isRecording) {
-        val prgressAnimation = coroutineScope.launch {
+        val progressAnimation = coroutineScope.launch {
             progress.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
@@ -141,13 +142,15 @@ private fun StartRecording(
             recorder.stopRecording(isRecording)
             viewModel.onTriggerEvent(
                 MainViewEvent.OnClickFinishRecordingButton(
-                    audioFile, viewState.selectedVoiceType, viewState.gender
+                    audioFile,
+                    viewState.selectedVoiceType,
+                    viewState.gender
                 )
             )
         }
 
         if (!isRecording.value) {
-            prgressAnimation.cancel()
+            progressAnimation.cancel()
             recorder.stopRecording(isRecording)
         }
     }

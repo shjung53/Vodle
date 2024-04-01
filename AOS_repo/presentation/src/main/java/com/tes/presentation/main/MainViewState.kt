@@ -18,7 +18,8 @@ sealed class MainViewState : ViewState {
     data class Default(
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val toastMessage: String? = null,
-        override val vodleList: List<Vodle> = emptyList(), override val isLoading: Boolean = false
+        override val vodleList: List<Vodle> = emptyList(),
+        override val isLoading: Boolean = false
     ) : MainViewState()
 
     data class MakingVodle(
@@ -30,12 +31,14 @@ sealed class MainViewState : ViewState {
         val convertedAudio: AudioData,
         val recordingFile: File = File("none"),
         val selectedVoiceType: VoiceType = VoiceType.ORIGINAL,
-        val gender: Gender = Gender.Male, override val isLoading: Boolean = false
+        val gender: Gender = Gender.Male,
+        override val isLoading: Boolean = false
     ) : MainViewState()
 
     data class ShowRecordedVodle(
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val toastMessage: String? = null,
-        override val vodleList: List<Vodle>, override val isLoading: Boolean = false
+        override val vodleList: List<Vodle>,
+        override val isLoading: Boolean = false
     ) : MainViewState()
 }

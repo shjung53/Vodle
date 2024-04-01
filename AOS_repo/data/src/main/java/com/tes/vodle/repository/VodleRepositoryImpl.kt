@@ -1,6 +1,5 @@
 package com.tes.vodle.repository
 
-import android.util.Log
 import com.tes.domain.model.AudioData
 import com.tes.domain.model.Gender
 import com.tes.domain.model.Location
@@ -59,8 +58,6 @@ class VodleRepositoryImpl @Inject constructor(
                 )
             },
             onFailure = { exception ->
-                Log.d("확인", "데이터소스에서 삑")
-                // 오류 처리
                 Result.failure(exception)
             }
         )

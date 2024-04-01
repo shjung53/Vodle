@@ -10,5 +10,5 @@ data class ConversionResponse(
 
 data class ConversionData(
     @SerializedName("convertedFileUrl")val convertedFileUrl: String,
-    @SerializedName("selectedVoice")val selectedVoice: String,
+    @SerializedName("selectedVoice")val selectedVoice: String
 )

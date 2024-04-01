@@ -47,9 +47,12 @@ fun VoiceSelector(selectedVoice: MutableIntState, voiceTypeList: List<VoiceType>
 
             Image(
                 modifier = Modifier.clickable {
-                    if (selectedVoice.intValue < voiceTypeList.lastIndex) selectedVoice.intValue += 1
+                    if (selectedVoice.intValue < voiceTypeList.lastIndex) {
+                        selectedVoice.intValue += 1
+                    }
                 },
-                painter = painterResource(id = R.drawable.right_arrow), contentDescription = null
+                painter = painterResource(id = R.drawable.right_arrow),
+                contentDescription = null
             )
         }
 
