@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -187,6 +188,7 @@ fun VodleListDialogComponent(
                                 .createMediaSource(
                                     MediaItem.fromUri(vodleList.get(index).streamingURL)
                                 )
+                        Log.d("확인", vodleList.get(index).streamingURL)
                         player.setMediaSource(hlsMediaSource)
                         player.prepare()
                         player.play()

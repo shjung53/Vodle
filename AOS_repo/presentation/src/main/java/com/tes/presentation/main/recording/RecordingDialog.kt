@@ -28,6 +28,7 @@ import androidx.compose.ui.window.Dialog
 import com.tes.presentation.R
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
+import com.tes.presentation.main.MainViewState
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.lightGrey
 import com.tes.presentation.theme.vodleTypoGraphy
@@ -38,7 +39,7 @@ import main.components.ButtonComponent
 import java.io.File
 
 @Composable
-internal fun RecordingDialog(viewModel: MainViewModel) {
+internal fun RecordingDialog(viewModel: MainViewModel, viewState: MainViewState.MakingVodle) {
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
     ) {
@@ -91,7 +92,7 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
                         recorder.stopRecording(isRecording)
                         viewModel.onTriggerEvent(
                             MainViewEvent.OnClickFinishRecordingButton(
-                                recordingFile
+                                recordingFile, viewState.selectedVoiceType, viewState.gender
                             )
                         )
                     },
@@ -101,7 +102,7 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
         }
 
         if (isRecording.value) {
-            StartRecording(viewModel, recordingFile, recorder, progress, isRecording)
+            StartRecording(viewModel, viewState, recordingFile, recorder, progress, isRecording)
         }
     }
 }
@@ -109,6 +110,7 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
 @Composable
 private fun StartRecording(
     viewModel: MainViewModel,
+    viewState: MainViewState.MakingVodle,
     audioFile: File,
     recorder: MediaRecorder,
     progress: Animatable<Float, AnimationVector1D>,
@@ -139,7 +141,7 @@ private fun StartRecording(
             recorder.stopRecording(isRecording)
             viewModel.onTriggerEvent(
                 MainViewEvent.OnClickFinishRecordingButton(
-                    audioFile
+                    audioFile, viewState.selectedVoiceType, viewState.gender
                 )
             )
         }

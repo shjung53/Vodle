@@ -26,11 +26,11 @@ interface VodleService {
      * "ahri", "mundo", "optimusPrime", "trump", "elsa" 중 하나의 목소리 선택
      */
     @Multipart
-    @POST("api/vodle/conversion/{selected_voice}/{pitch_change}")
+    @POST("api/vodle/conversion/{selected_voice}/{gender}")
     suspend fun convertVoice(
         @Part soundFile: MultipartBody.Part,
         @Path(value = "selected_voice") selectedVoice: String = "mundo",
-        @Path(value = "pitch_change") pitch: Int = 0
+        @Path(value = "gender") gender: String = "male"
     ): ConversionResponse
 }
 

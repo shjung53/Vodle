@@ -1,6 +1,8 @@
 package com.tes.vodle.repository
 
+import android.util.Log
 import com.tes.domain.model.AudioData
+import com.tes.domain.model.Gender
 import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.VodleRepository
@@ -42,19 +44,22 @@ class VodleRepositoryImpl @Inject constructor(
             }
         )
 
-    override suspend fun convertVoice(recordingFile: File): Result<List<AudioData>> =
-        vodleDataSource.convertVoice(recordingFile).fold(
+    override suspend fun convertVoice(
+        recordingFile: File,
+        selectedVoice: String,
+        gender: Gender
+    ): Result<AudioData> =
+        vodleDataSource.convertVoice(recordingFile, selectedVoice, gender).fold(
             onSuccess = { it ->
                 Result.success(
-                    it.data.map {
-                        AudioData(
-                            it.selectedVoice.toVoiceType(),
-                            it.convertedFileUrl
-                        )
-                    }
+                    AudioData(
+                        it.data.selectedVoice.toVoiceType(),
+                        it.data.convertedFileUrl
+                    )
                 )
             },
             onFailure = { exception ->
+                Log.d("확인", "데이터소스에서 삑")
                 // 오류 처리
                 Result.failure(exception)
             }

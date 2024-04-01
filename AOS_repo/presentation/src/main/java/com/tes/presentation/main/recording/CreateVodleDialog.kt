@@ -25,7 +25,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -66,7 +66,6 @@ internal fun CreateVodleDialog(
         var isPlaying by remember { mutableStateOf(false) }
         val currentProgress = remember { Animatable(0f) }
         val context = LocalContext.current
-        val selectedVoice = remember { mutableIntStateOf(0) }
         val dataSourceFactory = DefaultDataSource.Factory(context)
 
         PlayRecording(isPlaying, currentProgress)
@@ -116,9 +115,10 @@ internal fun CreateVodleDialog(
                                 HlsMediaSource.Factory(dataSourceFactory)
                                     .createMediaSource(
                                         MediaItem.fromUri(
-                                            viewState.audioDataList[selectedVoice.intValue].convertedAudioUrl
+                                            viewState.convertedAudio.convertedAudioUrl
                                         )
                                     )
+                            Log.d("확인", viewState.convertedAudio.convertedAudioUrl)
                             player.setMediaSource(hlsMediaSource)
                             player.prepare()
                             player.play()
