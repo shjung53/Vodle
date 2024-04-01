@@ -30,7 +30,11 @@ class MainViewModel @Inject constructor(
         when (event) {
             MainViewEvent.OnClickHeadPhoneButton -> TODO()
             is MainViewEvent.OnClickRecordingButton -> setState { onStartRecord(event.location) }
-            is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround()
+            is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround(
+                event.centerLocation,
+                event.northEastLocation,
+                event.southWestLocation
+            )
             MainViewEvent.OnClickWriteButton -> TODO()
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
@@ -65,9 +69,13 @@ class MainViewModel @Inject constructor(
             is MainViewState.ShowRecordedVodle -> this
         }
 
-    private fun searchVodlesAround() {
+    private fun searchVodlesAround(
+        centerLocation: Location,
+        northEastLocation: Location,
+        southWestLocation: Location
+    ) {
         viewModelScope.launch {
-            fetchVodlesAroundUseCase().fold(
+            fetchVodlesAroundUseCase(centerLocation, northEastLocation, southWestLocation).fold(
                 onSuccess = { it ->
                     val vodleList = it.map {
                         Vodle(
@@ -258,7 +266,7 @@ private fun MainViewState.onClickMarker(myLocation: Location, location: Location
         is MainViewState.Default -> MainViewState.ShowRecordedVodle(
             this.vodleMap,
             "",
-            this.vodleMap.get(location)!!,
+            this.vodleMap[location]!!,
             myLocation = myLocation
         )
 

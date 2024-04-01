@@ -8,7 +8,11 @@ import java.io.File
 
 sealed class MainViewEvent : ViewEvent {
 
-    data class OnClickSearchVodleButton(val location: Location, val radius: Long) : MainViewEvent()
+    data class OnClickSearchVodleButton(
+        val centerLocation: Location,
+        val northEastLocation: Location,
+        val southWestLocation: Location
+    ) : MainViewEvent()
 
     data object OnClickWriteButton : MainViewEvent()
 
