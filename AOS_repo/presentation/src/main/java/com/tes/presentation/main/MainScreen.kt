@@ -25,6 +25,7 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import com.tes.presentation.main.components.BottomButtonGroup
 import com.tes.presentation.main.components.CalendarButton
 import com.tes.presentation.main.components.CurrentLocationButton
+import com.tes.presentation.main.components.LoadingScreen
 import com.tes.presentation.main.components.SearchVodleButton
 import com.tes.presentation.main.components.VodleDialog
 import com.tes.presentation.main.components.VodleMapClustering
@@ -109,13 +110,17 @@ internal fun MainScreen(
     if (viewState is MainViewState.MakingVodle) {
         when (viewState.recordingStep) {
             RecordingStep.INTRODUCTION -> IntroDuctionDialog(viewModel, viewState)
-            RecordingStep.RECORDING -> RecordingDialog(viewModel)
+            RecordingStep.RECORDING -> RecordingDialog(viewModel, viewState)
             RecordingStep.CREATE -> CreateVodleDialog(
                 viewModel,
                 viewState,
                 player
             )
         }
+    }
+
+    if (viewState.isLoading) {
+        LoadingScreen()
     }
 }
 

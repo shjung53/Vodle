@@ -1,5 +1,6 @@
 package com.tes.vodle.datasource.vodle
 
+import com.tes.domain.model.Gender
 import com.tes.vodle.api.VodleMetaData
 import com.tes.vodle.api.VodleService
 import com.tes.vodle.model.BasicResponse
@@ -26,7 +27,11 @@ class VodleDataSourceImpl @Inject constructor(
         vodleService.uploadVodle(multipartBody, VodleMetaData())
     }
 
-    override suspend fun convertVoice(recordingFile: File): Result<ConversionResponse> =
+    override suspend fun convertVoice(
+        recordingFile: File,
+        selectedVoice: String,
+        gender: Gender
+    ): Result<ConversionResponse> =
         runCatching {
             val requestBody: RequestBody =
                 recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
@@ -36,6 +41,6 @@ class VodleDataSourceImpl @Inject constructor(
                     recordingFile.name,
                     requestBody
                 )
-            vodleService.convertVoice(multipartBody)
+            vodleService.convertVoice(multipartBody, selectedVoice, gender.value)
         }
 }

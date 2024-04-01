@@ -36,7 +36,12 @@ class MainViewModel @Inject constructor(
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
-            is MainViewEvent.OnClickFinishRecordingButton -> finishRecording(event.recordingFile)
+            is MainViewEvent.OnClickFinishRecordingButton -> finishRecording(
+                event.recordingFile,
+                event.selectedVoiceType,
+                event.gender
+            )
+
             is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.location) }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
@@ -102,47 +107,55 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun convertRecording(recordingFile: File): Result<Url> =
-        convertRecordingUseCase(recordingFile).fold(
+    private suspend fun convertRecording(
+        recordingFile: File,
+        selectedVoice: VoiceType,
+        gender: Gender
+    ): Result<String> =
+        convertRecordingUseCase(recordingFile, selectedVoice.eng, gender).fold(
             onSuccess = {
-                Result.success(it.toString())
+                Result.success(it.convertedAudioUrl)
             },
             onFailure = {
                 Result.failure(it)
             }
         )
 
-    private fun finishRecording(recordingFile: File) {
+    private fun finishRecording(recordingFile: File, selectedVoice: VoiceType, gender: Gender) {
         viewModelScope.launch {
-            convertRecording(recordingFile).fold(
+            setState { setLoading() }
+            convertRecording(recordingFile, selectedVoice, gender).fold(
                 onSuccess = {
-                    setState { onFinishConversion(recordingFile, it) }
+                    setState { onFinishConversion(selectedVoice, it) }
                 },
                 onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
             )
         }
     }
 
+    private fun MainViewState.setLoading(): MainViewState =
+        when (this) {
+            is MainViewState.Default -> this.copy(isLoading = true)
+            is MainViewState.MakingVodle -> this.copy(isLoading = true)
+            is MainViewState.ShowRecordedVodle -> this.copy(isLoading = true)
+        }
+
     private fun MainViewState.onFinishConversion(
-        recordingFile: File,
+        voiceType: VoiceType,
         convertedUrl: Url
     ): MainViewState {
         return when (this) {
             is MainViewState.Default -> this
             is MainViewState.MakingVodle -> {
-                val newAudioFileList = mutableListOf<File>()
-                newAudioFileList.add(recordingFile)
-                val audioDataList = mutableListOf<AudioData>()
-                audioDataList.add(AudioData(VoiceType.ORIGINAL, ""))
-                audioDataList.add(AudioData(VoiceType.MUNDO, convertedUrl))
                 this.copy(
                     recordingStep = RecordingStep.CREATE,
                     recordingFile = recordingFile,
-                    audioDataList = audioDataList
+                    convertedAudio = AudioData(voiceType, convertedUrl),
+                    isLoading = false
                 )
             }
 
-            is MainViewState.ShowRecordedVodle -> this
+            is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
     }
 
@@ -160,20 +173,25 @@ class MainViewModel @Inject constructor(
 
     private fun MainViewState.onSuccessSaveVodle(): MainViewState {
         return when (this) {
-            is MainViewState.Default -> this
+            is MainViewState.Default -> this.copy(isLoading = false)
             is MainViewState.MakingVodle -> {
-                MainViewState.Default(this.vodleMap, vodleList = this.vodleList)
+                MainViewState.Default(this.vodleMap, vodleList = this.vodleList, isLoading = false)
             }
 
-            is MainViewState.ShowRecordedVodle -> this
+            is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
     }
 
     private fun MainViewState.onFailMakingVodle(toastMessage: String): MainViewState =
         when (this) {
-            is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> MainViewState.Default(vodleMap, toastMessage, vodleList)
-            is MainViewState.ShowRecordedVodle -> this
+            is MainViewState.Default -> this.copy(isLoading = false)
+            is MainViewState.MakingVodle -> MainViewState.Default(
+                vodleMap,
+                toastMessage,
+                vodleList,
+                isLoading = false
+            )
+            is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
 }
 
@@ -183,13 +201,13 @@ private fun MainViewState.updateVodles(
 ): MainViewState {
     return when (this) {
         is MainViewState.Default -> {
-            this.copy(vodleMap = vodleMap, vodleList = vodleList)
+            this.copy(vodleMap = vodleMap, vodleList = vodleList, isLoading = false)
         }
 
-        is MainViewState.MakingVodle -> this
+        is MainViewState.MakingVodle -> this.copy(isLoading = false)
 
         is MainViewState.ShowRecordedVodle -> {
-            this.copy(vodleMap = vodleMap, vodleList = vodleList)
+            this.copy(vodleMap = vodleMap, vodleList = vodleList, isLoading = false)
         }
     }
 }
@@ -222,14 +240,16 @@ private fun MainViewState.onStartRecord(location: Location): MainViewState {
     return when (this) {
         is MainViewState.Default -> MainViewState.MakingVodle(
             this.vodleMap,
-            location = location
+            location = location,
+            convertedAudio = AudioData()
         )
 
         is MainViewState.MakingVodle -> this
 
         is MainViewState.ShowRecordedVodle -> MainViewState.MakingVodle(
             this.vodleMap,
-            location = location
+            location = location,
+            convertedAudio = AudioData()
         )
     }
 }

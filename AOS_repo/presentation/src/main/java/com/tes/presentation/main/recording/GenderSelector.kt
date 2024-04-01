@@ -20,8 +20,12 @@ import com.tes.presentation.theme.vodleTypoGraphy
 internal fun GenderSelector(selectedGender: MutableState<Gender>) {
     SelectionContainer {
         Row {
-            GenderText("남성", selectedGender.value == Gender.Male) { selectedGender.value = Gender.Male }
-            GenderText("여성", selectedGender.value == Gender.Female) { selectedGender.value = Gender.Female }
+            GenderText("남성", selectedGender.value == Gender.Male) {
+                selectedGender.value = Gender.Male
+            }
+            GenderText("여성", selectedGender.value == Gender.Female) {
+                selectedGender.value = Gender.Female
+            }
         }
     }
 }

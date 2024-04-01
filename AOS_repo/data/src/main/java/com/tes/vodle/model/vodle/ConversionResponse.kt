@@ -1,13 +1,14 @@
 package com.tes.vodle.model.vodle
 
+import com.google.gson.annotations.SerializedName
+
 data class ConversionResponse(
-    val status: Int,
-    val message: String,
-    val data: List<ConversionData>
+    @SerializedName("status") val status: Int,
+    @SerializedName("message")val message: String,
+    @SerializedName("data")val data: ConversionData
 )
 
 data class ConversionData(
-    val convertedFileUrl: String,
-    val selectedVoice: String,
-    val contentType: String
+    @SerializedName("convertedFileUrl")val convertedFileUrl: String,
+    @SerializedName("selectedVoice")val selectedVoice: String
 )

@@ -1,5 +1,6 @@
 package com.tes.vodle.datasource.vodle
 
+import com.tes.domain.model.Gender
 import com.tes.vodle.model.BasicResponse
 import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.VodlesAroundResponse
@@ -11,5 +12,5 @@ interface VodleDataSource {
 
     suspend fun uploadVodle(recordingFile: File): Result<BasicResponse>
 
-    suspend fun convertVoice(recordingFile: File): Result<ConversionResponse>
+    suspend fun convertVoice(recordingFile: File, selectedVoice: String, gender: Gender): Result<ConversionResponse>
 }
