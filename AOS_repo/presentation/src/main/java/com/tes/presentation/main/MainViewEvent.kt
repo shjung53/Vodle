@@ -16,8 +16,6 @@ sealed class MainViewEvent : ViewEvent {
 
     data class OnClickRecordingButton(val location: Location) : MainViewEvent()
 
-    data object OnClickUserButton : MainViewEvent()
-
     data object OnDismissRecordingDialog : MainViewEvent()
 
     data object OnClickMakingVodleButton : MainViewEvent()
