@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -48,6 +49,8 @@ object NetworkModule {
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.apply {
+            readTimeout(60, TimeUnit.SECONDS)
+            connectTimeout(60, TimeUnit.SECONDS)
             addInterceptor(authInterceptor)
             addInterceptor(loggingInterceptor)
             authenticator(authAuthenticator)

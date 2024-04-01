@@ -1,90 +1,58 @@
 package com.tes.presentation.main.recording
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.tes.presentation.R
+import com.tes.presentation.model.VoiceType
 import com.tes.presentation.theme.vodleTypoGraphy
-import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 @Composable
-fun VoiceSelector() {
-    Column {
+fun VoiceSelector(selectedVoice: MutableIntState, voiceTypeList: List<VoiceType>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    ) {
         Line()
 
-        val itemsList = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        val selectedVoice = remember { mutableIntStateOf(0) }
-        val coroutineScope = rememberCoroutineScope()
-        val listState = rememberLazyListState()
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                modifier = Modifier.clickable {
+                    if (selectedVoice.intValue > 0) selectedVoice.intValue -= 1
+                },
+                painter = painterResource(id = R.drawable.left_arrow),
+                contentDescription = null
+            )
 
-        val configuration = LocalConfiguration.current
-        val screenWidth = configuration.screenWidthDp.dp
-        val halfScreenWidth = screenWidth / 2
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 4.dp),
+                text = voiceTypeList[selectedVoice.intValue].korean,
+                style = vodleTypoGraphy.titleMedium,
+                textAlign = TextAlign.Center
+            )
 
-        LaunchedEffect(listState.isScrollInProgress) {
-            val visibleItems = listState.layoutInfo.visibleItemsInfo
-            if (visibleItems.isNotEmpty()) {
-                val centerItem = visibleItems.minByOrNull {
-                    abs(
-                        (it.offset + it.size / 2) -
-                            (listState.layoutInfo.viewportStartOffset + halfScreenWidth.value / 2)
-                    )
-                }
-                centerItem?.let {
-                    coroutineScope.launch {
-                        listState.animateScrollToItem(it.index)
-                        selectedVoice.intValue = it.index
-                    }
-                }
-            }
-        }
-
-        LazyRow(state = listState, contentPadding = PaddingValues(horizontal = 12.dp)) {
-            items(itemsList.size) { index ->
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .width(100.dp)
-                ) {
-                    Text(
-                        text = itemsList[index],
-                        style = if (listState.isItemCentered(index)) {
-                            vodleTypoGraphy.bodyMedium
-                        } else {
-                            vodleTypoGraphy.titleMedium
-                        }
-                    )
-                }
-            }
+            Image(
+                modifier = Modifier.clickable {
+                    if (selectedVoice.intValue < voiceTypeList.lastIndex) selectedVoice.intValue += 1
+                },
+                painter = painterResource(id = R.drawable.right_arrow), contentDescription = null
+            )
         }
 
         Line()
     }
-}
-
-fun LazyListState.isItemCentered(index: Int): Boolean {
-    val visibleItemsInfo = layoutInfo.visibleItemsInfo
-    if (visibleItemsInfo.isNotEmpty()) {
-        val screenWidth = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
-        val centerItemInfo = visibleItemsInfo.firstOrNull {
-            val itemCenter = it.offset + it.size / 2
-            itemCenter in (screenWidth / 2 - it.size / 2)..(screenWidth / 2 + it.size / 2)
-        }
-        return centerItemInfo?.index == index
-    }
-    return false
 }

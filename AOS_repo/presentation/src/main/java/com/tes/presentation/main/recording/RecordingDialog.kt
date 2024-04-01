@@ -1,6 +1,5 @@
 package com.tes.presentation.main.recording
 
-import android.content.Context
 import android.media.MediaRecorder
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -32,13 +31,11 @@ import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.lightGrey
 import com.tes.presentation.theme.vodleTypoGraphy
+import com.tes.presentation.utils.createM4aFile
 import kotlinx.coroutines.launch
 import main.components.BasicDialog
 import main.components.ButtonComponent
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 internal fun RecordingDialog(viewModel: MainViewModel) {
@@ -48,7 +45,7 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
         val context = LocalContext.current
         val progress = remember { Animatable(0f) }
         val isRecording = remember { mutableStateOf(true) }
-        val recordingFile = createAudioFile(context)
+        val recordingFile = createM4aFile(context)
         val recorder = MediaRecorder()
 
         BasicDialog {
@@ -104,13 +101,14 @@ internal fun RecordingDialog(viewModel: MainViewModel) {
         }
 
         if (isRecording.value) {
-            StartRecording(recordingFile, recorder, progress, isRecording)
+            StartRecording(viewModel, recordingFile, recorder, progress, isRecording)
         }
     }
 }
 
 @Composable
 private fun StartRecording(
+    viewModel: MainViewModel,
     audioFile: File,
     recorder: MediaRecorder,
     progress: Animatable<Float, AnimationVector1D>,
@@ -139,6 +137,11 @@ private fun StartRecording(
                 )
             )
             recorder.stopRecording(isRecording)
+            viewModel.onTriggerEvent(
+                MainViewEvent.OnClickFinishRecordingButton(
+                    audioFile
+                )
+            )
         }
 
         if (!isRecording.value) {
@@ -154,12 +157,4 @@ private fun MediaRecorder.stopRecording(isRecording: MutableState<Boolean>) {
         this.stop()
         this.release()
     }
-}
-
-private fun createAudioFile(context: Context): File {
-    val timeStamp: String =
-        SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val audioFileName = "AUDIO_$timeStamp"
-    val cacheDir: File = context.cacheDir
-    return File.createTempFile(audioFileName, ".m4a", cacheDir)
 }

@@ -6,10 +6,10 @@ import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.tes.presentation.LocationModule
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.lat
 import com.tes.presentation.model.lng
+import com.tes.presentation.utils.LocationModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +44,4 @@ internal fun fetchLocationAndHandle(
             withContext(Dispatchers.Main) { onFailure() }
         }
     }
-}
-
-internal fun showRecordedVodleDialog() {
 }

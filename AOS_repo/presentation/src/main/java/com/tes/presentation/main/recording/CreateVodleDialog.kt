@@ -25,6 +25,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,11 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import com.tes.presentation.main.MainViewEvent
@@ -55,8 +57,7 @@ import main.components.ButtonComponent
 internal fun CreateVodleDialog(
     viewModel: MainViewModel,
     viewState: MainViewState.MakingVodle,
-    player: ExoPlayer,
-    dataSourceFactory: DataSource.Factory
+    player: ExoPlayer
 ) {
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
@@ -64,12 +65,11 @@ internal fun CreateVodleDialog(
         val writer = remember { mutableStateOf("") }
         var isPlaying by remember { mutableStateOf(false) }
         val currentProgress = remember { Animatable(0f) }
+        val context = LocalContext.current
+        val selectedVoice = remember { mutableIntStateOf(0) }
+        val dataSourceFactory = DefaultDataSource.Factory(context)
 
-        if (isPlaying) {
-            PlayVoice(isPlaying, currentProgress)
-        } else {
-            PlayVoice(isPlaying, currentProgress)
-        }
+        PlayRecording(isPlaying, currentProgress)
 
         Box(
             modifier =
@@ -91,8 +91,6 @@ internal fun CreateVodleDialog(
                 WriterRow(writer = writer)
 
                 Spacer(modifier = Modifier.height(32.dp))
-
-                VoiceSelector()
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -116,7 +114,11 @@ internal fun CreateVodleDialog(
                         if (isPlaying) {
                             val hlsMediaSource =
                                 HlsMediaSource.Factory(dataSourceFactory)
-                                    .createMediaSource(MediaItem.fromUri(viewState.streamingUrl))
+                                    .createMediaSource(
+                                        MediaItem.fromUri(
+                                            viewState.audioDataList[selectedVoice.intValue].convertedAudioUrl
+                                        )
+                                    )
                             player.setMediaSource(hlsMediaSource)
                             player.prepare()
                             player.play()
@@ -147,7 +149,11 @@ internal fun CreateVodleDialog(
 
                 ButtonComponent(
                     buttonText = "저장하기",
-                    onClick = { viewModel.onTriggerEvent(MainViewEvent.OnClickSaveVodleButton) },
+                    onClick = {
+                        viewModel.onTriggerEvent(
+                            MainViewEvent.OnClickSaveVodleButton(viewState.recordingFile)
+                        )
+                    },
                     buttonTextStyle = vodleTypoGraphy.titleMedium
                 )
             }
@@ -156,7 +162,7 @@ internal fun CreateVodleDialog(
 }
 
 @Composable
-private fun PlayVoice(
+private fun PlayRecording(
     isPlaying: Boolean,
     progress: Animatable<Float, AnimationVector1D>
 ) {

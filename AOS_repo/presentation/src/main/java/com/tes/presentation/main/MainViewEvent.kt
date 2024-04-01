@@ -1,7 +1,9 @@
 package com.tes.presentation.main
 
+import com.tes.domain.model.Gender
 import com.tes.presentation.composebase.ViewEvent
 import com.tes.presentation.model.Location
+import com.tes.presentation.model.VoiceType
 import java.io.File
 
 sealed class MainViewEvent : ViewEvent {
@@ -20,9 +22,8 @@ sealed class MainViewEvent : ViewEvent {
 
     data object OnClickMakingVodleButton : MainViewEvent()
     data class OnClickFinishRecordingButton(val recordingFile: File) : MainViewEvent()
-    data object OnClickSaveVodleButton : MainViewEvent()
+    data class OnClickSaveVodleButton(val recordingFile: File) : MainViewEvent()
 
-    data object OnCompleteVodle : MainViewEvent()
     data class ShowToast(val message: String) : MainViewEvent()
 
     data object OnFinishToast : MainViewEvent()
@@ -30,4 +31,10 @@ sealed class MainViewEvent : ViewEvent {
     data class OnClickMarker(val location: Location) : MainViewEvent()
 
     data object OnDismissVodleDialog : MainViewEvent()
+
+    data class OnFailMakingVodle(val toastMessage: String) : MainViewEvent()
+
+    data class OnSelectVoiceType(val voiceType: VoiceType) : MainViewEvent()
+
+    data class OnSelectGender(val gender: Gender) : MainViewEvent()
 }
