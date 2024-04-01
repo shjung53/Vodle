@@ -1,5 +1,7 @@
 package com.tes.presentation.mypage
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.navercorp.nid.NaverIdLoginSDK
@@ -26,6 +29,9 @@ fun MyPageScreen(
     LaunchedEffect(viewState.isLogin) {
         if (!viewState.isLogin) onSuccessLogout()
     }
+    val context = LocalContext.current
+
+    ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
     if (viewState.isTryingSignOut) {
         SignOutDialog(
@@ -67,6 +73,20 @@ internal fun TopBar(onClickBackButton: () -> Unit, title: String) {
                 text = title,
                 style = vodleTypoGraphy.bodyLarge
             )
+        }
+    }
+}
+
+@Composable
+private fun ObserveToastMessage(
+    viewState: MyPageViewState,
+    context: Context,
+    viewModel: MyPageViewModel
+) {
+    LaunchedEffect(key1 = viewState.toastMessage) {
+        if (viewState.toastMessage.isNotEmpty()) {
+            Toast.makeText(context, viewState.toastMessage, Toast.LENGTH_SHORT).show()
+            viewModel.onTriggerEvent(MyPageViewEvent.OnFinishToast)
         }
     }
 }

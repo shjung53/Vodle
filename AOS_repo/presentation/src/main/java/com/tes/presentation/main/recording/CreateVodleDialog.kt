@@ -6,6 +6,8 @@ import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,6 +72,7 @@ internal fun CreateVodleDialog(
         val context = LocalContext.current
         val dataSourceFactory = DefaultDataSource.Factory(context)
         val playerLoad = remember { mutableStateOf(false) }
+        val interactionSource = remember { MutableInteractionSource() }
 
         LaunchedEffect(isPlaying.value) {
             if (isPlaying.value) {
@@ -127,18 +130,19 @@ internal fun CreateVodleDialog(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                Spacer(modifier = Modifier.height(32.dp))
-
                 Row(
                     modifier = Modifier
                         .padding(top = 10.dp, end = 20.dp)
                         .align(Alignment.CenterHorizontally)
                 ) {
                     IconButton(
+                        interactionSource = interactionSource,
                         onClick = {
                             isPlaying.value = !isPlaying.value
                         },
-                        modifier = Modifier.align(Alignment.CenterVertically),
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .indication(interactionSource, null),
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = main_coral_darken,
                             containerColor = Color.White,

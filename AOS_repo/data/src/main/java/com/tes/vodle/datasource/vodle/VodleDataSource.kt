@@ -12,5 +12,9 @@ interface VodleDataSource {
 
     suspend fun uploadVodle(recordingFile: File): Result<BasicResponse>
 
-    suspend fun convertVoice(recordingFile: File, selectedVoice: String, gender: Gender): Result<ConversionResponse>
+    suspend fun convertVoice(
+        recordingFile: File,
+        selectedVoice: String,
+        gender: Gender
+    ): Result<ConversionResponse>
 }

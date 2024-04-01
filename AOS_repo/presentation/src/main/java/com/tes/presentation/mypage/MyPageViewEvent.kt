@@ -19,4 +19,6 @@ sealed class MyPageViewEvent : ViewEvent {
     data class ShowToast(val message: String) : MyPageViewEvent()
 
     data object OnClickBackButtonFromVodleLogView : MyPageViewEvent()
+
+    data object OnFinishToast : MyPageViewEvent()
 }

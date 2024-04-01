@@ -31,7 +31,6 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnClickHeadPhoneButton -> TODO()
             is MainViewEvent.OnClickRecordingButton -> setState { onStartRecord(event.location) }
             is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround()
-            MainViewEvent.OnClickUserButton -> TODO()
             MainViewEvent.OnClickWriteButton -> TODO()
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }

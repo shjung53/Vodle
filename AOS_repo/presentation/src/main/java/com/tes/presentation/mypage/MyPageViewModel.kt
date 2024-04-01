@@ -22,15 +22,28 @@ class MyPageViewModel @Inject constructor(
     override fun onTriggerEvent(event: MyPageViewEvent) {
         when (event) {
             MyPageViewEvent.OnClickLogout -> logout()
-            MyPageViewEvent.OnClickPrivacyPolicy -> TODO()
+            MyPageViewEvent.OnClickPrivacyPolicy -> {}
             is MyPageViewEvent.OnClickSignOut -> setState { tryingSignOut() }
             MyPageViewEvent.OnClickMyVodleLog -> fetchMyVodleLogs()
-            is MyPageViewEvent.ShowToast -> TODO()
+            is MyPageViewEvent.ShowToast -> setState { showToast(event.message) }
             MyPageViewEvent.OnCancelSignOut -> setState { cancelSignOut() }
             is MyPageViewEvent.OnClickSignOutConfirm -> signOut(event.naverAccessToken)
             MyPageViewEvent.OnClickBackButtonFromVodleLogView -> setState { backToMyPageView() }
+            MyPageViewEvent.OnFinishToast -> setState { onFinishToast() }
         }
     }
+
+    private fun MyPageViewState.onFinishToast(): MyPageViewState =
+        when (this) {
+            is MyPageViewState.Default -> this.copy(toastMessage = "")
+            is MyPageViewState.VodleLog -> this.copy(toastMessage = "")
+        }
+
+    private fun MyPageViewState.showToast(message: String): MyPageViewState =
+        when (this) {
+            is MyPageViewState.Default -> this.copy(toastMessage = message)
+            is MyPageViewState.VodleLog -> this.copy(toastMessage = message)
+        }
 
     private fun MyPageViewState.backToMyPageView(): MyPageViewState =
         when (this) {
@@ -55,7 +68,9 @@ class MyPageViewModel @Inject constructor(
                     }
                     setState { onSuccessFetchVodleLog(vodleLogList) }
                 },
-                onFailure = {}
+                onFailure = {
+                    setState { showToast("보들 기록을 가져오는 데 실패했습니다.") }
+                }
             )
         }
     }
@@ -72,7 +87,9 @@ class MyPageViewModel @Inject constructor(
                 onSuccess = {
                     setState { onSuccessLogout() }
                 },
-                onFailure = {}
+                onFailure = {
+                    setState { showToast("로그아웃에 실패했습니다.") }
+                }
             )
         }
     }
@@ -93,7 +110,9 @@ class MyPageViewModel @Inject constructor(
                 onSuccess = {
                     logout()
                 },
-                onFailure = {}
+                onFailure = {
+                    setState { showToast("회원탈퇴에 실패했습니다.") }
+                }
             )
         }
     }

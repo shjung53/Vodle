@@ -23,7 +23,6 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.tes.presentation.main.components.BottomButtonGroup
-import com.tes.presentation.main.components.CalendarButton
 import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.LoadingScreen
 import com.tes.presentation.main.components.SearchVodleButton
@@ -71,9 +70,9 @@ internal fun MainScreen(
                 .align(Alignment.End)
         )
 
-        CalendarButton(
-            modifier = Modifier.align(Alignment.End)
-        )
+//        CalendarButton(
+//            modifier = Modifier.align(Alignment.End)
+//        )
 
         Spacer(modifier = Modifier.weight(1f))
 
