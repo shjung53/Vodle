@@ -3,7 +3,7 @@ package com.tes.vodle.model.vodle
 data class ConversionResponse(
     val status: Int,
     val message: String,
-    val data: ConversionData
+    val data: List<ConversionData>
 )
 
 data class ConversionData(

@@ -108,7 +108,7 @@ internal fun MainScreen(
 
     if (viewState is MainViewState.MakingVodle) {
         when (viewState.recordingStep) {
-            RecordingStep.INTRODUCTION -> IntroDuctionDialog(viewModel)
+            RecordingStep.INTRODUCTION -> IntroDuctionDialog(viewModel, viewState)
             RecordingStep.RECORDING -> RecordingDialog(viewModel)
             RecordingStep.CREATE -> CreateVodleDialog(
                 viewModel,

@@ -1,10 +1,12 @@
 package com.tes.presentation.main
 
+import com.tes.domain.model.Gender
 import com.tes.presentation.composebase.ViewState
-import com.tes.presentation.main.recording.AudioData
 import com.tes.presentation.main.recording.RecordingStep
+import com.tes.presentation.model.AudioData
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
+import com.tes.presentation.model.VoiceType
 import java.io.File
 
 sealed class MainViewState : ViewState {
@@ -25,7 +27,9 @@ sealed class MainViewState : ViewState {
         val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
         val location: Location,
         val audioDataList: List<AudioData> = emptyList(),
-        val recordingFile: File = File("none")
+        val recordingFile: File = File("none"),
+        val selectedVoiceType: VoiceType = VoiceType.ORIGINAL,
+        val gender: Gender = Gender.Male
     ) : MainViewState()
 
     data class ShowRecordedVodle(

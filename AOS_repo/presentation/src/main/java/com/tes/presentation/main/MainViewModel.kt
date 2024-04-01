@@ -1,16 +1,17 @@
 package com.tes.presentation.main
 
 import androidx.lifecycle.viewModelScope
+import com.tes.domain.model.Gender
 import com.tes.domain.usecase.vodle.ConvertRecordingUseCase
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.domain.usecase.vodle.UploadVodleUseCase
 import com.tes.presentation.composebase.BaseViewModel
-import com.tes.presentation.main.recording.AudioData
 import com.tes.presentation.main.recording.RecordingStep
-import com.tes.presentation.main.recording.Url
-import com.tes.presentation.main.recording.VoiceType
+import com.tes.presentation.model.AudioData
 import com.tes.presentation.model.Location
+import com.tes.presentation.model.Url
 import com.tes.presentation.model.Vodle
+import com.tes.presentation.model.VoiceType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -41,8 +42,24 @@ class MainViewModel @Inject constructor(
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             is MainViewEvent.OnClickSaveVodleButton -> saveVodle(event.recordingFile)
             is MainViewEvent.OnFailMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
+            is MainViewEvent.OnSelectVoiceType -> setState { onSelectVoiceType(event.voiceType) }
+            is MainViewEvent.OnSelectGender -> setState { onSelectGender(event.gender) }
         }
     }
+
+    private fun MainViewState.onSelectGender(selectedGender: Gender): MainViewState =
+        when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> this.copy(gender = selectedGender)
+            is MainViewState.ShowRecordedVodle -> this
+        }
+
+    private fun MainViewState.onSelectVoiceType(selectedVoiceType: VoiceType): MainViewState =
+        when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> this.copy(selectedVoiceType = selectedVoiceType)
+            is MainViewState.ShowRecordedVodle -> this
+        }
 
     private fun searchVodlesAround() {
         viewModelScope.launch {

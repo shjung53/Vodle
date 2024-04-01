@@ -1,7 +1,9 @@
 package com.tes.presentation.main
 
+import com.tes.domain.model.Gender
 import com.tes.presentation.composebase.ViewEvent
 import com.tes.presentation.model.Location
+import com.tes.presentation.model.VoiceType
 import java.io.File
 
 sealed class MainViewEvent : ViewEvent {
@@ -31,4 +33,8 @@ sealed class MainViewEvent : ViewEvent {
     data object OnDismissVodleDialog : MainViewEvent()
 
     data class OnFailMakingVodle(val toastMessage: String) : MainViewEvent()
+
+    data class OnSelectVoiceType(val voiceType: VoiceType) : MainViewEvent()
+
+    data class OnSelectGender(val gender: Gender) : MainViewEvent()
 }

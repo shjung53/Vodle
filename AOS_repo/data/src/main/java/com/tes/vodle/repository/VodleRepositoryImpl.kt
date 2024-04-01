@@ -1,10 +1,11 @@
 package com.tes.vodle.repository
 
-import android.util.Log
+import com.tes.domain.model.AudioData
 import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.VodleRepository
 import com.tes.vodle.datasource.vodle.VodleDataSource
+import com.tes.vodle.util.toVoiceType
 import java.io.File
 import javax.inject.Inject
 
@@ -41,11 +42,17 @@ class VodleRepositoryImpl @Inject constructor(
             }
         )
 
-    override suspend fun convertVoice(recordingFile: File): Result<String> =
+    override suspend fun convertVoice(recordingFile: File): Result<List<AudioData>> =
         vodleDataSource.convertVoice(recordingFile).fold(
             onSuccess = { it ->
-                Log.d("확인", it.data.convertedFileUrl)
-                Result.success(it.data.convertedFileUrl)
+                Result.success(
+                    it.data.map {
+                        AudioData(
+                            it.selectedVoice.toVoiceType(),
+                            it.convertedFileUrl
+                        )
+                    }
+                )
             },
             onFailure = { exception ->
                 // 오류 처리

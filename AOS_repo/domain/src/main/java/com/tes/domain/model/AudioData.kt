@@ -1,7 +1,11 @@
-package com.tes.presentation.main.recording
+package com.tes.domain.model
 
 enum class VoiceType {
     AHRI, MUNDO, OPTIMUSPRIME, TRUMP, ELSA, ORIGINAL
+}
+
+enum class Gender {
+    Male, Female
 }
 
 data class AudioData(

@@ -18,10 +18,12 @@ object RecordingModule {
         } else {
             // 권한 요청이 필요한 경우
             ActivityCompat.requestPermissions(
-                context as MainActivity, arrayOf(
+                context as MainActivity,
+                arrayOf(
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.READ_EXTERNAL_STORAGE
-                ), 0
+                ),
+                0
             )
             Result.failure(Exception("Permissions not granted"))
         }

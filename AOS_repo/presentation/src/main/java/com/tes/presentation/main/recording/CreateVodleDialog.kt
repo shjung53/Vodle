@@ -57,7 +57,7 @@ import main.components.ButtonComponent
 internal fun CreateVodleDialog(
     viewModel: MainViewModel,
     viewState: MainViewState.MakingVodle,
-    player: ExoPlayer,
+    player: ExoPlayer
 ) {
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
@@ -92,8 +92,6 @@ internal fun CreateVodleDialog(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                VoiceSelector(selectedVoice, viewState.audioDataList)
-
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Row(
@@ -117,7 +115,9 @@ internal fun CreateVodleDialog(
                             val hlsMediaSource =
                                 HlsMediaSource.Factory(dataSourceFactory)
                                     .createMediaSource(
-                                        MediaItem.fromUri(viewState.audioDataList[selectedVoice.intValue].convertedAudioUrl)
+                                        MediaItem.fromUri(
+                                            viewState.audioDataList[selectedVoice.intValue].convertedAudioUrl
+                                        )
                                     )
                             player.setMediaSource(hlsMediaSource)
                             player.prepare()
@@ -164,7 +164,7 @@ internal fun CreateVodleDialog(
 @Composable
 private fun PlayRecording(
     isPlaying: Boolean,
-    progress: Animatable<Float, AnimationVector1D>,
+    progress: Animatable<Float, AnimationVector1D>
 ) {
     val coroutineScope = rememberCoroutineScope()
 
