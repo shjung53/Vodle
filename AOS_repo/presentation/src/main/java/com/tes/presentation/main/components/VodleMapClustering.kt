@@ -5,21 +5,24 @@ import com.naver.maps.map.compose.CameraPositionState
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.MainViewState
 import com.tes.presentation.model.Vodle
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 internal fun VodleMapClustering(
     viewModel: MainViewModel,
     viewState: MainViewState,
+    scope: CoroutineScope,
     cameraPositionState: CameraPositionState
 ) {
-    VodleMapClustering(viewModel, viewState.vodleList, cameraPositionState)
+    VodleMapClustering(viewModel, viewState.vodleList, scope, cameraPositionState)
 }
 
 @Composable
 private fun VodleMapClustering(
     viewModel: MainViewModel,
     vodleList: List<Vodle>,
+    scope: CoroutineScope,
     cameraPositionState: CameraPositionState
 ) {
-    VodleMap(viewModel, vodleList, cameraPositionState)
+    VodleMap(viewModel, vodleList, scope, cameraPositionState)
 }

@@ -1,11 +1,16 @@
 package main.components
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +32,9 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,50 +43,85 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import com.tes.presentation.R
+import com.tes.presentation.main.MainViewEvent
+import com.tes.presentation.main.MainViewModel
+import com.tes.presentation.main.fetchLocationAndHandle
+import com.tes.presentation.main.moveCameraPosition
+import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
+import com.tes.presentation.model.lat
+import com.tes.presentation.model.lng
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
+import com.tes.presentation.utils.distanceCalculator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+private const val TAG = "VodleListDialogCompo_싸피"
 @OptIn(UnstableApi::class)
 @Composable
 fun VodleListDialogComponent(
+    viewModel: MainViewModel,
     vodleList: List<Vodle>,
+    context: Context,
+    myLocation: Location,
+    scope: CoroutineScope,
     player: ExoPlayer,
     dataSourceFactory: DataSource.Factory
 ) {
     var index by remember { mutableStateOf(0) }
     val currentProgress = remember { Animatable(0f) }
-    var isPlaying by remember { mutableStateOf(false) }
+    val isPlaying = remember { mutableStateOf(false) }
+    val audioDuration = remember { mutableIntStateOf(0) }
+    val playerLoad = remember { mutableStateOf(false) }
+    var currentLocation : Location = myLocation
 
-    if (isPlaying) {
-        PlayVodle(isPlaying, currentProgress)
-    } else {
-        PlayVodle(isPlaying, currentProgress)
-    }
+    player.addListener(object : Player.Listener {
+        @Deprecated("Deprecated in Java")
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if (playbackState == Player.STATE_READY) {
+                player.play()
+                audioDuration.intValue = player.duration.toInt()
+                playerLoad.value = false
+            }
 
+            if (playbackState == Player.STATE_ENDED) {
+                audioDuration.intValue = 0
+            }
+        }
+    })
+
+    ProgressBarAnimation(isPlaying, audioDuration.intValue, currentProgress)
     Box(
         modifier = Modifier.then(
             Modifier
+                .border(
+                    BorderStroke(1.dp, main_coral_bright),
+                    RoundedCornerShape(10.dp)
+                )
                 .clip(shape = RoundedCornerShape(10.dp))
                 .fillMaxWidth(0.9f)
                 .wrapContentHeight()
                 .background(color = Color.White)
+
         )
     ) {
         if (index != 0) {
             IconButton(
                 onClick = {
                     index--
-                    isPlaying = false
+                    isPlaying.value = !isPlaying.value
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -100,7 +142,7 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index++
-                    isPlaying = false
+                    isPlaying.value = !isPlaying.value
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -117,6 +159,7 @@ fun VodleListDialogComponent(
                 )
             }
         }
+
         Column(
             modifier = Modifier
                 .wrapContentHeight()
@@ -171,7 +214,21 @@ fun VodleListDialogComponent(
             ) {
                 IconButton(
                     onClick = {
-                        isPlaying = !isPlaying
+                        isPlaying.value = !isPlaying.value
+
+                        fetchLocationAndHandle(
+                            scope,
+                            context,
+                            onSuccess = { location ->
+                                        currentLocation = location
+                            },
+                            onFailure = {
+                                viewModel.onTriggerEvent(
+                                    MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))
+                                )
+                            }
+                        )
+
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                     colors = IconButtonDefaults.iconButtonColors(
@@ -181,21 +238,33 @@ fun VodleListDialogComponent(
                         disabledContainerColor = Color.White
                     )
                 ) {
-                    if (isPlaying) {
-                        val hlsMediaSource =
-                            HlsMediaSource.Factory(dataSourceFactory)
-                                .createMediaSource(
-                                    MediaItem.fromUri(vodleList.get(index).streamingURL)
-                                )
-                        player.setMediaSource(hlsMediaSource)
-                        player.prepare()
-                        player.play()
-                        Icon(
-                            imageVector = Icons.Default.Stop,
-                            contentDescription = "stopButton",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    } else {
+                    if (isPlaying.value) {
+                        if(distanceCalculator(myLocation.lat,myLocation.lng,vodleList.get(index).location.lat,vodleList.get(index).location.lng)){
+                            Log.d(TAG, "VodleListDialogComponent: ${distanceCalculator(myLocation.lat,myLocation.lng,vodleList.get(index).location.lat,vodleList.get(index).location.lng)}")
+                            val hlsMediaSource =
+                                HlsMediaSource.Factory(dataSourceFactory)
+                                    .createMediaSource(
+                                        MediaItem.fromUri(vodleList.get(index).streamingURL)
+                                    )
+                            player.setMediaSource(hlsMediaSource)
+                            player.prepare()
+                            player.play()
+                            Icon(
+                                imageVector = Icons.Default.Stop,
+                                contentDescription = "stopButton",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                        else{
+                            Toast.makeText(context, "50m 밖에 있는 Vodle은 들을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "playButton",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                    else {
                         player.pause()
                         player.stop()
                         Icon(
@@ -217,26 +286,26 @@ fun VodleListDialogComponent(
 }
 
 @Composable
-private fun PlayVodle(
-    isPlaying: Boolean,
+private fun ProgressBarAnimation(
+    isPlaying: MutableState<Boolean>,
+    audioDuration: Int,
     progress: Animatable<Float, AnimationVector1D>
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            // isPlaying이 true일 때 애니메이션 시작
+    LaunchedEffect(audioDuration) {
+        if (audioDuration > 0) {
             coroutineScope.launch {
                 progress.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(
-                        durationMillis = 15000,
+                        durationMillis = audioDuration,
                         easing = LinearEasing
                     )
                 )
             }
         } else {
-            // isPlaying이 false일 때 애니메이션 중지 및 초기화
+            isPlaying.value = false
             progress.snapTo(0f)
         }
     }

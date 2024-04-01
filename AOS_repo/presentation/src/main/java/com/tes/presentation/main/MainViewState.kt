@@ -39,6 +39,7 @@ sealed class MainViewState : ViewState {
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val toastMessage: String? = null,
         override val vodleList: List<Vodle>,
-        override val isLoading: Boolean = false
+        override val isLoading: Boolean = false,
+        val myLocation : Location
     ) : MainViewState()
 }

@@ -31,7 +31,7 @@ sealed class MainViewEvent : ViewEvent {
 
     data object OnFinishToast : MainViewEvent()
 
-    data class OnClickMarker(val location: Location) : MainViewEvent()
+    data class OnClickMarker(val myLocation: Location, val location: Location) : MainViewEvent()
 
     data object OnDismissVodleDialog : MainViewEvent()
 
