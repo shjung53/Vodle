@@ -1,5 +1,6 @@
 package com.tes.vodle.datasource.user
 
+import android.util.Log
 import com.tes.vodle.api.AuthService
 import com.tes.vodle.api.NaverAuthService
 import com.tes.vodle.api.NaverLoginService
@@ -9,6 +10,7 @@ import com.tes.vodle.model.user.response.MyVodleResponse
 import com.tes.vodle.model.user.response.TokenResponse
 import javax.inject.Inject
 
+private const val TAG = "UserDataSourceImpl_싸피"
 class UserDataSourceImpl @Inject constructor(
     private val authService: AuthService,
     private val naverLoginService: NaverLoginService,
@@ -41,5 +43,10 @@ class UserDataSourceImpl @Inject constructor(
 
     override suspend fun fetchMyVodle(): Result<MyVodleResponse> = runCatching {
         userService.fetchMyVodle()
+    }
+
+    override suspend fun autoLogin(accessToken: String): Result<TokenResponse> = runCatching {
+        Log.d(TAG, "autoLogin: ${authService.autoLogin(accessToken)} / ${accessToken}")
+        authService.autoLogin(accessToken)
     }
 }

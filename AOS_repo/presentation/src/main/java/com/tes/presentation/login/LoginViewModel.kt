@@ -1,6 +1,9 @@
 package com.tes.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.tes.domain.usecase.user.AutoLoginUseCase
+import com.tes.domain.usecase.user.CheckAccessTokenUseCase
 import com.tes.domain.usecase.user.GetNaverIdUseCase
 import com.tes.domain.usecase.user.SignInNaverUseCase
 import com.tes.presentation.composebase.BaseViewModel
@@ -8,13 +11,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "LoginViewModel_싸피"
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val signInNaverUseCase: SignInNaverUseCase,
-    private val getNaverIdUseCase: GetNaverIdUseCase
+    private val getNaverIdUseCase: GetNaverIdUseCase,
+    private val autoLoginUseCase: AutoLoginUseCase,
+    private val checkAccessTokenUseCase: CheckAccessTokenUseCase
 ) : BaseViewModel<LoginViewState, LoginViewEvent>() {
     override fun createInitialState(): LoginViewState =
-        LoginViewState.Default()
+        LoginViewState.Splash()
 
     override fun onTriggerEvent(event: LoginViewEvent) {
         setEvent(event)
@@ -41,6 +48,8 @@ class LoginViewModel @Inject constructor(
             }
 
             LoginViewEvent.OnFinishToast -> setState { onFinishToast() }
+            is LoginViewEvent.OnAutoLogin -> autoLogin()
+            is LoginViewEvent.CheckAccessToken -> checkAccessToken()
         }
     }
 
@@ -57,6 +66,7 @@ class LoginViewModel @Inject constructor(
         return when (this) {
             is LoginViewState.Default -> copy(isTryingLogin = true)
             is LoginViewState.Login -> copy(isTryingLogin = true)
+            is LoginViewState.Splash -> copy(isTryingLogin = true)
         }
     }
 
@@ -75,6 +85,7 @@ class LoginViewModel @Inject constructor(
         return when (this) {
             is LoginViewState.Default -> copy(toastMessage = message, isTryingLogin = false)
             is LoginViewState.Login -> copy(toastMessage = message, isTryingLogin = false)
+            is LoginViewState.Splash -> copy(toastMessage = message, isTryingLogin = false)
         }
     }
 
@@ -82,6 +93,7 @@ class LoginViewModel @Inject constructor(
         return when (this) {
             is LoginViewState.Default -> copy(toastMessage = "", isTryingLogin = false)
             is LoginViewState.Login -> copy(toastMessage = "", isTryingLogin = false)
+            is LoginViewState.Splash -> copy(toastMessage = "", isTryingLogin = false)
         }
     }
 
@@ -90,6 +102,7 @@ class LoginViewModel @Inject constructor(
             return when (this) {
                 is LoginViewState.Default -> copy(shouldExit = true)
                 is LoginViewState.Login -> copy(shouldExit = true)
+                is LoginViewState.Splash -> copy(shouldExit = true)
             }
         }
 
@@ -103,6 +116,11 @@ class LoginViewModel @Inject constructor(
                 lastBackPressedTime = backPressedTime,
                 toastMessage = "한번 더 누르면 종료됩니다."
             )
+
+            is LoginViewState.Splash -> copy(
+                lastBackPressedTime = backPressedTime,
+                toastMessage = "한번 더 누르면 종료됩니다."
+            )
         }
     }
 
@@ -111,5 +129,26 @@ class LoginViewModel @Inject constructor(
         lastBackPressedTime: Long
     ): Boolean {
         return backPressedTime - lastBackPressedTime < 1000
+    }
+
+    private suspend fun autoLogin() {
+        autoLoginUseCase().fold(
+            onSuccess = { setState { LoginViewState.Login() } },
+            onFailure = { setState { showToast(it.message ?: "자동 로그인 실패") } }
+        )
+    }
+
+    private suspend fun checkAccessToken() {
+        checkAccessTokenUseCase().fold(
+            onSuccess = {
+                Log.d(TAG, "checkAccessToken 성공: ${it}")
+                onTriggerEvent(LoginViewEvent.OnAutoLogin)
+            },
+            onFailure = {
+                Log.d(TAG, "checkAccessToken 실패: ${it}")
+                Log.d(TAG, "checkAccessToken: 자동 로그인 실패")
+                setState { LoginViewState.Default() }
+            }
+        )
     }
 }

@@ -2,7 +2,9 @@ package com.tes.presentation.login
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import android.window.SplashScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +41,7 @@ import com.tes.presentation.navigation.Route
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+private const val TAG = "LoginScreen_싸피"
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel<LoginViewModel>(),
@@ -45,6 +51,28 @@ fun LoginScreen(
 
     val context = LocalContext.current
 
+    if (viewState.isTryingAutoLogin) SplashScreen(viewState, context, viewModel)
+    else LoginWithNaverScreen(viewState, context, viewModel, onLoginSuccess)
+}
+
+@Composable
+fun SplashScreen(
+    viewState: LoginViewState,
+    context: Context,
+    viewModel: LoginViewModel
+) {
+    Log.d(TAG, "SplashScreen: here1 ${viewState.isTryingAutoLogin}")
+    ObserveAutoLoginAttempt(viewState, context, viewModel)
+    Log.d(TAG, "SplashScreen: here2 ${viewState.isTryingAutoLogin}")
+}
+
+@Composable
+fun LoginWithNaverScreen(
+    viewState: LoginViewState,
+    context: Context,
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit
+) {
     ObserveLoginAttempt(viewState, context, viewModel)
 
     ObserveToastMessage(viewState, context, viewModel)
@@ -95,6 +123,19 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1.1f))
     }
+}
+
+@Composable
+private fun ObserveAutoLoginAttempt(
+    viewState: LoginViewState,
+    context: Context,
+    viewModel: LoginViewModel
+) {
+//    LaunchedEffect(viewState.isTryingAutoLogin) {
+        if (viewState.isTryingAutoLogin) {
+            viewModel.onTriggerEvent(LoginViewEvent.CheckAccessToken)
+        }
+//    }
 }
 
 @Composable
