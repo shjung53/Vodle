@@ -14,8 +14,8 @@ object MediaPlayer {
     private lateinit var sampleList: List<String>
     private val prefixPattern = Regex("^$prefix")
 
-    fun playMusic(context: Context, voiceType: VoiceType) {
-        stopMusic()
+    fun playSample(context: Context, voiceType: VoiceType) {
+        stopSample()
         mediaPlayer = MediaPlayer().apply {
             val fieldName = prefix + voiceType.name.toLowerCase(Locale.current)
             val resourceId = R.raw::class.java.getField(fieldName).getInt(null)
@@ -29,7 +29,7 @@ object MediaPlayer {
         }
     }
 
-    fun stopMusic() {
+    fun stopSample() {
         mediaPlayer?.let {
             if (it.isPlaying) {
                 it.stop()

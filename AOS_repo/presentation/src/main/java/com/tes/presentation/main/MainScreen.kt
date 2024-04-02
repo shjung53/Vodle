@@ -26,6 +26,7 @@ import com.tes.presentation.main.recording.CreateVodleDialog
 import com.tes.presentation.main.recording.IntroDuctionDialog
 import com.tes.presentation.main.recording.RecordingDialog
 import com.tes.presentation.main.recording.RecordingStep
+import com.tes.presentation.main.recording.TypingDialog
 
 @Composable
 internal fun MainScreen(
@@ -102,6 +103,7 @@ internal fun MainScreen(
                 viewState,
                 player
             )
+            RecordingStep.TYPING -> TypingDialog(viewModel = viewModel, viewState)
         }
     }
 

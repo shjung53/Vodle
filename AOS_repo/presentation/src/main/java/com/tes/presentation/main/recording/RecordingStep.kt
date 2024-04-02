@@ -1,5 +1,5 @@
 package com.tes.presentation.main.recording
 
 enum class RecordingStep {
-    INTRODUCTION, RECORDING, CREATE
+    INTRODUCTION, RECORDING, CREATE, TYPING
 }

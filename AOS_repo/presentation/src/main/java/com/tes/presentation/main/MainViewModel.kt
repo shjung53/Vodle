@@ -3,6 +3,7 @@ package com.tes.presentation.main
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.model.Gender
 import com.tes.domain.usecase.vodle.ConvertRecordingUseCase
+import com.tes.domain.usecase.vodle.ConvertTTSUseCase
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
 import com.tes.domain.usecase.vodle.UploadVodleUseCase
 import com.tes.presentation.composebase.BaseViewModel
@@ -11,6 +12,7 @@ import com.tes.presentation.model.AudioData
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Url
 import com.tes.presentation.model.Vodle
+import com.tes.presentation.model.VodleOption
 import com.tes.presentation.model.VoiceType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val fetchVodlesAroundUseCase: FetchVodlesAroundUseCase,
     private val uploadVodleUseCase: UploadVodleUseCase,
-    private val convertRecordingUseCase: ConvertRecordingUseCase
+    private val convertRecordingUseCase: ConvertRecordingUseCase,
+    private val convertTTSUseCase: ConvertTTSUseCase
 ) : BaseViewModel<MainViewState, MainViewEvent>() {
     override fun createInitialState(): MainViewState =
         MainViewState.Default()
@@ -30,12 +33,17 @@ class MainViewModel @Inject constructor(
         when (event) {
             MainViewEvent.OnClickHeadPhoneButton -> TODO()
             is MainViewEvent.OnClickRecordingButton -> setState { onStartRecord(event.location) }
+            is MainViewEvent.OnClickWriteButton -> setState {
+                onStartRecord(
+                    event.location,
+                    event.vodleOption
+                )
+            }
             is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround(
                 event.centerLocation,
                 event.northEastLocation,
                 event.southWestLocation
             )
-            MainViewEvent.OnClickWriteButton -> TODO()
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
@@ -52,6 +60,10 @@ class MainViewModel @Inject constructor(
             is MainViewEvent.OnFailMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
             is MainViewEvent.OnSelectVoiceType -> setState { onSelectVoiceType(event.voiceType) }
             is MainViewEvent.OnSelectGender -> setState { onSelectGender(event.gender) }
+            is MainViewEvent.OnClickFinishTypingButton -> finishTyping(
+                event.text,
+                event.selectedVoiceType
+            )
         }
     }
 
@@ -107,7 +119,10 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> this
             is MainViewState.MakingVodle -> {
-                this.copy(recordingStep = RecordingStep.RECORDING)
+                when (this.vodleOption) {
+                    VodleOption.TEXT -> this.copy(recordingStep = RecordingStep.TYPING)
+                    VodleOption.VOICE -> this.copy(recordingStep = RecordingStep.RECORDING)
+                }
             }
 
             is MainViewState.ShowRecordedVodle -> this
@@ -127,6 +142,18 @@ class MainViewModel @Inject constructor(
                 Result.failure(it)
             }
         )
+
+    private fun finishTyping(text: String, selectedVoice: VoiceType) {
+        viewModelScope.launch {
+            setState { setLoading() }
+            convertTTSUseCase(text, selectedVoice.eng).fold(
+                onSuccess = {
+                    setState { onFinishConversion(selectedVoice, it.convertedAudioUrl) }
+                },
+                onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
+            )
+        }
+    }
 
     private fun finishRecording(recordingFile: File, selectedVoice: VoiceType, gender: Gender) {
         viewModelScope.launch {
@@ -243,12 +270,16 @@ private fun MainViewState.showToast(message: String): MainViewState {
     }
 }
 
-private fun MainViewState.onStartRecord(location: Location): MainViewState {
+private fun MainViewState.onStartRecord(
+    location: Location,
+    vodleOption: VodleOption = VodleOption.VOICE
+): MainViewState {
     return when (this) {
         is MainViewState.Default -> MainViewState.MakingVodle(
             this.vodleMap,
             location = location,
-            convertedAudio = AudioData()
+            convertedAudio = AudioData(),
+            vodleOption = vodleOption
         )
 
         is MainViewState.MakingVodle -> this
@@ -256,7 +287,8 @@ private fun MainViewState.onStartRecord(location: Location): MainViewState {
         is MainViewState.ShowRecordedVodle -> MainViewState.MakingVodle(
             this.vodleMap,
             location = location,
-            convertedAudio = AudioData()
+            convertedAudio = AudioData(),
+            vodleOption = vodleOption
         )
     }
 }

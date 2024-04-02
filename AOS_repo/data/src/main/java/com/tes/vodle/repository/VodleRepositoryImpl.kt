@@ -69,4 +69,19 @@ class VodleRepositoryImpl @Inject constructor(
                 Result.failure(exception)
             }
         )
+
+    override suspend fun convertTTS(content: String, selectedVoice: String): Result<AudioData> =
+        vodleDataSource.convertTTS(content, selectedVoice).fold(
+            onSuccess = {
+                Result.success(
+                    AudioData(
+                        it.data.selectedVoice.toVoiceType(),
+                        it.data.convertedFileUrl
+                    )
+                )
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
 }

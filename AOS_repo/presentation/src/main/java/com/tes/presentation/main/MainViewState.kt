@@ -6,6 +6,7 @@ import com.tes.presentation.main.recording.RecordingStep
 import com.tes.presentation.model.AudioData
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
+import com.tes.presentation.model.VodleOption
 import com.tes.presentation.model.VoiceType
 import java.io.File
 
@@ -26,6 +27,7 @@ sealed class MainViewState : ViewState {
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val vodleList: List<Vodle> = emptyList(),
         override val toastMessage: String? = null,
+        val vodleOption: VodleOption = VodleOption.VOICE,
         val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
         val location: Location,
         val convertedAudio: AudioData,

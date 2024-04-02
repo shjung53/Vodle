@@ -21,4 +21,9 @@ interface VodleRepository {
         selectedVoice: String,
         gender: Gender
     ): Result<AudioData>
+
+    suspend fun convertTTS(
+        content: String,
+        selectedVoice: String
+    ): Result<AudioData>
 }

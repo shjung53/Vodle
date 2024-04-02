@@ -26,7 +26,20 @@ internal fun BottomButtonGroup(
                 .padding(horizontal = 12.dp)
                 .padding(bottom = 12.dp)
         ),
-        onClickWriteButton = { /*TODO*/ },
+        onClickWriteButton = {
+            fetchLocationAndHandle(
+                scope = scope,
+                context = context,
+                onSuccess = { location ->
+                    viewModel.onTriggerEvent(MainViewEvent.OnClickWriteButton(location))
+                },
+                onFailure = {
+                    viewModel.onTriggerEvent(
+                        MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))
+                    )
+                }
+            )
+        },
         onClickHeadphoneButton = { /*TODO*/ },
         onClickRecordingButton = {
             fetchLocationAndHandle(
