@@ -1,6 +1,7 @@
 package com.tes.presentation.main
 
 import com.tes.domain.model.Gender
+import com.tes.domain.model.RecordType
 import com.tes.presentation.composebase.ViewEvent
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.VodleOption
@@ -38,7 +39,13 @@ sealed class MainViewEvent : ViewEvent {
         val selectedVoiceType: VoiceType
     ) : MainViewEvent()
 
-    data class OnClickSaveVodleButton(val recordingFile: File) : MainViewEvent()
+    data class OnClickSaveVodleButton(
+        val recordingFile: File,
+        val writer: String,
+        val recordType: RecordType,
+        val streamingUrl: String,
+        val location: Location
+    ) : MainViewEvent()
 
     data class ShowToast(val message: String) : MainViewEvent()
 

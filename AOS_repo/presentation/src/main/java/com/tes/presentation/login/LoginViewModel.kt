@@ -1,6 +1,5 @@
 package com.tes.presentation.login
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.usecase.user.AutoLoginUseCase
 import com.tes.domain.usecase.user.CheckAccessTokenUseCase
@@ -10,8 +9,6 @@ import com.tes.presentation.composebase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val TAG = "LoginViewModel_싸피"
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(

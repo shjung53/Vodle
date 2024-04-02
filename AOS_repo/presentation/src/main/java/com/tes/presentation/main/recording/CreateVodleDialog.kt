@@ -44,10 +44,13 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import com.tes.domain.model.RecordType
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.MainViewState
 import com.tes.presentation.main.components.LoadingScreen
+import com.tes.presentation.model.VodleOption
+import com.tes.presentation.model.VoiceType
 import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
@@ -62,6 +65,15 @@ internal fun CreateVodleDialog(
     viewState: MainViewState.MakingVodle,
     player: ExoPlayer
 ) {
+    val recordType: RecordType = when (viewState.vodleOption) {
+        VodleOption.TEXT -> RecordType.TTS
+        VodleOption.VOICE -> {
+            when (viewState.selectedVoiceType) {
+                VoiceType.ORIGINAL -> RecordType.NONE
+                else -> RecordType.STS
+            }
+        }
+    }
     Dialog(
         onDismissRequest = { viewModel.onTriggerEvent(MainViewEvent.OnDismissRecordingDialog) }
     ) {
@@ -178,7 +190,13 @@ internal fun CreateVodleDialog(
                     buttonText = "저장하기",
                     onClick = {
                         viewModel.onTriggerEvent(
-                            MainViewEvent.OnClickSaveVodleButton(viewState.recordingFile)
+                            MainViewEvent.OnClickSaveVodleButton(
+                                viewState.recordingFile,
+                                writer.value,
+                                recordType,
+                                viewState.convertedAudio.convertedAudioUrl,
+                                viewState.location
+                            )
                         )
                     },
                     buttonTextStyle = vodleTypoGraphy.titleMedium
@@ -186,7 +204,7 @@ internal fun CreateVodleDialog(
             }
         }
 
-        if (playerLoad.value) {
+        if (playerLoad.value || viewState.isLoading) {
             LoadingScreen()
         }
     }

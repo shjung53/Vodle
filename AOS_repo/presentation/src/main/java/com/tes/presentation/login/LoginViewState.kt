@@ -19,7 +19,7 @@ sealed class LoginViewState : ViewState {
         override val toastMessage: String? = null,
         override val lastBackPressedTime: Long = 0,
         override val shouldExit: Boolean = false,
-        override val isTryingAutoLogin: Boolean = true,
+        override val isTryingAutoLogin: Boolean = true
     ) : LoginViewState()
 
     data class Default(

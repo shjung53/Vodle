@@ -3,7 +3,6 @@ package com.tes.vodle.api
 import com.tes.vodle.model.user.request.NaverLoginRequest
 import com.tes.vodle.model.user.response.TokenResponse
 import retrofit2.http.Body
-import retrofit2.http.Field
 import retrofit2.http.Header
 import retrofit2.http.POST
 

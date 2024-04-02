@@ -22,13 +22,7 @@ internal fun IntroDuctionDialog(viewModel: MainViewModel, viewState: MainViewSta
 
     when (viewState.vodleOption) {
         VodleOption.TEXT -> {
-            voiceTypeList = listOf(
-                VoiceType.MUNDO,
-                VoiceType.OPTIMUSPRIME,
-                VoiceType.TRUMP,
-                VoiceType.AHRI,
-                VoiceType.ELSA
-            )
+            voiceTypeList = VoiceType.entries.filter { it != VoiceType.ORIGINAL }
             TextIntroductionView(
                 viewModel,
                 selectedVoiceIndex,
@@ -38,14 +32,7 @@ internal fun IntroDuctionDialog(viewModel: MainViewModel, viewState: MainViewSta
         }
 
         VodleOption.VOICE -> {
-            voiceTypeList = listOf(
-                VoiceType.ORIGINAL,
-                VoiceType.MUNDO,
-                VoiceType.OPTIMUSPRIME,
-                VoiceType.TRUMP,
-                VoiceType.AHRI,
-                VoiceType.ELSA
-            )
+            voiceTypeList = VoiceType.entries
 
             VoiceIntroductionView(
                 viewModel,

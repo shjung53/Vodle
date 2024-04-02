@@ -15,7 +15,13 @@ interface VodleDataSource {
         southWestLocation: Location
     ): Result<VodlesAroundResponse>
 
-    suspend fun uploadVodle(recordingFile: File): Result<BasicResponse>
+    suspend fun uploadVodle(
+        recordingFile: File,
+        writer: String,
+        recordType: String,
+        streamingUrl: String,
+        location: Location
+    ): Result<BasicResponse>
 
     suspend fun convertVoice(
         recordingFile: File,

@@ -34,7 +34,6 @@ import com.tes.presentation.model.Vodle
 import kotlinx.coroutines.CoroutineScope
 import ted.gun0912.clustering.naver.TedNaverClustering
 
-
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 internal fun VodleMap(

@@ -1,12 +1,13 @@
 package com.tes.presentation.mypage
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,11 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tes.presentation.R
+import com.tes.presentation.main.components.VodleSnackBarHost
 import com.tes.presentation.theme.vodleTypoGraphy
 
 @Composable
@@ -31,9 +33,10 @@ fun MyPageScreen(
     LaunchedEffect(viewState.isLogin) {
         if (!viewState.isLogin) onSuccessLogout()
     }
-    val context = LocalContext.current
 
-    ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    ObserveToastMessage(viewState = viewState, snackBarHostState, viewModel = viewModel)
 
     if (viewState.isTryingSignOut) {
         SignOutDialog(
@@ -46,11 +49,20 @@ fun MyPageScreen(
         )
     }
 
-    when (viewState) {
-        is MyPageViewState.Default -> MyPageView(onClickBackButton, viewModel)
-        is MyPageViewState.VodleLog -> VodleLogView(vodleLogList = viewState.vodleLogList) {
-            viewModel.onTriggerEvent(MyPageViewEvent.OnClickBackButtonFromVodleLogView)
+    Box {
+        when (viewState) {
+            is MyPageViewState.Default -> MyPageView(onClickBackButton, viewModel)
+            is MyPageViewState.VodleLog -> VodleLogView(vodleLogList = viewState.vodleLogList) {
+                viewModel.onTriggerEvent(MyPageViewEvent.OnClickBackButtonFromVodleLogView)
+            }
         }
+
+        VodleSnackBarHost(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+            snackBarHostState = snackBarHostState
+        )
     }
 }
 
@@ -64,7 +76,10 @@ internal fun TopBar(onClickBackButton: () -> Unit, title: String) {
     Box {
         Image(
             alignment = Alignment.CenterStart,
-            modifier = Modifier.clickable(interactionSource = interactionSource, indication = null) { onClickBackButton() },
+            modifier = Modifier.clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onClickBackButton() },
             painter = painterResource(id = R.drawable.left_arrow),
             contentDescription = null
         )
@@ -84,12 +99,16 @@ internal fun TopBar(onClickBackButton: () -> Unit, title: String) {
 @Composable
 private fun ObserveToastMessage(
     viewState: MyPageViewState,
-    context: Context,
+    snackBarHostState: SnackbarHostState,
     viewModel: MyPageViewModel
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
         if (viewState.toastMessage.isNotEmpty()) {
-            Toast.makeText(context, viewState.toastMessage, Toast.LENGTH_SHORT).show()
+            snackBarHostState.showSnackbar(
+                viewState.toastMessage ?: "",
+                actionLabel = "확인",
+                duration = SnackbarDuration.Short
+            )
             viewModel.onTriggerEvent(MyPageViewEvent.OnFinishToast)
         }
     }

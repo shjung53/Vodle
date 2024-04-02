@@ -2,14 +2,12 @@ package com.tes.presentation.login
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import android.window.SplashScreen
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,14 +16,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,11 +34,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.tes.presentation.R
+import com.tes.presentation.main.components.VodleSnackBarHost
 import com.tes.presentation.navigation.Route
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-
-private const val TAG = "LoginScreen_싸피"
 
 @Composable
 fun LoginScreen(
@@ -50,15 +46,18 @@ fun LoginScreen(
 ) {
     val viewState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    if (viewState.isTryingAutoLogin) SplashScreen(viewState, context, viewModel)
-    else LoginWithNaverScreen(viewState, context, viewModel, onLoginSuccess)
+    if (viewState.isTryingAutoLogin) {
+        SplashScreen(viewState, viewModel)
+    } else {
+        LoginWithNaverScreen(viewState, snackBarHostState, context, viewModel, onLoginSuccess)
+    }
 }
 
 @Composable
 fun SplashScreen(
     viewState: LoginViewState,
-    context: Context,
     viewModel: LoginViewModel
 ) {
     Column(
@@ -81,19 +80,20 @@ fun SplashScreen(
         Spacer(modifier = Modifier.weight(1f))
     }
 
-    ObserveAutoLoginAttempt(viewState, context, viewModel)
+    ObserveAutoLoginAttempt(viewState, viewModel)
 }
 
 @Composable
 fun LoginWithNaverScreen(
     viewState: LoginViewState,
+    snackBarHostState: SnackbarHostState,
     context: Context,
     viewModel: LoginViewModel,
     onLoginSuccess: () -> Unit
 ) {
     ObserveLoginAttempt(viewState, context, viewModel)
 
-    ObserveToastMessage(viewState, context, viewModel)
+    ObserveToastMessage(viewState, snackBarHostState, viewModel)
 
     ObserveRoute(viewState, onLoginSuccess)
 
@@ -108,45 +108,53 @@ fun LoginWithNaverScreen(
         viewModel.onTriggerEvent(LoginViewEvent.OnClickBackButton(backPressedTime))
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color(0xFFC8DCDC)),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo_panpare),
-            contentDescription = null,
+    Box {
+        Column(
             modifier = Modifier
-                .padding(top = 24.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f)
-        )
+                .fillMaxSize()
+                .background(color = Color(0xFFC8DCDC)),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo_panpare),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+            )
 
-        Text(text = "Vodle", fontSize = 72.sp)
+            Text(text = "Vodle", fontSize = 72.sp)
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Image(
+            Image(
+                modifier = Modifier
+                    .width(280.dp)
+                    .height(40.dp)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { viewModel.onTriggerEvent(LoginViewEvent.OnClickNaverLoginButton) },
+                painter = painterResource(id = R.drawable.naver_login_button),
+                contentDescription = null
+            )
+
+            Spacer(modifier = Modifier.weight(1.1f))
+        }
+
+        VodleSnackBarHost(
             modifier = Modifier
-                .width(280.dp)
-                .height(40.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) { viewModel.onTriggerEvent(LoginViewEvent.OnClickNaverLoginButton) },
-            painter = painterResource(id = R.drawable.naver_login_button),
-            contentDescription = null
+                .align(Alignment.BottomCenter)
+                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+            snackBarHostState = snackBarHostState
         )
-
-        Spacer(modifier = Modifier.weight(1.1f))
     }
 }
 
 @Composable
 private fun ObserveAutoLoginAttempt(
     viewState: LoginViewState,
-    context: Context,
     viewModel: LoginViewModel
 ) {
     if (viewState.isTryingAutoLogin) {
@@ -178,12 +186,16 @@ private fun ObserveLoginAttempt(
 @Composable
 private fun ObserveToastMessage(
     viewState: LoginViewState,
-    context: Context,
+    snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
         if (viewState.toastMessage?.isNotEmpty() == true) {
-            Toast.makeText(context, viewState.toastMessage, Toast.LENGTH_SHORT).show()
+            snackbarHostState.showSnackbar(
+                viewState.toastMessage ?: "",
+                actionLabel = "확인",
+                duration = SnackbarDuration.Short
+            )
             viewModel.onTriggerEvent(LoginViewEvent.OnFinishToast)
         }
     }

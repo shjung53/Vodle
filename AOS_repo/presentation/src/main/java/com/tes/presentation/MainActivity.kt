@@ -8,8 +8,6 @@ import com.tes.presentation.navigation.AppNavHost
 import com.tes.presentation.theme.VodleTheme
 import com.tes.presentation.utils.MediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
-
-private const val TAG = "MainActivity_싸피"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 

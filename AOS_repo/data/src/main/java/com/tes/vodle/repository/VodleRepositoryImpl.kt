@@ -3,6 +3,7 @@ package com.tes.vodle.repository
 import com.tes.domain.model.AudioData
 import com.tes.domain.model.Gender
 import com.tes.domain.model.Location
+import com.tes.domain.model.RecordType
 import com.tes.domain.model.Vodle
 import com.tes.domain.repository.VodleRepository
 import com.tes.vodle.datasource.vodle.VodleDataSource
@@ -41,8 +42,20 @@ class VodleRepositoryImpl @Inject constructor(
             onFailure = { Result.failure(Exception()) }
         )
 
-    override suspend fun uploadVodle(recordingFile: File): Result<Unit> =
-        vodleDataSource.uploadVodle(recordingFile).fold(
+    override suspend fun uploadVodle(
+        recordingFile: File,
+        writer: String,
+        recordType: RecordType,
+        streamingUrl: String,
+        location: Location
+    ): Result<Unit> =
+        vodleDataSource.uploadVodle(
+            recordingFile,
+            writer,
+            recordType.name,
+            streamingUrl,
+            location
+        ).fold(
             onSuccess = {
                 Result.success(Unit)
             },
