@@ -10,8 +10,6 @@ import kotlinx.coroutines.runBlocking
 import java.lang.NullPointerException
 import javax.inject.Inject
 
-private const val TAG = "UserRepositoryImpl_싸피"
-
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
     private val tokenManager: TokenManager

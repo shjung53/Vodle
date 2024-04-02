@@ -1,7 +1,6 @@
 package main.components
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
@@ -65,8 +64,6 @@ import com.tes.presentation.theme.vodleTypoGraphy
 import com.tes.presentation.utils.distanceCalculator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-private const val TAG = "VodleListDialogCompo_싸피"
 
 @OptIn(UnstableApi::class)
 @Composable
@@ -246,15 +243,6 @@ fun VodleListDialogComponent(
                                 vodleList.get(index).location.lng
                             )
                         ) {
-                            Log.d(
-                                TAG,
-                                "VodleListDialogComponent: ${distanceCalculator(
-                                    myLocation.lat,
-                                    myLocation.lng,
-                                    vodleList.get(index).location.lat,
-                                    vodleList.get(index).location.lng
-                                )}"
-                            )
                             val hlsMediaSource =
                                 HlsMediaSource.Factory(dataSourceFactory)
                                     .createMediaSource(

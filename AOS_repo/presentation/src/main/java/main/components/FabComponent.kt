@@ -47,7 +47,8 @@ fun FabComponent(
             modifier = modifier.then(
                 Modifier
                     .clip(CircleShape)
-                    .size(40.dp)),
+                    .size(40.dp)
+            ),
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = main_red,
                 containerColor = Color.White,
@@ -69,7 +70,7 @@ private object NoRippleTheme : RippleTheme {
     override fun defaultColor() = Color.Unspecified
 
     @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f,0.0f,0.0f,0.0f)
+    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
 }
 
 @Preview

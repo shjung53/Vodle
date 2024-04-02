@@ -9,7 +9,6 @@ import com.tes.vodle.model.user.response.MyVodleResponse
 import com.tes.vodle.model.user.response.TokenResponse
 import javax.inject.Inject
 
-private const val TAG = "UserDataSourceImpl_싸피"
 class UserDataSourceImpl @Inject constructor(
     private val authService: AuthService,
     private val naverLoginService: NaverLoginService,

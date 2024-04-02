@@ -49,7 +49,7 @@ fun LoginScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     if (viewState.isTryingAutoLogin) {
-        SplashScreen(viewState, context, viewModel)
+        SplashScreen(viewState, viewModel)
     } else {
         LoginWithNaverScreen(viewState, snackBarHostState, context, viewModel, onLoginSuccess)
     }
@@ -58,7 +58,6 @@ fun LoginScreen(
 @Composable
 fun SplashScreen(
     viewState: LoginViewState,
-    context: Context,
     viewModel: LoginViewModel
 ) {
     Column(
@@ -81,7 +80,7 @@ fun SplashScreen(
         Spacer(modifier = Modifier.weight(1f))
     }
 
-    ObserveAutoLoginAttempt(viewState, context, viewModel)
+    ObserveAutoLoginAttempt(viewState, viewModel)
 }
 
 @Composable
@@ -156,7 +155,6 @@ fun LoginWithNaverScreen(
 @Composable
 private fun ObserveAutoLoginAttempt(
     viewState: LoginViewState,
-    context: Context,
     viewModel: LoginViewModel
 ) {
     if (viewState.isTryingAutoLogin) {

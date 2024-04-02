@@ -76,7 +76,10 @@ internal fun TopBar(onClickBackButton: () -> Unit, title: String) {
     Box {
         Image(
             alignment = Alignment.CenterStart,
-            modifier = Modifier.clickable(interactionSource = interactionSource, indication = null) { onClickBackButton() },
+            modifier = Modifier.clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onClickBackButton() },
             painter = painterResource(id = R.drawable.left_arrow),
             contentDescription = null
         )
