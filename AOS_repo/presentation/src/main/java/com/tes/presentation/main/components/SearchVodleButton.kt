@@ -29,7 +29,14 @@ internal fun SearchVodleButton(
                         cameraPositionState.position.target.latitude,
                         cameraPositionState.position.target.longitude
                     ),
-                    144L
+                    Location(
+                        cameraPositionState.contentBounds!!.northLatitude,
+                        cameraPositionState.contentBounds!!.eastLongitude
+                    ),
+                    Location(
+                        cameraPositionState.contentBounds!!.southLatitude,
+                        cameraPositionState.contentBounds!!.westLongitude
+                    )
                 )
             )
         },

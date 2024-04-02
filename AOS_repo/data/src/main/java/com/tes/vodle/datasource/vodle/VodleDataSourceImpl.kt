@@ -1,11 +1,15 @@
 package com.tes.vodle.datasource.vodle
 
 import com.tes.domain.model.Gender
+import com.tes.domain.model.Location
+import com.tes.domain.model.lat
+import com.tes.domain.model.lng
 import com.tes.vodle.api.VodleMetaData
 import com.tes.vodle.api.VodleService
 import com.tes.vodle.model.BasicResponse
 import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.TTSConversionRequest
+import com.tes.vodle.model.vodle.VodlesAroundRequest
 import com.tes.vodle.model.vodle.VodlesAroundResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -17,8 +21,21 @@ import javax.inject.Inject
 class VodleDataSourceImpl @Inject constructor(
     private val vodleService: VodleService
 ) : VodleDataSource {
-    override suspend fun fetchVodlesAround(): Result<VodlesAroundResponse> = runCatching {
-        vodleService.fetchVodlesAround()
+    override suspend fun fetchVodlesAround(
+        centerLocation: Location,
+        northEastLocation: Location,
+        southWestLocation: Location
+    ): Result<VodlesAroundResponse> = runCatching {
+        vodleService.fetchVodlesAround(
+            VodlesAroundRequest(
+                centerLatitude = centerLocation.lat,
+                centerLongitude = centerLocation.lng,
+                northEastLatitude = northEastLocation.lat,
+                northEastLongitude = northEastLocation.lng,
+                southWestLatitude = southWestLocation.lat,
+                southWestLongitude = southWestLocation.lng
+            )
+        )
     }
 
     override suspend fun uploadVodle(recordingFile: File): Result<BasicResponse> = runCatching {

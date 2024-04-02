@@ -33,14 +33,17 @@ class MainViewModel @Inject constructor(
         when (event) {
             MainViewEvent.OnClickHeadPhoneButton -> TODO()
             is MainViewEvent.OnClickRecordingButton -> setState { onStartRecord(event.location) }
-            is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround()
             is MainViewEvent.OnClickWriteButton -> setState {
                 onStartRecord(
                     event.location,
                     event.vodleOption
                 )
             }
-
+            is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround(
+                event.centerLocation,
+                event.northEastLocation,
+                event.southWestLocation
+            )
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
@@ -78,9 +81,13 @@ class MainViewModel @Inject constructor(
             is MainViewState.ShowRecordedVodle -> this
         }
 
-    private fun searchVodlesAround() {
+    private fun searchVodlesAround(
+        centerLocation: Location,
+        northEastLocation: Location,
+        southWestLocation: Location
+    ) {
         viewModelScope.launch {
-            fetchVodlesAroundUseCase().fold(
+            fetchVodlesAroundUseCase(centerLocation, northEastLocation, southWestLocation).fold(
                 onSuccess = { it ->
                     val vodleList = it.map {
                         Vodle(
@@ -218,7 +225,6 @@ class MainViewModel @Inject constructor(
                 vodleList,
                 isLoading = false
             )
-
             is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
 }
@@ -292,7 +298,7 @@ private fun MainViewState.onClickMarker(myLocation: Location, location: Location
         is MainViewState.Default -> MainViewState.ShowRecordedVodle(
             this.vodleMap,
             "",
-            this.vodleMap.get(location)!!,
+            this.vodleMap[location]!!,
             myLocation = myLocation
         )
 

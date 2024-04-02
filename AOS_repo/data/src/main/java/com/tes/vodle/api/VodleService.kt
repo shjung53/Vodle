@@ -13,8 +13,10 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface VodleService {
-    @GET("api/vodle/all")
-    suspend fun fetchVodlesAround(): VodlesAroundResponse
+    @POST("api/vodle/search")
+    suspend fun fetchVodlesAround(
+        @Body vodlesAroundRequest: VodlesAroundRequest
+    ): VodlesAroundResponse
 
     @Multipart
     @POST("api/vodle")

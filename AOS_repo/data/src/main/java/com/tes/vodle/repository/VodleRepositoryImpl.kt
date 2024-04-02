@@ -13,8 +13,16 @@ import javax.inject.Inject
 class VodleRepositoryImpl @Inject constructor(
     private val vodleDataSource: VodleDataSource
 ) : VodleRepository {
-    override suspend fun fetchVodlesAround(): Result<List<Vodle>> =
-        vodleDataSource.fetchVodlesAround().fold(
+    override suspend fun fetchVodlesAround(
+        centerLocation: Location,
+        northEastLocation: Location,
+        southWestLocation: Location
+    ): Result<List<Vodle>> =
+        vodleDataSource.fetchVodlesAround(
+            centerLocation,
+            northEastLocation,
+            southWestLocation
+        ).fold(
             onSuccess = { it ->
                 val vodleList: List<Vodle> = it.dataBody.map {
                     Vodle(
