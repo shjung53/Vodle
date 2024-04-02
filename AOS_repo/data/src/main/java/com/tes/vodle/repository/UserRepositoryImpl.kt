@@ -1,6 +1,5 @@
 package com.tes.vodle.repository
 
-import android.util.Log
 import com.tes.domain.TokenManager
 import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
@@ -100,11 +99,12 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun checkAccessToken(): Result<Boolean> {
         val accessToken = tokenManager.getAccessToken()
 
-        Log.d(TAG, "checkAccessToken: ${accessToken}")
-
         val result = runBlocking {
-            if (accessToken == "") Result.failure(exception = NullPointerException())
-            else Result.success(accessToken)
+            if (accessToken == "") {
+                Result.failure(exception = NullPointerException())
+            } else {
+                Result.success(accessToken)
+            }
         }
 
         return result.fold(

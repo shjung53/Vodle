@@ -1,5 +1,6 @@
 package com.tes.vodle.api
 
+import com.google.gson.annotations.SerializedName
 import com.tes.vodle.model.BasicResponse
 import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.TTSConversionRequest
@@ -44,9 +45,9 @@ interface VodleService {
 }
 
 data class VodleMetaData(
-    val writer: String = " 익명",
-    val recordType: String = "TTS",
-    val fileOriginName: String = "test",
-    val longitude: Float = 128.41647f,
-    val latitude: Float = 36.10714f
+    @SerializedName("writer") val writer: String = " 익명",
+    @SerializedName("recordType") val recordType: String = "TTS",
+    @SerializedName("streamingURL") val streamingURL: String = "test",
+    @SerializedName("latitude") val longitude: Double = 128.41647,
+    @SerializedName("longitude") val latitude: Double = 36.10714
 )

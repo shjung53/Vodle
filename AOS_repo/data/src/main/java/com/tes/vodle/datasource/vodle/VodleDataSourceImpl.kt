@@ -38,11 +38,26 @@ class VodleDataSourceImpl @Inject constructor(
         )
     }
 
-    override suspend fun uploadVodle(recordingFile: File): Result<BasicResponse> = runCatching {
+    override suspend fun uploadVodle(
+        recordingFile: File,
+        writer: String,
+        recordType: String,
+        streamingUrl: String,
+        location: Location
+    ): Result<BasicResponse> = runCatching {
         val requestBody: RequestBody = recordingFile.asRequestBody("audio/m4a".toMediaTypeOrNull())
         val multipartBody: MultipartBody.Part =
-            MultipartBody.Part.createFormData("soundFile", recordingFile.getName(), requestBody)
-        vodleService.uploadVodle(multipartBody, VodleMetaData())
+            MultipartBody.Part.createFormData("soundFile", recordingFile.name, requestBody)
+        vodleService.uploadVodle(
+            multipartBody,
+            VodleMetaData(
+                writer,
+                recordType,
+                streamingUrl,
+                location.lat,
+                location.lng
+            )
+        )
     }
 
     override suspend fun convertVoice(

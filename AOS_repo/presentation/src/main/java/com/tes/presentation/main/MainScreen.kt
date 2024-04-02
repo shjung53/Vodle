@@ -1,16 +1,21 @@
 package com.tes.presentation.main
 
-import android.content.Context
-import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -22,6 +27,7 @@ import com.tes.presentation.main.components.LoadingScreen
 import com.tes.presentation.main.components.SearchVodleButton
 import com.tes.presentation.main.components.VodleDialog
 import com.tes.presentation.main.components.VodleMapClustering
+import com.tes.presentation.main.components.VodleSnackBarHost
 import com.tes.presentation.main.recording.CreateVodleDialog
 import com.tes.presentation.main.recording.IntroDuctionDialog
 import com.tes.presentation.main.recording.RecordingDialog
@@ -44,53 +50,69 @@ internal fun MainScreen(
     val player = ExoPlayer.Builder(LocalContext.current).build()
     val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
 
-    ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    ObserveToastMessage(
+        viewState = viewState,
+        viewModel = viewModel,
+        snackBarHostState = snackBarHostState
+    )
 
     VodleMapClustering(viewModel, viewState, scope, cameraPositionState)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SearchVodleButton(
-            viewModel = viewModel,
-            cameraPositionState = cameraPositionState,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-        )
+    Box {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            SearchVodleButton(
+                viewModel = viewModel,
+                cameraPositionState = cameraPositionState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+            )
 
-        CurrentLocationButton(
-            viewModel = viewModel,
-            context = context,
-            scope = scope,
-            cameraPositionState = cameraPositionState,
-            modifier = Modifier
-                .align(Alignment.End)
-        )
+            CurrentLocationButton(
+                viewModel = viewModel,
+                context = context,
+                scope = scope,
+                cameraPositionState = cameraPositionState,
+                modifier = Modifier
+                    .align(Alignment.End)
+            )
 
 //        CalendarButton(
 //            modifier = Modifier.align(Alignment.End)
 //        )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        if (viewState is MainViewState.ShowRecordedVodle) {
-            VodleDialog(
+            if (viewState is MainViewState.ShowRecordedVodle) {
+                VodleDialog(
+                    viewModel = viewModel,
+                    viewState = viewState,
+                    context = context,
+                    myLocation = viewState.myLocation,
+                    scope = scope,
+                    player = player,
+                    dataSourceFactory = dataSourceFactory
+                )
+            }
+
+            BottomButtonGroup(
                 viewModel = viewModel,
-                viewState = viewState,
                 context = context,
-                myLocation = viewState.myLocation,
                 scope = scope,
-                player = player,
-                dataSourceFactory = dataSourceFactory
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClickUserButton = onClickUserButton
             )
         }
 
-        BottomButtonGroup(
-            viewModel = viewModel,
-            context = context,
-            scope = scope,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClickUserButton = onClickUserButton
+        VodleSnackBarHost(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+            snackBarHostState = snackBarHostState
         )
     }
 
@@ -103,6 +125,7 @@ internal fun MainScreen(
                 viewState,
                 player
             )
+
             RecordingStep.TYPING -> TypingDialog(viewModel = viewModel, viewState)
         }
     }
@@ -115,12 +138,16 @@ internal fun MainScreen(
 @Composable
 private fun ObserveToastMessage(
     viewState: MainViewState,
-    context: Context,
+    snackBarHostState: SnackbarHostState,
     viewModel: MainViewModel
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
         if (viewState.toastMessage?.isNotEmpty() == true) {
-            Toast.makeText(context, viewState.toastMessage, Toast.LENGTH_SHORT).show()
+            snackBarHostState.showSnackbar(
+                viewState.toastMessage ?: "",
+                actionLabel = "확인",
+                duration = SnackbarDuration.Short
+            )
             viewModel.onTriggerEvent(MainViewEvent.OnFinishToast)
         }
     }

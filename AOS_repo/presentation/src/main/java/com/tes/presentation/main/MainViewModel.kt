@@ -2,6 +2,7 @@ package com.tes.presentation.main
 
 import androidx.lifecycle.viewModelScope
 import com.tes.domain.model.Gender
+import com.tes.domain.model.RecordType
 import com.tes.domain.usecase.vodle.ConvertRecordingUseCase
 import com.tes.domain.usecase.vodle.ConvertTTSUseCase
 import com.tes.domain.usecase.vodle.FetchVodlesAroundUseCase
@@ -39,11 +40,13 @@ class MainViewModel @Inject constructor(
                     event.vodleOption
                 )
             }
+
             is MainViewEvent.OnClickSearchVodleButton -> searchVodlesAround(
                 event.centerLocation,
                 event.northEastLocation,
                 event.southWestLocation
             )
+
             is MainViewEvent.ShowToast -> setState { showToast(event.message) }
             MainViewEvent.OnDismissRecordingDialog -> setState { onDismissDialog() }
             MainViewEvent.OnFinishToast -> setState { onFinishToast() }
@@ -59,9 +62,17 @@ class MainViewModel @Inject constructor(
                     event.location
                 )
             }
+
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
-            is MainViewEvent.OnClickSaveVodleButton -> saveVodle(event.recordingFile)
+            is MainViewEvent.OnClickSaveVodleButton -> saveVodle(
+                event.recordingFile,
+                event.writer,
+                event.recordType,
+                event.streamingUrl,
+                event.location
+            )
+
             is MainViewEvent.OnFailMakingVodle -> setState { onFailMakingVodle(event.toastMessage) }
             is MainViewEvent.OnSelectVoiceType -> setState { onSelectVoiceType(event.voiceType) }
             is MainViewEvent.OnSelectGender -> setState { onSelectGender(event.gender) }
@@ -153,7 +164,12 @@ class MainViewModel @Inject constructor(
             setState { setLoading() }
             convertTTSUseCase(text, selectedVoice.eng).fold(
                 onSuccess = {
-                    setState { onFinishConversion(selectedVoice, it.convertedAudioUrl) }
+                    setState {
+                        onFinishConversion(
+                            voiceType = selectedVoice,
+                            convertedUrl = it.convertedAudioUrl
+                        )
+                    }
                 },
                 onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
             )
@@ -165,7 +181,7 @@ class MainViewModel @Inject constructor(
             setState { setLoading() }
             convertRecording(recordingFile, selectedVoice, gender).fold(
                 onSuccess = {
-                    setState { onFinishConversion(selectedVoice, it) }
+                    setState { onFinishConversion(recordingFile, selectedVoice, it) }
                 },
                 onFailure = { onTriggerEvent(MainViewEvent.OnFailMakingVodle("문제가 발생했습니다.")) }
             )
@@ -180,6 +196,7 @@ class MainViewModel @Inject constructor(
         }
 
     private fun MainViewState.onFinishConversion(
+        recordingFile: File = File(""),
         voiceType: VoiceType,
         convertedUrl: Url
     ): MainViewState {
@@ -198,10 +215,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun saveVodle(recordingFile: File) {
-        // TODO 보들 저장하는거 해야한다..
+    private fun saveVodle(
+        recordingFile: File,
+        writer: String,
+        recordType: RecordType,
+        streamingUrl: String,
+        location: Location
+    ) {
+        setState { setLoading() }
         viewModelScope.launch {
-            uploadVodleUseCase(recordingFile).fold(
+            uploadVodleUseCase(recordingFile, writer, recordType, streamingUrl, location).fold(
                 onSuccess = {
                     setState { onSuccessSaveVodle() }
                 },
@@ -214,7 +237,12 @@ class MainViewModel @Inject constructor(
         return when (this) {
             is MainViewState.Default -> this.copy(isLoading = false)
             is MainViewState.MakingVodle -> {
-                MainViewState.Default(this.vodleMap, vodleList = this.vodleList, isLoading = false)
+                MainViewState.Default(
+                    this.vodleMap,
+                    vodleList = this.vodleList,
+                    isLoading = false,
+                    toastMessage = "보들 등록에 성공했습니다!"
+                )
             }
 
             is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
@@ -230,6 +258,7 @@ class MainViewModel @Inject constructor(
                 vodleList,
                 isLoading = false
             )
+
             is MainViewState.ShowRecordedVodle -> this.copy(isLoading = false)
         }
 }
@@ -240,13 +269,23 @@ private fun MainViewState.updateVodles(
 ): MainViewState {
     return when (this) {
         is MainViewState.Default -> {
-            this.copy(vodleMap = vodleMap, vodleList = vodleList, isLoading = false)
+            this.copy(
+                vodleMap = vodleMap,
+                vodleList = vodleList,
+                isLoading = false,
+                toastMessage = "보들 불러오기 성공"
+            )
         }
 
-        is MainViewState.MakingVodle -> this.copy(isLoading = false)
+        is MainViewState.MakingVodle -> this.copy(isLoading = false, toastMessage = "보들 불러오기 성공")
 
         is MainViewState.ShowRecordedVodle -> {
-            this.copy(vodleMap = vodleMap, vodleList = vodleList, isLoading = false)
+            this.copy(
+                vodleMap = vodleMap,
+                vodleList = vodleList,
+                isLoading = false,
+                toastMessage = "보들 불러오기 성공"
+            )
         }
     }
 }

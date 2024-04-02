@@ -1,6 +1,5 @@
 package com.tes.vodle.datasource.user
 
-import android.util.Log
 import com.tes.vodle.api.AuthService
 import com.tes.vodle.api.NaverAuthService
 import com.tes.vodle.api.NaverLoginService
@@ -46,7 +45,6 @@ class UserDataSourceImpl @Inject constructor(
     }
 
     override suspend fun autoLogin(accessToken: String): Result<TokenResponse> = runCatching {
-        Log.d(TAG, "autoLogin: ${authService.autoLogin(accessToken)} / ${accessToken}")
         authService.autoLogin(accessToken)
     }
 }
