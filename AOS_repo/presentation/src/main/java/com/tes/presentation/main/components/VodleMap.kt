@@ -1,6 +1,5 @@
 package com.tes.presentation.main.components
 
-import android.graphics.Color
 import android.widget.ImageView
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.LocationSource
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
@@ -22,7 +19,6 @@ import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapUiSettings
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberFusedLocationSource
-import com.naver.maps.map.overlay.CircleOverlay
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.tes.presentation.R
@@ -62,26 +58,6 @@ internal fun VodleMap(
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<Vodle>?>(null) }
         var myLocation: Location
-
-        val circleOverlay = remember { mutableStateOf<CircleOverlay?>(null) }
-
-        val locationChangeListener = LocationSource.OnLocationChangedListener {
-            if (circleOverlay.value == null) {
-                val circle = CircleOverlay()
-                circle.center = LatLng(it!!.latitude, it.longitude)
-                circle.radius = 50.0
-                circle.color = Color.parseColor("#500000ff")
-                circleOverlay.value = circle
-            } else {
-                circleOverlay.value?.center = LatLng(it!!.latitude, it.longitude)
-            }
-        }
-
-        locationSource.activate(locationChangeListener)
-
-        MapEffect(circleOverlay.value) {
-            circleOverlay.value?.map = it
-        }
 
         MapEffect(vodleList) { map ->
             if (clusterManager == null) {
