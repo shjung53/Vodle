@@ -3,6 +3,7 @@ package com.tes.presentation.main
 import com.tes.domain.model.Gender
 import com.tes.presentation.composebase.ViewEvent
 import com.tes.presentation.model.Location
+import com.tes.presentation.model.VodleOption
 import com.tes.presentation.model.VoiceType
 import java.io.File
 
@@ -10,7 +11,10 @@ sealed class MainViewEvent : ViewEvent {
 
     data class OnClickSearchVodleButton(val location: Location, val radius: Long) : MainViewEvent()
 
-    data object OnClickWriteButton : MainViewEvent()
+    data class OnClickWriteButton(
+        val location: Location,
+        val vodleOption: VodleOption = VodleOption.TEXT
+    ) : MainViewEvent()
 
     data object OnClickHeadPhoneButton : MainViewEvent()
 
@@ -23,6 +27,11 @@ sealed class MainViewEvent : ViewEvent {
         val recordingFile: File,
         val selectedVoiceType: VoiceType,
         val gender: Gender
+    ) : MainViewEvent()
+
+    data class OnClickFinishTypingButton(
+        val text: String,
+        val selectedVoiceType: VoiceType
     ) : MainViewEvent()
 
     data class OnClickSaveVodleButton(val recordingFile: File) : MainViewEvent()

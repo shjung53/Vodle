@@ -17,4 +17,9 @@ interface VodleDataSource {
         selectedVoice: String,
         gender: Gender
     ): Result<ConversionResponse>
+
+    suspend fun convertTTS(
+        content: String,
+        selectedVoice: String
+    ): Result<ConversionResponse>
 }
