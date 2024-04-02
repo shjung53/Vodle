@@ -1,14 +1,9 @@
 package com.tes.presentation.main
 
 import android.content.Context
-import android.view.Gravity
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,10 +11,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -35,6 +26,7 @@ import com.tes.presentation.main.recording.CreateVodleDialog
 import com.tes.presentation.main.recording.IntroDuctionDialog
 import com.tes.presentation.main.recording.RecordingDialog
 import com.tes.presentation.main.recording.RecordingStep
+import com.tes.presentation.main.recording.TypingDialog
 
 @Composable
 internal fun MainScreen(
