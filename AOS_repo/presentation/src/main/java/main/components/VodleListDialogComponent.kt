@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
@@ -56,7 +55,6 @@ import com.tes.presentation.R
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.fetchLocationAndHandle
-import com.tes.presentation.main.moveCameraPosition
 import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
 import com.tes.presentation.model.lat
@@ -69,6 +67,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "VodleListDialogCompo_싸피"
+
 @OptIn(UnstableApi::class)
 @Composable
 fun VodleListDialogComponent(
@@ -85,7 +84,7 @@ fun VodleListDialogComponent(
     val isPlaying = remember { mutableStateOf(false) }
     val audioDuration = remember { mutableIntStateOf(0) }
     val playerLoad = remember { mutableStateOf(false) }
-    var currentLocation : Location = myLocation
+    var currentLocation: Location = myLocation
 
     player.addListener(object : Player.Listener {
         @Deprecated("Deprecated in Java")
@@ -220,15 +219,16 @@ fun VodleListDialogComponent(
                             scope,
                             context,
                             onSuccess = { location ->
-                                        currentLocation = location
+                                currentLocation = location
                             },
                             onFailure = {
                                 viewModel.onTriggerEvent(
-                                    MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))
+                                    MainViewEvent.ShowToast(
+                                        context.getString(R.string.location_fetch_failure)
+                                    )
                                 )
                             }
                         )
-
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                     colors = IconButtonDefaults.iconButtonColors(
@@ -239,8 +239,22 @@ fun VodleListDialogComponent(
                     )
                 ) {
                     if (isPlaying.value) {
-                        if(distanceCalculator(myLocation.lat,myLocation.lng,vodleList.get(index).location.lat,vodleList.get(index).location.lng)){
-                            Log.d(TAG, "VodleListDialogComponent: ${distanceCalculator(myLocation.lat,myLocation.lng,vodleList.get(index).location.lat,vodleList.get(index).location.lng)}")
+                        if (distanceCalculator(
+                                myLocation.lat,
+                                myLocation.lng,
+                                vodleList.get(index).location.lat,
+                                vodleList.get(index).location.lng
+                            )
+                        ) {
+                            Log.d(
+                                TAG,
+                                "VodleListDialogComponent: ${distanceCalculator(
+                                    myLocation.lat,
+                                    myLocation.lng,
+                                    vodleList.get(index).location.lat,
+                                    vodleList.get(index).location.lng
+                                )}"
+                            )
                             val hlsMediaSource =
                                 HlsMediaSource.Factory(dataSourceFactory)
                                     .createMediaSource(
@@ -254,17 +268,19 @@ fun VodleListDialogComponent(
                                 contentDescription = "stopButton",
                                 modifier = Modifier.fillMaxWidth()
                             )
-                        }
-                        else{
-                            Toast.makeText(context, "50m 밖에 있는 Vodle은 들을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "50m 밖에 있는 Vodle은 들을 수 없습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             Icon(
                                 imageVector = Icons.Default.PlayArrow,
                                 contentDescription = "playButton",
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
-                    }
-                    else {
+                    } else {
                         player.pause()
                         player.stop()
                         Icon(

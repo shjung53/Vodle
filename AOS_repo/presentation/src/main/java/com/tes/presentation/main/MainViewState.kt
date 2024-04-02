@@ -42,6 +42,6 @@ sealed class MainViewState : ViewState {
         override val toastMessage: String? = null,
         override val vodleList: List<Vodle>,
         override val isLoading: Boolean = false,
-        val myLocation : Location
+        val myLocation: Location
     ) : MainViewState()
 }

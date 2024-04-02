@@ -42,7 +42,6 @@ fun BottomNavBarComponent(
                 .clip(shape = RoundedCornerShape(10.dp))
                 .fillMaxWidth(0.88f)
                 .wrapContentHeight()
-
                 .background(color = Color.White)
         )
     ) {

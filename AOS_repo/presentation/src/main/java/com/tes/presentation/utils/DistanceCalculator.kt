@@ -1,9 +1,6 @@
 package com.tes.presentation.utils
 
 import android.util.Log
-import com.tes.presentation.model.Location
-import com.tes.presentation.model.lat
-import com.tes.presentation.model.lng
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -11,7 +8,6 @@ import kotlin.math.sqrt
 
 private const val TAG = "distanceCalculator_싸피"
 internal fun distanceCalculator(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Boolean {
-
     val earthRadius = 6371 // 지구의 반지름 (단위: km)
 
     val dLat = Math.toRadians(lat2 - lat1)
@@ -25,6 +21,6 @@ internal fun distanceCalculator(lat1: Double, lon1: Double, lat2: Double, lon2: 
 
     val distance = earthRadius * c
 
-    Log.d(TAG, "distanceCalculator: 값은 이렇게 : ${distance}")
+    Log.d(TAG, "distanceCalculator: 값은 이렇게 : $distance")
     return distance < 0.05
 }

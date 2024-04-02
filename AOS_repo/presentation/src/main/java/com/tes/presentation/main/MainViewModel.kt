@@ -53,7 +53,12 @@ class MainViewModel @Inject constructor(
                 event.gender
             )
 
-            is MainViewEvent.OnClickMarker -> setState { onClickMarker(event.myLocation,event.location) }
+            is MainViewEvent.OnClickMarker -> setState {
+                onClickMarker(
+                    event.myLocation,
+                    event.location
+                )
+            }
             MainViewEvent.OnDismissVodleDialog -> setState { onDismissVodleDialog() }
             MainViewEvent.OnClickMakingVodleButton -> setState { startRecording() }
             is MainViewEvent.OnClickSaveVodleButton -> saveVodle(event.recordingFile)

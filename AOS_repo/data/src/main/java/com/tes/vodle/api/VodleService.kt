@@ -3,10 +3,10 @@ package com.tes.vodle.api
 import com.tes.vodle.model.BasicResponse
 import com.tes.vodle.model.vodle.ConversionResponse
 import com.tes.vodle.model.vodle.TTSConversionRequest
+import com.tes.vodle.model.vodle.VodlesAroundRequest
 import com.tes.vodle.model.vodle.VodlesAroundResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part

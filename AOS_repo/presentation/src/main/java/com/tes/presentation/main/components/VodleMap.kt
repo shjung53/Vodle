@@ -87,7 +87,9 @@ internal fun VodleMap(
                             },
                             onFailure = {
                                 viewModel.onTriggerEvent(
-                                    MainViewEvent.ShowToast(context.getString(R.string.location_fetch_failure))
+                                    MainViewEvent.ShowToast(
+                                        context.getString(R.string.location_fetch_failure)
+                                    )
                                 )
                             }
                         )

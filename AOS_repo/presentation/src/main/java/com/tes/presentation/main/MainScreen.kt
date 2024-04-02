@@ -46,7 +46,7 @@ internal fun MainScreen(
 
     ObserveToastMessage(viewState = viewState, context = context, viewModel = viewModel)
 
-    VodleMapClustering(viewModel, viewState, scope,cameraPositionState)
+    VodleMapClustering(viewModel, viewState, scope, cameraPositionState)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
