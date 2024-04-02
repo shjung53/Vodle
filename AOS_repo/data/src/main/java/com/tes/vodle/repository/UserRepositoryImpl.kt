@@ -1,5 +1,6 @@
 package com.tes.vodle.repository
 
+import android.util.Log
 import com.tes.domain.TokenManager
 import com.tes.domain.model.Location
 import com.tes.domain.model.Vodle
@@ -7,7 +8,10 @@ import com.tes.domain.repository.UserRepository
 import com.tes.vodle.datasource.user.UserDataSource
 import com.tes.vodle.util.calculateHmac
 import kotlinx.coroutines.runBlocking
+import java.lang.NullPointerException
 import javax.inject.Inject
+
+private const val TAG = "UserRepositoryImpl_싸피"
 
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
@@ -77,4 +81,39 @@ class UserRepositoryImpl @Inject constructor(
             },
             onFailure = { Result.failure(it) }
         )
+
+    override suspend fun autoLogin(): Result<Unit> {
+        val accessToken = tokenManager.getAccessToken()
+        val result = runBlocking { userDataSource.autoLogin("Bearer $accessToken") }
+
+        return result.fold(
+            onSuccess = {
+                tokenManager.saveToken(it.data.accessToken, it.data.refreshToken)
+                Result.success(Unit)
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
+    }
+
+    override suspend fun checkAccessToken(): Result<Boolean> {
+        val accessToken = tokenManager.getAccessToken()
+
+        Log.d(TAG, "checkAccessToken: ${accessToken}")
+
+        val result = runBlocking {
+            if (accessToken == "") Result.failure(exception = NullPointerException())
+            else Result.success(accessToken)
+        }
+
+        return result.fold(
+            onSuccess = {
+                Result.success(true)
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
+    }
 }

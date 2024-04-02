@@ -14,4 +14,8 @@ sealed class LoginViewEvent : ViewEvent {
     data class ShowToast(val message: String) : LoginViewEvent()
 
     data object OnFinishToast : LoginViewEvent()
+
+    data object OnAutoLogin : LoginViewEvent()
+
+    data object CheckAccessToken : LoginViewEvent()
 }

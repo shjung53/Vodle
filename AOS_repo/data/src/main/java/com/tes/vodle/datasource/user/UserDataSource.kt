@@ -20,4 +20,6 @@ interface UserDataSource {
     ): Result<Unit>
 
     suspend fun fetchMyVodle(): Result<MyVodleResponse>
+
+    suspend fun autoLogin(accessToken: String): Result<TokenResponse>
 }

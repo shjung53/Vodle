@@ -9,8 +9,10 @@ import com.tes.presentation.theme.VodleTheme
 import com.tes.presentation.utils.MediaPlayer
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val TAG = "MainActivity_싸피"
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MediaPlayer.initSampleList(this)

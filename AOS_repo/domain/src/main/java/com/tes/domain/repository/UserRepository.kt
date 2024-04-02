@@ -17,4 +17,8 @@ interface UserRepository {
     ): Result<Unit>
 
     suspend fun fetchMyVodle(): Result<List<Vodle>>
+
+    suspend fun autoLogin(): Result<Unit>
+
+    suspend fun checkAccessToken(): Result<Boolean>
 }

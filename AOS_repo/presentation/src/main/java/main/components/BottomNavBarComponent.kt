@@ -58,15 +58,15 @@ fun BottomNavBarComponent(
                     .weight(1f)
                     .height(70.dp)
             )
-            BottomNavButtonComponent(
-                imageVector = Icons.Outlined.Headphones,
-                flag = flag,
-                onClick = onClickHeadphoneButton,
-                info = "오버히어링 모드",
-                modifier = Modifier
-                    .weight(1f)
-                    .height(70.dp)
-            )
+//            BottomNavButtonComponent(
+//                imageVector = Icons.Outlined.Headphones,
+//                flag = flag,
+//                onClick = onClickHeadphoneButton,
+//                info = "오버히어링 모드",
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .height(70.dp)
+//            )
             BottomNavButtonComponent(
                 imageVector = Icons.Outlined.MicNone,
                 flag = flag,
