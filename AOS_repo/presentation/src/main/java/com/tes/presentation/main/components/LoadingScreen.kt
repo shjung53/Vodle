@@ -5,12 +5,11 @@ import android.widget.ImageView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -18,6 +17,7 @@ import androidx.compose.ui.window.Dialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.tes.presentation.R
+import com.tes.presentation.theme.main_coral
 
 @Composable
 fun LoadingScreen() {
@@ -50,11 +50,11 @@ fun LoadingScreen() {
                             .clearOnDetach()
                     }
                 )
-                CircularProgressIndicator(
+                LinearProgressIndicator(
                     modifier = Modifier
-                        .padding(top = 24.dp, start = 12.dp, end = 12.dp)
-                        .align(Alignment.Center),
-                    color = Color.White
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 240.dp),
+                    color = main_coral
                 )
             }
         }
