@@ -24,7 +24,9 @@ internal fun moveCameraPosition(
         CameraUpdate.toCameraPosition(
             CameraPosition(
                 LatLng(location.lat, location.lng),
-                cameraPositionState.position.zoom
+                16.0,
+                45.0,
+                0.0
             )
         )
     )

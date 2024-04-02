@@ -55,7 +55,7 @@ internal fun VodleMap(
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<Vodle>?>(null) }
-        var myLocation : Location
+        var myLocation: Location
 
         MapEffect(vodleList) { map ->
             if (clusterManager == null) {
@@ -78,7 +78,12 @@ internal fun VodleMap(
                             context,
                             onSuccess = { location ->
                                 myLocation = location
-                                viewModel.onTriggerEvent(MainViewEvent.OnClickMarker(myLocation,it.location))
+                                viewModel.onTriggerEvent(
+                                    MainViewEvent.OnClickMarker(
+                                        myLocation,
+                                        it.location
+                                    )
+                                )
                             },
                             onFailure = {
                                 viewModel.onTriggerEvent(
@@ -91,6 +96,7 @@ internal fun VodleMap(
                     .clickToCenter(true)
                     .make()
             }
+            clusterManager?.clearItems()
             clusterManager?.addItems(vodleList)
         }
     }
