@@ -134,19 +134,16 @@ class LoginViewModel @Inject constructor(
     private suspend fun autoLogin() {
         autoLoginUseCase().fold(
             onSuccess = { setState { LoginViewState.Login() } },
-            onFailure = { setState { showToast(it.message ?: "자동 로그인 실패") } }
+            onFailure = { setState { LoginViewState.Default() } }
         )
     }
 
     private suspend fun checkAccessToken() {
         checkAccessTokenUseCase().fold(
             onSuccess = {
-                Log.d(TAG, "checkAccessToken 성공: ${it}")
                 onTriggerEvent(LoginViewEvent.OnAutoLogin)
             },
             onFailure = {
-                Log.d(TAG, "checkAccessToken 실패: ${it}")
-                Log.d(TAG, "checkAccessToken: 자동 로그인 실패")
                 setState { LoginViewState.Default() }
             }
         )

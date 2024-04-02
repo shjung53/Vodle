@@ -42,13 +42,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 private const val TAG = "LoginScreen_싸피"
+
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel<LoginViewModel>(),
     onLoginSuccess: () -> Unit
 ) {
     val viewState = viewModel.uiState.collectAsState().value
-
     val context = LocalContext.current
 
     if (viewState.isTryingAutoLogin) SplashScreen(viewState, context, viewModel)
@@ -61,9 +61,27 @@ fun SplashScreen(
     context: Context,
     viewModel: LoginViewModel
 ) {
-    Log.d(TAG, "SplashScreen: here1 ${viewState.isTryingAutoLogin}")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFFC8DCDC)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo_panpare),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        )
+
+        Text(text = "Vodle", fontSize = 72.sp)
+
+        Spacer(modifier = Modifier.weight(1f))
+    }
+
     ObserveAutoLoginAttempt(viewState, context, viewModel)
-    Log.d(TAG, "SplashScreen: here2 ${viewState.isTryingAutoLogin}")
 }
 
 @Composable
@@ -131,11 +149,9 @@ private fun ObserveAutoLoginAttempt(
     context: Context,
     viewModel: LoginViewModel
 ) {
-//    LaunchedEffect(viewState.isTryingAutoLogin) {
-        if (viewState.isTryingAutoLogin) {
-            viewModel.onTriggerEvent(LoginViewEvent.CheckAccessToken)
-        }
-//    }
+    if (viewState.isTryingAutoLogin) {
+        viewModel.onTriggerEvent(LoginViewEvent.CheckAccessToken)
+    }
 }
 
 @Composable
