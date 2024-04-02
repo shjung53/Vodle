@@ -98,11 +98,8 @@ class UserRepositoryImpl @Inject constructor(
         val accessToken = tokenManager.getAccessToken()
 
         val result = runBlocking {
-            if (accessToken == "") {
-                Result.failure(exception = NullPointerException())
-            } else {
-                Result.success(accessToken)
-            }
+            if (accessToken == "") Result.failure(exception = NullPointerException())
+            else Result.success(accessToken)
         }
 
         return result.fold(
