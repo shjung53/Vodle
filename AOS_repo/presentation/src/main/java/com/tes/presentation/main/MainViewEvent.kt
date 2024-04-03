@@ -60,4 +60,6 @@ sealed class MainViewEvent : ViewEvent {
     data class OnSelectVoiceType(val voiceType: VoiceType) : MainViewEvent()
 
     data class OnSelectGender(val gender: Gender) : MainViewEvent()
+
+    data object OnFailStreaming : MainViewEvent()
 }
