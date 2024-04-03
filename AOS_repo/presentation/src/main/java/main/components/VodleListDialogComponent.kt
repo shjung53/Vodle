@@ -169,16 +169,16 @@ fun VodleListDialogComponent(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = vodleList.get(index).writer,
+                    text = vodleList[index].writer,
                     textAlign = TextAlign.Start,
                     style = vodleTypoGraphy.bodyMedium,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
-                    text = vodleList.get(index).address,
+                    text = vodleList[index].address,
                     textAlign = TextAlign.Start,
-                    style = vodleTypoGraphy.titleSmall,
+                    style = vodleTypoGraphy.bodySmall,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
@@ -189,16 +189,16 @@ fun VodleListDialogComponent(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = vodleList.get(index).date,
+                    text = vodleList[index].category,
                     textAlign = TextAlign.Start,
-                    style = vodleTypoGraphy.bodySmall,
+                    style = vodleTypoGraphy.titleMedium,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
-                    text = vodleList.get(index).category,
+                    text = vodleList[index].date.substring(0, 13),
                     textAlign = TextAlign.Start,
-                    style = vodleTypoGraphy.titleMedium,
+                    style = vodleTypoGraphy.bodySmall,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }

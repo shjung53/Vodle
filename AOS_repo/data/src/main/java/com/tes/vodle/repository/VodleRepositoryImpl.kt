@@ -28,7 +28,7 @@ class VodleRepositoryImpl @Inject constructor(
                 val vodleList: List<Vodle> = it.dataBody.map {
                     Vodle(
                         it.id,
-                        "테스트 날짜",
+                        it.date,
                         it.address,
                         it.writer,
                         it.category,
