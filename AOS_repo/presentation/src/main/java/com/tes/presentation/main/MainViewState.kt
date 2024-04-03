@@ -13,12 +13,12 @@ import java.io.File
 sealed class MainViewState : ViewState {
     abstract val vodleMap: HashMap<Location, List<Vodle>>
     abstract val isLoading: Boolean
-    abstract val toastMessage: String?
+    abstract val toastMessage: String
     abstract val vodleList: List<Vodle>
 
     data class Default(
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         override val vodleList: List<Vodle> = emptyList(),
         override val isLoading: Boolean = false
     ) : MainViewState()
@@ -26,7 +26,7 @@ sealed class MainViewState : ViewState {
     data class MakingVodle(
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
         override val vodleList: List<Vodle> = emptyList(),
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         val vodleOption: VodleOption = VodleOption.VOICE,
         val recordingStep: RecordingStep = RecordingStep.INTRODUCTION,
         val location: Location,
@@ -39,9 +39,10 @@ sealed class MainViewState : ViewState {
 
     data class ShowRecordedVodle(
         override val vodleMap: HashMap<Location, List<Vodle>> = HashMap<Location, List<Vodle>>(),
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         override val vodleList: List<Vodle>,
         override val isLoading: Boolean = false,
+        val dialogVodleList: List<Vodle>,
         val myLocation: Location
     ) : MainViewState()
 }

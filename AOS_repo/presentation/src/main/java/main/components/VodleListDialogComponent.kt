@@ -1,7 +1,6 @@
 package main.components
 
 import android.content.Context
-import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -54,7 +53,6 @@ import com.tes.presentation.R
 import com.tes.presentation.main.MainViewEvent
 import com.tes.presentation.main.MainViewModel
 import com.tes.presentation.main.fetchLocationAndHandle
-import com.tes.presentation.model.Location
 import com.tes.presentation.model.Vodle
 import com.tes.presentation.model.lat
 import com.tes.presentation.model.lng
@@ -63,6 +61,9 @@ import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
 import com.tes.presentation.utils.distanceCalculator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
@@ -71,7 +72,6 @@ fun VodleListDialogComponent(
     viewModel: MainViewModel,
     vodleList: List<Vodle>,
     context: Context,
-    myLocation: Location,
     scope: CoroutineScope,
     player: ExoPlayer,
     dataSourceFactory: DataSource.Factory
@@ -81,22 +81,61 @@ fun VodleListDialogComponent(
     val isPlaying = remember { mutableStateOf(false) }
     val audioDuration = remember { mutableIntStateOf(0) }
     val playerLoad = remember { mutableStateOf(false) }
-    var currentLocation: Location = myLocation
+    val bufferingTime = remember { mutableIntStateOf(0) }
+    var bufferingJob: Job? = null
 
     player.addListener(object : Player.Listener {
         @Deprecated("Deprecated in Java")
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if (playbackState == Player.STATE_BUFFERING) {
+                startBuffering()
+            }
+
             if (playbackState == Player.STATE_READY) {
                 player.play()
                 audioDuration.intValue = player.duration.toInt()
                 playerLoad.value = false
+                endBuffering()
             }
 
             if (playbackState == Player.STATE_ENDED) {
                 audioDuration.intValue = 0
+                endBuffering()
             }
         }
+
+        private fun startBuffering() {
+            bufferingJob?.cancel()
+            bufferingJob = CoroutineScope(Dispatchers.IO).launch {
+                repeat(10) {
+                    delay(1000)
+                    bufferingTime.intValue += 1
+                }
+            }
+        }
+
+        private fun endBuffering() {
+            bufferingJob?.cancel()
+            bufferingJob = null
+        }
     })
+
+    LaunchedEffect(isPlaying.value) {
+        if (isPlaying.value) {
+            val hlsMediaSource =
+                HlsMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(
+                        MediaItem.fromUri(vodleList.get(index).streamingURL)
+                    )
+            player.setMediaSource(hlsMediaSource)
+            player.prepare()
+            playerLoad.value = true
+        } else {
+            player.pause()
+            player.stop()
+            playerLoad.value = false
+        }
+    }
 
     ProgressBarAnimation(isPlaying, audioDuration.intValue, currentProgress)
     Box(
@@ -117,7 +156,6 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index--
-                    isPlaying.value = !isPlaying.value
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -138,7 +176,6 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index++
-                    isPlaying.value = !isPlaying.value
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -210,13 +247,25 @@ fun VodleListDialogComponent(
             ) {
                 IconButton(
                     onClick = {
-                        isPlaying.value = !isPlaying.value
-
                         fetchLocationAndHandle(
                             scope,
                             context,
                             onSuccess = { location ->
-                                currentLocation = location
+                                if (distanceCalculator(
+                                        location.lat,
+                                        location.lng,
+                                        vodleList[index].location.lat,
+                                        vodleList[index].location.lng
+                                    )
+                                ) {
+                                    isPlaying.value = !isPlaying.value
+                                } else {
+                                    viewModel.onTriggerEvent(
+                                        MainViewEvent.ShowToast(
+                                            context.getString(R.string.distance_limit_message)
+                                        )
+                                    )
+                                }
                             },
                             onFailure = {
                                 viewModel.onTriggerEvent(
@@ -236,41 +285,12 @@ fun VodleListDialogComponent(
                     )
                 ) {
                     if (isPlaying.value) {
-                        if (distanceCalculator(
-                                myLocation.lat,
-                                myLocation.lng,
-                                vodleList.get(index).location.lat,
-                                vodleList.get(index).location.lng
-                            )
-                        ) {
-                            val hlsMediaSource =
-                                HlsMediaSource.Factory(dataSourceFactory)
-                                    .createMediaSource(
-                                        MediaItem.fromUri(vodleList.get(index).streamingURL)
-                                    )
-                            player.setMediaSource(hlsMediaSource)
-                            player.prepare()
-                            player.play()
-                            Icon(
-                                imageVector = Icons.Default.Stop,
-                                contentDescription = "stopButton",
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "50m 밖에 있는 Vodle은 들을 수 없습니다.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "playButton",
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Stop,
+                            contentDescription = "stopButton",
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     } else {
-                        player.pause()
-                        player.stop()
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = "playButton",
@@ -278,6 +298,7 @@ fun VodleListDialogComponent(
                         )
                     }
                 }
+
                 LinearProgressIndicator(
                     progress = { currentProgress.value },
                     modifier = Modifier.align(Alignment.CenterVertically),

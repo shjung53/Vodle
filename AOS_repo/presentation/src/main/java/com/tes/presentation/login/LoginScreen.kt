@@ -186,13 +186,14 @@ private fun ObserveLoginAttempt(
 @Composable
 private fun ObserveToastMessage(
     viewState: LoginViewState,
-    snackbarHostState: SnackbarHostState,
+    snackBarHostState: SnackbarHostState,
     viewModel: LoginViewModel
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
-        if (viewState.toastMessage?.isNotEmpty() == true) {
-            snackbarHostState.showSnackbar(
-                viewState.toastMessage ?: "",
+        if (viewState.toastMessage.isNotEmpty()) {
+            snackBarHostState.currentSnackbarData?.dismiss()
+            snackBarHostState.showSnackbar(
+                viewState.toastMessage,
                 actionLabel = "확인",
                 duration = SnackbarDuration.Short
             )

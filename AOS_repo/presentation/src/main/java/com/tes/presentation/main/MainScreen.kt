@@ -21,6 +21,7 @@ import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.tes.presentation.R
 import com.tes.presentation.main.components.BottomButtonGroup
 import com.tes.presentation.main.components.CurrentLocationButton
 import com.tes.presentation.main.components.LoadingScreen
@@ -92,10 +93,10 @@ internal fun MainScreen(
                     viewModel = viewModel,
                     viewState = viewState,
                     context = context,
-                    myLocation = viewState.myLocation,
                     scope = scope,
                     player = player,
-                    dataSourceFactory = dataSourceFactory
+                    dataSourceFactory = dataSourceFactory,
+                    snackBarHostState = snackBarHostState
                 )
             }
 
@@ -108,12 +109,17 @@ internal fun MainScreen(
             )
         }
 
-        VodleSnackBarHost(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-            snackBarHostState = snackBarHostState
-        )
+        if (snackBarHostState.currentSnackbarData?.visuals?.message != context.getString(
+                R.string.distance_limit_message
+            )
+        ) {
+            VodleSnackBarHost(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                snackBarHostState = snackBarHostState
+            )
+        }
     }
 
     if (viewState is MainViewState.MakingVodle) {
@@ -142,9 +148,10 @@ private fun ObserveToastMessage(
     viewModel: MainViewModel
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
-        if (viewState.toastMessage?.isNotEmpty() == true) {
+        if (viewState.toastMessage.isNotEmpty()) {
+            snackBarHostState.currentSnackbarData?.dismiss()
             snackBarHostState.showSnackbar(
-                viewState.toastMessage ?: "",
+                viewState.toastMessage,
                 actionLabel = "확인",
                 duration = SnackbarDuration.Short
             )

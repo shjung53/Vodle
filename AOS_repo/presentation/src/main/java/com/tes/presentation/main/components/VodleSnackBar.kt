@@ -29,7 +29,9 @@ internal fun VodleSnackBarHost(modifier: Modifier, snackBarHostState: SnackbarHo
             containerColor = Color.White,
             action = {
                 data.visuals.actionLabel?.let { actionLabel ->
-                    TextButton(onClick = { data.performAction() }) {
+                    TextButton(onClick = {
+                        data.dismiss()
+                    }) {
                         Text(actionLabel)
                     }
                 }

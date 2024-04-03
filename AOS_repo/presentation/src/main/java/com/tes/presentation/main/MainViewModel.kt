@@ -59,7 +59,7 @@ class MainViewModel @Inject constructor(
             is MainViewEvent.OnClickMarker -> setState {
                 onClickMarker(
                     event.myLocation,
-                    event.location
+                    event.locationList
                 )
             }
 
@@ -88,7 +88,12 @@ class MainViewModel @Inject constructor(
     private fun MainViewState.onFailStreaming(): MainViewState =
         when (this) {
             is MainViewState.Default -> this
-            is MainViewState.MakingVodle -> MainViewState.Default(vodleMap, "스트리밍에 문제가 생겼습니다.", vodleList)
+            is MainViewState.MakingVodle -> MainViewState.Default(
+                vodleMap,
+                "스트리밍에 문제가 생겼습니다.",
+                vodleList
+            )
+
             is MainViewState.ShowRecordedVodle -> this
         }
 
@@ -346,18 +351,30 @@ private fun MainViewState.onStartRecord(
     }
 }
 
-private fun MainViewState.onClickMarker(myLocation: Location, location: Location): MainViewState {
+private fun MainViewState.onClickMarker(
+    myLocation: Location,
+    locationList: List<Location>
+): MainViewState {
+    val dialogVodleList = locationList.map { location -> vodleMap[location] }
+        .flatMap { vodleList -> vodleList.orEmpty() }
     return when (this) {
         is MainViewState.Default -> MainViewState.ShowRecordedVodle(
-            this.vodleMap,
-            "",
-            this.vodleMap[location]!!,
+            vodleMap = vodleMap,
+            toastMessage = "",
+            vodleList = vodleList,
+            dialogVodleList = dialogVodleList,
             myLocation = myLocation
         )
 
         is MainViewState.MakingVodle -> this
 
-        is MainViewState.ShowRecordedVodle -> this
+        is MainViewState.ShowRecordedVodle -> this.copy(
+            vodleMap = vodleMap,
+            toastMessage = "",
+            vodleList = vodleList,
+            dialogVodleList = dialogVodleList,
+            myLocation = myLocation
+        )
     }
 }
 
