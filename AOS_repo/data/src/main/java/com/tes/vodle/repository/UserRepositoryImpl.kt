@@ -7,7 +7,6 @@ import com.tes.domain.repository.UserRepository
 import com.tes.vodle.datasource.user.UserDataSource
 import com.tes.vodle.util.calculateHmac
 import kotlinx.coroutines.runBlocking
-import java.lang.NullPointerException
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -98,8 +97,11 @@ class UserRepositoryImpl @Inject constructor(
         val accessToken = tokenManager.getAccessToken()
 
         val result = runBlocking {
-            if (accessToken == "") Result.failure(exception = NullPointerException())
-            else Result.success(accessToken)
+            if (accessToken == "") {
+                Result.failure(exception = NullPointerException())
+            } else {
+                Result.success(accessToken)
+            }
         }
 
         return result.fold(

@@ -80,8 +80,17 @@ class MainViewModel @Inject constructor(
                 event.text,
                 event.selectedVoiceType
             )
+
+            MainViewEvent.OnFailStreaming -> setState { onFailStreaming() }
         }
     }
+
+    private fun MainViewState.onFailStreaming(): MainViewState =
+        when (this) {
+            is MainViewState.Default -> this
+            is MainViewState.MakingVodle -> MainViewState.Default(vodleMap, "스트리밍에 문제가 생겼습니다.", vodleList)
+            is MainViewState.ShowRecordedVodle -> this
+        }
 
     private fun MainViewState.onSelectGender(selectedGender: Gender): MainViewState =
         when (this) {

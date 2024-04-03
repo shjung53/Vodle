@@ -55,6 +55,10 @@ import com.tes.presentation.theme.Padding
 import com.tes.presentation.theme.main_coral_bright
 import com.tes.presentation.theme.main_coral_darken
 import com.tes.presentation.theme.vodleTypoGraphy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import main.components.ButtonComponent
 
@@ -85,6 +89,16 @@ internal fun CreateVodleDialog(
         val dataSourceFactory = DefaultDataSource.Factory(context)
         val playerLoad = remember { mutableStateOf(false) }
         val interactionSource = remember { MutableInteractionSource() }
+        val bufferingTime = remember { mutableIntStateOf(0) }
+        var bufferingJob: Job? = null
+
+        LaunchedEffect(bufferingTime.intValue) {
+            if (bufferingTime.intValue == 10) {
+                viewModel.onTriggerEvent(
+                    MainViewEvent.OnFailStreaming
+                )
+            }
+        }
 
         LaunchedEffect(isPlaying.value) {
             if (isPlaying.value) {
@@ -108,15 +122,36 @@ internal fun CreateVodleDialog(
         player.addListener(object : Player.Listener {
             @Deprecated("Deprecated in Java")
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playbackState == Player.STATE_BUFFERING) {
+                    startBuffering()
+                }
+
                 if (playbackState == Player.STATE_READY) {
                     player.play()
                     audioDuration.intValue = player.duration.toInt()
                     playerLoad.value = false
+                    endBuffering()
                 }
 
                 if (playbackState == Player.STATE_ENDED) {
                     audioDuration.intValue = 0
+                    endBuffering()
                 }
+            }
+
+            private fun startBuffering() {
+                bufferingJob?.cancel()
+                bufferingJob = CoroutineScope(Dispatchers.IO).launch {
+                    repeat(10) {
+                        delay(1000)
+                        bufferingTime.intValue += 1
+                    }
+                }
+            }
+
+            private fun endBuffering() {
+                bufferingJob?.cancel()
+                bufferingJob = null
             }
         })
 
