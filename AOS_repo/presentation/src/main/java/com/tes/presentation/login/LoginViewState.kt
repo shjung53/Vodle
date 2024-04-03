@@ -7,7 +7,7 @@ sealed class LoginViewState : ViewState {
 
     abstract val nextRoute: Route
     abstract val isTryingLogin: Boolean
-    abstract val toastMessage: String?
+    abstract val toastMessage: String
     abstract val lastBackPressedTime: Long
     abstract val shouldExit: Boolean
     abstract val isTryingAutoLogin: Boolean
@@ -16,7 +16,7 @@ sealed class LoginViewState : ViewState {
         override val nextRoute: Route = Route.LOGIN,
         val isLoading: Boolean = false,
         override val isTryingLogin: Boolean = false,
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         override val lastBackPressedTime: Long = 0,
         override val shouldExit: Boolean = false,
         override val isTryingAutoLogin: Boolean = true
@@ -26,7 +26,7 @@ sealed class LoginViewState : ViewState {
         override val nextRoute: Route = Route.LOGIN,
         val isLoading: Boolean = false,
         override val isTryingLogin: Boolean = false,
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         override val lastBackPressedTime: Long = 0,
         override val shouldExit: Boolean = false,
         override val isTryingAutoLogin: Boolean = false
@@ -35,7 +35,7 @@ sealed class LoginViewState : ViewState {
     data class Login(
         override val nextRoute: Route = Route.MAIN,
         override val isTryingLogin: Boolean = false,
-        override val toastMessage: String? = null,
+        override val toastMessage: String = "",
         override val lastBackPressedTime: Long = 0,
         override val shouldExit: Boolean = false,
         override val isTryingAutoLogin: Boolean = false

@@ -9,5 +9,5 @@ enum class VoiceType(val korean: String, val eng: String) {
     OPTIMUSPRIME("옵티머스프라임", "optimusPrime"),
     TRUMP("트럼프", "trump"),
     AHRI("아리", "ahri"),
-    ELSA("엘사", "elsa"),
+    ELSA("엘사", "elsa")
 }

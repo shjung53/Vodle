@@ -104,8 +104,9 @@ private fun ObserveToastMessage(
 ) {
     LaunchedEffect(key1 = viewState.toastMessage) {
         if (viewState.toastMessage.isNotEmpty()) {
+            snackBarHostState.currentSnackbarData?.dismiss()
             snackBarHostState.showSnackbar(
-                viewState.toastMessage ?: "",
+                viewState.toastMessage,
                 actionLabel = "확인",
                 duration = SnackbarDuration.Short
             )

@@ -12,8 +12,8 @@ data class VodleResponse(
     @SerializedName("writer") val writer: String = "",
     @SerializedName("contentType") val category: String = "",
     @SerializedName("address") val address: String = "",
-    @SerializedName("latitude") val latitude: Float = 0f,
-    @SerializedName("longitude") val longitude: Float = 0f,
+    @SerializedName("latitude") val latitude: Double = 0.0,
+    @SerializedName("longitude") val longitude: Double = 0.0,
     @SerializedName("streamingURL") val streamingURL: String = "",
     @SerializedName("createdDate") val date: String = ""
 )

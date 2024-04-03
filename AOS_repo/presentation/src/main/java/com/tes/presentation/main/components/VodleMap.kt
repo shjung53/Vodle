@@ -73,6 +73,27 @@ internal fun VodleMap(
                         ImageView(context).apply {
                             setImageResource(R.drawable.resized_megaphone)
                         }
+                    }.clusterClickListener {
+                        fetchLocationAndHandle(
+                            scope,
+                            context,
+                            onSuccess = { location ->
+                                myLocation = location
+                                viewModel.onTriggerEvent(
+                                    MainViewEvent.OnClickMarker(
+                                        myLocation,
+                                        it.items.map { vodle -> vodle.location }
+                                    )
+                                )
+                            },
+                            onFailure = {
+                                viewModel.onTriggerEvent(
+                                    MainViewEvent.ShowToast(
+                                        context.getString(R.string.location_fetch_failure)
+                                    )
+                                )
+                            }
+                        )
                     }
                     .markerClickListener {
                         fetchLocationAndHandle(
@@ -83,7 +104,7 @@ internal fun VodleMap(
                                 viewModel.onTriggerEvent(
                                     MainViewEvent.OnClickMarker(
                                         myLocation,
-                                        it.location
+                                        listOf(it.location)
                                     )
                                 )
                             },
@@ -100,6 +121,7 @@ internal fun VodleMap(
                     .clickToCenter(true)
                     .make()
             }
+            clusterManager?.clearItems()
             clusterManager?.addItems(vodleList)
         }
     }
