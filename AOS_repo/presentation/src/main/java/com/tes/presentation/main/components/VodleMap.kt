@@ -100,7 +100,6 @@ internal fun VodleMap(
                     .clickToCenter(true)
                     .make()
             }
-            clusterManager?.clearItems()
             clusterManager?.addItems(vodleList)
         }
     }
