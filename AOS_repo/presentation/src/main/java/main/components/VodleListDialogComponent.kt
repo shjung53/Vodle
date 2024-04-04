@@ -98,6 +98,11 @@ fun VodleListDialogComponent(
                 endBuffering()
             }
 
+            if (playbackState == Player.STATE_IDLE) {
+                audioDuration.intValue = 0
+                endBuffering()
+            }
+
             if (playbackState == Player.STATE_ENDED) {
                 audioDuration.intValue = 0
                 endBuffering()
@@ -156,6 +161,7 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index--
+                    player.stop()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
@@ -176,6 +182,7 @@ fun VodleListDialogComponent(
             IconButton(
                 onClick = {
                     index++
+                    player.stop()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = main_coral_darken,
