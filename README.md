@@ -4,9 +4,9 @@
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/512.gif" alt="🔥" width="32" height="32"> VODLE 소개 및 (UCC+시연) 영상
 #### ✔ 소개
-![img](./README/Introduction_1.png)
-<br>
-![img](./README/Introduction_2.png)
+![Introduction_1](https://github.com/shjung53/Vodle/assets/90888718/b096af10-e207-4f9a-9bc7-170c25a3e8f0)
+![Introduction_2](https://github.com/shjung53/Vodle/assets/90888718/727cc663-f4f1-4e04-880a-c5b27fd5e8a9)
+
 
 <br>
 
@@ -22,43 +22,35 @@ https://youtu.be/6GsL7m1SSGc
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31f/512.gif" alt="🌟" width="32" height="32">  VODLE 서비스 화면
 ### ✔ 로그인
-![img](./README/gif/Login.gif)
+![Login](https://github.com/shjung53/Vodle/assets/90888718/5073e2c9-79a0-4b10-9789-94e3710e0ebe)
 <br>
 <br>
 
 ### ✔ 음성 조회하기
-![img](./README/gif/Get_1.gif)
-<br/>
-![img](./README/gif/Get_2.gif)
-<br/>
-![img](./README/gif/Get_3.gif)
+![Get_1](https://github.com/shjung53/Vodle/assets/90888718/5eede15c-c483-46a7-b95c-0eb4a30e5ec5)
+![Get_2](https://github.com/shjung53/Vodle/assets/90888718/ad19aaf1-0aae-42a8-b889-a6fab70d7999)
+![Get_3](https://github.com/shjung53/Vodle/assets/90888718/7c6792f6-aa33-4cbc-938f-00847aa751ec)
 <br>
 <br>
 
 ### ✔ 음성 기록 남기기
-![img](./README/gif/Register_1.gif)
-<br/>
-![img](./README/gif/Register_2.gif)
-<br/>
-![img](./README/gif/Register_3.gif)
-<br/>
-![img](./README/gif/Register_4.gif)
-<br/>
-![img](./README/gif/Register_5.gif)
+![Register_1](https://github.com/shjung53/Vodle/assets/90888718/2fbba03e-087b-4d59-9428-8b9008a88dfd)
+![Register_2](https://github.com/shjung53/Vodle/assets/90888718/60105798-cc6d-4f7f-bb8e-fe3f73aea979)
+![Register_3](https://github.com/shjung53/Vodle/assets/90888718/0f7beb27-cc85-49dc-b433-f1a4fb8bfe0c)
+![Register_4](https://github.com/shjung53/Vodle/assets/90888718/31d58f5f-af3c-40fb-a8a7-5c1fff58efe6)
+![Register_5](https://github.com/shjung53/Vodle/assets/90888718/a23c32bb-5b34-4c75-bc92-264b1824d903)
 <br>
 <br>
 
 
 ### ✔ 텍스트 기록 남기기
-![img](./README/gif/Write_1.gif)
-<br/>
-![img](./README/gif/Write_2.gif)
+![Write_1](https://github.com/shjung53/Vodle/assets/90888718/6f4c04f3-b6ac-43b9-80ee-77936428c542)
+![Write_2](https://github.com/shjung53/Vodle/assets/90888718/7bc43dbf-3aa2-4530-a1b7-c444d8d92cd3)
 <br>
 <br>
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4ab/512.gif" alt="💫" width="32" height="32"> 서비스 아키텍처
-![img](./README/VodleDiagram.png)
-
+![VodleDiagram](https://github.com/shjung53/Vodle/assets/90888718/57e0001b-6214-4368-91b6-9a1c6b0270c7)
 <br>
 
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f680/512.gif" alt="🚀" width="32" height="32"> 기술 스택
@@ -270,7 +262,8 @@ https://youtu.be/6GsL7m1SSGc
 <br>
 
 #### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Fountain.png" alt="Fountain" width="15" height="15" /> Git flow 이미지
-![img](./README/Flow.png)
+![Flow](https://github.com/shjung53/Vodle/assets/90888718/a14696ff-ae04-404f-ad73-7b965c071df2)
+
 
 <br>
 
@@ -333,26 +326,29 @@ https://youtu.be/6GsL7m1SSGc
 ## <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f381/512.gif" alt="🎁" width="25" height="25"> 산출물
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Clipboard.png" alt="Clipboard" width="15" height="15" /> 시퀀스 다이어그램
-![img](./README/SequenceDiagram.png)
+![SequenceDiagram](https://github.com/shjung53/Vodle/assets/90888718/8b087d79-5e1e-4f1d-9ff0-ce59d199efc0)
+
 
 <br>
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Desktop%20Computer.png" alt="Desktop Computer" width="15" height="15" /> 화면 설계서
-![img](./README/pigma.png)
+![pigma](https://github.com/shjung53/Vodle/assets/90888718/fa1554f5-6925-4ca1-bb3f-7e7ef3c31fbe)
+
 
 <br>
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Memo.png" alt="Memo" width="15" height="15" /> 기능명세서
-![img](./README/FunctionStatement.png)
+![FunctionStatement](https://github.com/shjung53/Vodle/assets/90888718/82e73a5d-cd3a-4247-ae31-d516a797b5ac)
+
 
 <br>
 
 ### <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Bar%20Chart.png" alt="Bar Chart" width="15" height="15" /> 간트차트
-![img](./README/GanttChart.png)
+![GanttChart](https://github.com/shjung53/Vodle/assets/90888718/94f27d32-7be4-4ea2-ba1b-a38b7d1ced19)
 
 <br>
 
 ### 🎨 ERD
-![img](./README/ERD.png)
+![ERD](https://github.com/shjung53/Vodle/assets/90888718/c827a208-56ef-4471-a4a5-7945e9959564)
 
 <br>
